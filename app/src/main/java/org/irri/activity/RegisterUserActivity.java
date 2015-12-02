@@ -81,31 +81,36 @@ public class RegisterUserActivity extends AppCompatActivity {
 
     public void actionSave(View view){
 
-        DatabaseTool dbTool = new DatabaseTool(this);
-        dbTool.openDB();
-        SQLiteDatabase database=dbTool.getDatabase();
-        AccountManager mgr = new AccountManager(database);
+        try {
 
-        ContentValues values = new ContentValues();
-        values.put("display_name",txtUser.getText().toString());
-        values.put("program_abbrev",txtProgram.getText().toString());
-        values.put("user",txtUsername.getText().toString());
-        values.put("password",txtPassword.getText().toString());
-        values.put("access_token",accessToken);
+            DatabaseTool dbTool = new DatabaseTool(this);
+            dbTool.openDB();
+            SQLiteDatabase database = dbTool.getDatabase();
+            AccountManager mgr = new AccountManager(database);
 
-        mgr.insert(values);
+            ContentValues values = new ContentValues();
+            values.put("display_name", txtUser.getText().toString());
+            values.put("program_abbrev", txtProgram.getText().toString());
+            values.put("username", txtUsername.getText().toString());
+            values.put("password", txtPassword.getText().toString());
+            values.put("access_token", accessToken);
 
-        Cursor cursor = mgr.getAccountList();
+            mgr.insert(values);
+
+            Cursor cursor = mgr.getAccountList();
 
 
-        while (cursor.isAfterLast() == false)
-        {
-            String val=cursor.getString(cursor.getColumnIndex("display_name")) +" "+cursor.getString(cursor.getColumnIndex("program_abbrev"));
-            Toast.makeText(this, val, Toast.LENGTH_LONG).show();
-            cursor.moveToNext();
+            while (cursor.isAfterLast() == false) {
+                String val = cursor.getString(cursor.getColumnIndex("display_name")) + " " + cursor.getString(cursor.getColumnIndex("program_abbrev"));
+                Toast.makeText(this, val, Toast.LENGTH_LONG).show();
+                cursor.moveToNext();
+            }
+
+        }catch (Exception e){
+            Toast.makeText(this, "Error getting user information", Toast.LENGTH_LONG).show();
         }
 
-        //finish();
+
     }
 
 

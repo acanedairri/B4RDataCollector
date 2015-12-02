@@ -105,6 +105,10 @@
             android:name=".EasySocialAuthActivity"
             android:label="@string/title_activity_test" >
         </activity>
+        <activity
+            android:name=".StudyListActivity"
+            android:label="@string/title_activity_load_study" >
+        </activity>
     </application>
 
 </manifest>

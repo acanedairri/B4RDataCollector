@@ -3,6 +3,7 @@ package org.irri.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,7 +18,9 @@ import com.google.gson.Gson;
 
 import org.irri.activity.R;
 import org.irri.constant.Authentication;
+import org.irri.database.AccountManager;
 import org.irri.database.DatabaseHelper;
+import org.irri.database.DatabaseTool;
 import org.irri.entity.AccessToken;
 
 import java.io.IOException;
@@ -26,6 +29,8 @@ public class LoginActivity extends Activity {
     private int REQUEST_CODE = 0X1;
     private AccessToken accessToken;
     private Gson gson;
+    private EditText username;
+    private EditText password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +77,39 @@ public class LoginActivity extends Activity {
 
 
     public void onStartOauth(View v) {
+
+
+
         Intent intent = new Intent(this, EasySocialAuthActivity.class);
         intent.putExtra(EasySocialAuthActivity.URL, Authentication.LOGIN_URL);
         intent.putExtra(EasySocialAuthActivity.REDIRECT_URL,Authentication.REDIRECT_URI);
         intent.putExtra(EasySocialAuthActivity.ACCESS_TOKEN, Authentication.ACCESS_TOKEN_URL);
         startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    public void actionLogin(View v) {
+
+        username = (EditText) findViewById(R.id.txtUsername);
+        password = (EditText) findViewById(R.id.txtPassword);
+        String token=null;
+        DatabaseTool dbTool = new DatabaseTool(this);
+        dbTool.openDB();
+        SQLiteDatabase database = dbTool.getDatabase();
+        AccountManager mgr = new AccountManager(database);
+
+        Cursor cursor = mgr.getUserToken(username.getText().toString(),password.getText().toString());
+
+        if(cursor != null && cursor.getCount() > 0){
+            cursor.moveToFirst();
+            token = cursor.getString(cursor.getColumnIndex("access_token"));
+            Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
+            intent.putExtra("ACCESS_TOKEN", token);
+            startActivity(intent);
+        }else{
+            Toast.makeText(this, "Invalid User", Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
     @Override

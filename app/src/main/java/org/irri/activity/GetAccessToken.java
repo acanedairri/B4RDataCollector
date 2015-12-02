@@ -49,6 +49,7 @@ public class GetAccessToken extends AsyncTask<String, Void, String> {
             this._Callback = (Callback) activity;
             _Activity = activity;
             _Dialog = new ProgressDialog(activity);
+            _Dialog.setTitle("Processing");
             _Dialog.setCancelable(false);
             _Dialog.setCanceledOnTouchOutside(false);
         } catch (ClassCastException e) {
