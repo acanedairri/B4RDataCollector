@@ -66,10 +66,6 @@
             android:label="@string/title_activity_variable" >
         </activity>
         <activity
-            android:name=".TestDatabaseActivity"
-            android:label="@string/title_activity_test_database" >
-        </activity>
-        <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
@@ -83,7 +79,7 @@
         </activity>
         <activity
             android:name=".StudiesActivity"
-            android:label="@string/title_activity_studies" >
+            android:label="My Studies">
         </activity>
         <activity
             android:name=".StudyActivity"
@@ -91,7 +87,7 @@
         </activity>
         <activity
             android:name=".StudyMetadataActivity"
-            android:label="@string/title_activity_study_metadata" >
+            android:label="Metadata" >
         </activity>
         <activity
             android:name=".DataEntryActivity"
@@ -107,7 +103,20 @@
         </activity>
         <activity
             android:name=".StudyListActivity"
-            android:label="@string/title_activity_load_study" >
+            android:label="Study List" >
+        </activity>
+        <activity
+            android:name=".ImageLoaderActivity"
+            android:label="@string/title_activity_image_loader" >
+        </activity>
+        <activity
+            android:name=".StudyInfoTabActivity"
+            android:label="@string/title_activity_image_loader" >
+        </activity>
+
+        <activity
+            android:name=".InternalStorageActivity"
+            android:label="@string/title_activity_internal_storage" >
         </activity>
     </application>
 

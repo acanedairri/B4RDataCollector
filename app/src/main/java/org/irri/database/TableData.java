@@ -22,4 +22,37 @@ public class TableData {
             "        `access_token`\tTEXT,\n" +
             "        `access_token_expire`\tTEXT\n" +
             "        );";
+
+     public static String TABLE_STUDY="study";
+
+     public static String CREATE_STUDY_TABLE="CREATE TABLE `study` (" +
+                "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "`id` INTEGER," +
+                "`userid` INTEGER," +
+                "`transaction_id` TEXT," +
+                "`program` TEXT," +
+                "`place` INTEGER," +
+                "`phase` INTEGER," +
+                "`year` TEXT," +
+                "`season` TEXT," +
+                "`name` TEXT," +
+                "`title` TEXT," +
+                "`creation_timestamp` TEXT" +
+                "`modification_timestamp` TEXT," +
+                "`notes` TEXT," +
+                "`key` TEXT," +
+                "`number` INTEGER," +
+                "`is_uploaded` TEXT" +
+                ");";
+
+    public static String CREATE_STUDY_NETADATA_TABLE="CREATE TABLE `study_metadata` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`id` INTEGER," +
+            "`userid` INTEGER," +
+            "`transaction_id` TEXT," +
+            "`variable` TEXT," +
+            "`value` TEXT" +
+            ");";
+
+
 }

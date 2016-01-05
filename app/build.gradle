@@ -27,4 +27,5 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile files('libs/DataCollection.jar')
     compile files('libs/LinePrinter.jar')
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
 }

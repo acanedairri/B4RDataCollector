@@ -16,24 +16,22 @@ public class StudyManager {
 
     private SQLiteDatabase database;
     private static String tblName = "study";
-
+    private static String tblStudyMetadata = "study_metadata";
     public StudyManager(SQLiteDatabase database) {
         this.database = database;
     }
 
 
     public Cursor getAllRecords() {
+        Cursor cursor = null;
         try {
             String sql = "SELECT * from study";
-            Cursor cursor = database.rawQuery(sql, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
-            }
+            cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {
 
         }
-        return null;
+        return cursor;
     }
 
     public Cursor getRecordByName(String name) {
@@ -67,6 +65,15 @@ public class StudyManager {
     public void insertRecord(ContentValues cvalues) {
         try {
             database.insert(tblName, null, cvalues);
+        } catch (SQLiteException e) {
+
+        }
+    }
+
+
+    public void insertRecordMetadata(ContentValues cvalues) {
+        try {
+            database.insert(tblStudyMetadata, null, cvalues);
         } catch (SQLiteException e) {
 
         }

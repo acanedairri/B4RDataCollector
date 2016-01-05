@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.irri.activity.StudyListActivity">
+
+
+    <item android:id="@+id/action_help"
+        android:icon="@drawable/help"
+        android:title="Help"
+        android:showAsAction="always"/>
+</menu>

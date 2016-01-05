@@ -1,7 +1,6 @@
 package org.irri.activity;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -16,31 +15,21 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import org.irri.activity.R;
 import org.irri.database.AccountManager;
-import org.irri.database.DatabaseTool;
-import org.irri.database.TableData;
-import org.irri.entity.AccessToken;
+import org.irri.database.DatabaseMasterTool;
 import org.irri.entity.User;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.List;
-
-import cz.msebera.android.httpclient.Header;
 
 public class RegisterUserActivity extends AppCompatActivity {
 
@@ -83,8 +72,8 @@ public class RegisterUserActivity extends AppCompatActivity {
 
         try {
 
-            DatabaseTool dbTool = new DatabaseTool(this);
-            dbTool.openDB();
+            DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+            dbTool.openDBMaster();
             SQLiteDatabase database = dbTool.getDatabase();
             AccountManager mgr = new AccountManager(database);
 

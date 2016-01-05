@@ -18,31 +18,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.util.Log;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class DatabaseStudyHelper extends SQLiteOpenHelper {
+
 
     // The Android's default system path of your application database.
 
-
-    // The default DB_NAME unless changed later on.
-    private static String DB_NAME = "master";
-    private static String DB_ACCOUNT = "account";
     // In the Galaxy Tab, the true SD Card path needs to have /external_sd/ to be appended
     private SQLiteDatabase database;
     private final Context myContext;
+    private static String DB_NAME;
 
 
-    /**
-     * Constructor Takes and keeps a reference of the passed context in order to
-     * access to the application assets and resources.
-     *
-     * @param context
-     */
-    public DatabaseHelper(Context context) {
-
-        super(context, DB_NAME, null, 1);
-        this.myContext = context;
-        //		myDataBase = this.getWritableDatabase();
-    }
 
     /**
      * Constructor Takes and keeps a reference of the passed context in order to
@@ -51,7 +37,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param context
      * @param dbName
      */
-    public DatabaseHelper(Context context, String dbName) {
+
+    public DatabaseStudyHelper(Context context, String dbName) {
 
         super(context, dbName, null, 1);
         this.myContext = context;
@@ -59,19 +46,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //		myDataBase = this.getWritableDatabase();
     }
 
+
+
     public static String getDB_NAME() {
+
         return DB_NAME;
     }
 
-    public static void setDB_NAME(String dB_NAME) {
+    public static void setDB_NAME(String dB_NAME)
+    {
         DB_NAME = dB_NAME;
     }
 
     public SQLiteDatabase getDataBase() {
+
         return database;
     }
 
-    public void setDataBase(SQLiteDatabase database) {
+    public void setDataBase(SQLiteDatabase database)
+    {
         this.database = database;
     }
 
@@ -107,27 +100,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void createAccountTable(SQLiteDatabase db){
-
-        String sql ="CREATE TABLE `user` (\n" +
-                "        `_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
-                "        `user_id`\tINTEGER,\n" +
-                "        `username`\tTEXT,\n" +
-                "        `password`\tTEXT,\n" +
-                "        `user_type`\tTEXT,\n" +
-                "        `status`\tTEXT,\n" +
-                "        `display_name`\tTEXT,\n" +
-                "        `program_abbrev`\tBLOB,\n" +
-                "        `program_display_name`\tTEXT,\n" +
-                "        `valid_start_date`\tINTEGER,\n" +
-                "        `valid_end_date`\tINTEGER,\n" +
-                "        `creation_timestamp`\tINTEGER,\n" +
-                "        `access_token`\tTEXT,\n" +
-                "        `access_token_expire`\tTEXT\n" +
-                "        );";
-
-        db.execSQL(sql);
-    }
 
     public void createDatabaseMaster(String databaseName) throws IOException {
         //If database not exists copy it from the assets
@@ -258,6 +230,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Open or create the database from the specified path
         database = SQLiteDatabase.openOrCreateDatabase(myPath, null);
         setDataBase(database);
+
+    }
+
+    public void createStudyDatabase(Context context, String databasename){
+        String myPath = AppDirectory.DB_PATH + databasename;
+        database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
+    }
+
+    public void createStudyTables(){
 
     }
 
