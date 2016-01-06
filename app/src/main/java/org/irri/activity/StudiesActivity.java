@@ -134,8 +134,9 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         StudyListData study = (StudyListData) adapter.getItem(position);
-
-        Toast.makeText(this,study.getName() + "", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(getApplicationContext(), StudyMainActivity.class);
+        intent.putExtra("STUDYNAME", study.getName());
+        startActivity(intent);
     }
 
     public class MyStudyListAdapter extends ArrayAdapter {

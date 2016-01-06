@@ -28,4 +28,5 @@ dependencies {
     compile files('libs/DataCollection.jar')
     compile files('libs/LinePrinter.jar')
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }

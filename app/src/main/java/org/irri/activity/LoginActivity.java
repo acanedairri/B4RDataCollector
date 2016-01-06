@@ -28,6 +28,7 @@ public class LoginActivity extends Activity {
     private Gson gson;
     private EditText username;
     private EditText password;
+    private String token="EzfrfXUCo6Klt92nR7djMDgPck9MvhGcHmauoId6";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,6 @@ public class LoginActivity extends Activity {
 
         username = (EditText) findViewById(R.id.txtUsername);
         password = (EditText) findViewById(R.id.txtPassword);
-        String token=null;
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
         dbTool.openDBMaster();
         SQLiteDatabase database = dbTool.getDatabase();
@@ -98,14 +98,11 @@ public class LoginActivity extends Activity {
         if(cursor != null && cursor.getCount() > 0){
             cursor.moveToFirst();
             //token = cursor.getString(cursor.getColumnIndex("access_token"));
-            token="ciW5NNDoB9nMAtreuAkp5nXKQ5b6C4YjWWPLDpmy";
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);
         }else{
             //Toast.makeText(this, "Invalid User", Toast.LENGTH_LONG).show();
-
-            token="ciW5NNDoB9nMAtreuAkp5nXKQ5b6C4YjWWPLDpmy";
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);

@@ -79,7 +79,7 @@
         </activity>
         <activity
             android:name=".StudiesActivity"
-            android:label="My Studies">
+            android:label="My Studies" >
         </activity>
         <activity
             android:name=".StudyActivity"
@@ -113,10 +113,13 @@
             android:name=".StudyInfoTabActivity"
             android:label="@string/title_activity_image_loader" >
         </activity>
-
         <activity
             android:name=".InternalStorageActivity"
             android:label="@string/title_activity_internal_storage" >
+        </activity>
+        <activity
+            android:name=".StudyMainActivity"
+            android:label="Study" >
         </activity>
     </application>
 
