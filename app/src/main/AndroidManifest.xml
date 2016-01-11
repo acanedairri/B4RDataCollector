@@ -111,7 +111,7 @@
         </activity>
         <activity
             android:name=".StudyInfoTabActivity"
-            android:label="@string/title_activity_image_loader" >
+            android:label="@string/title_activity_study_info" >
         </activity>
         <activity
             android:name=".InternalStorageActivity"
@@ -120,6 +120,14 @@
         <activity
             android:name=".StudyMainActivity"
             android:label="Study" >
+        </activity>
+        <activity
+            android:name=".PlotDataEntryActivity"
+            android:label="@string/title_activity_plot_data_entry" >
+        </activity>
+        <activity
+            android:name=".TraitMeasuringActivity"
+            android:label="@string/title_activity_trait_measuring" >
         </activity>
     </application>
 

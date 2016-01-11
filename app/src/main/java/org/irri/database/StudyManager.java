@@ -17,6 +17,9 @@ public class StudyManager {
     private SQLiteDatabase database;
     private static String tblName = "study";
     private static String tblStudyMetadata = "study_metadata";
+    private static String tblPlotHeader = "plot_header";
+    private static String tblPlot = "plot";
+    private static String tblVariableSet = "variable_set";
     public StudyManager(SQLiteDatabase database) {
         this.database = database;
     }
@@ -62,7 +65,30 @@ public class StudyManager {
         return null;
     }
 
-    public void insertRecord(ContentValues cvalues) {
+
+    public Cursor getStudyBasicInfo() {
+        try {
+            String sql = "SELECT * from study";
+            Cursor cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return null;
+    }
+
+    public Cursor getStudyMetaData() {
+        try {
+            String sql = "SELECT * from study_metadata";
+            Cursor cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return null;
+    }
+
+    public void insertStudyBasicInfoRecord(ContentValues cvalues) {
         try {
             database.insert(tblName, null, cvalues);
         } catch (SQLiteException e) {
@@ -71,9 +97,34 @@ public class StudyManager {
     }
 
 
-    public void insertRecordMetadata(ContentValues cvalues) {
+    public void insertStudyMetaData(ContentValues cvalues) {
         try {
             database.insert(tblStudyMetadata, null, cvalues);
+        } catch (SQLiteException e) {
+
+        }
+    }
+
+    public void insertPlotData(String header,int recno,String values){
+        try {
+            String query="Insert into plot ("+header +") values ("+recno+","+values+")";
+            database.execSQL(query);
+        } catch (SQLiteException e) {
+
+        }
+    }
+
+    public void insertPlotHeader(ContentValues cvalues){
+        try {
+            database.insert(tblPlotHeader, null, cvalues);
+        } catch (SQLiteException e) {
+
+        }
+    }
+
+    public void insertVariableSet(ContentValues cvalues){
+        try {
+            database.insert(tblVariableSet, null, cvalues);
         } catch (SQLiteException e) {
 
         }

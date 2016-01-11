@@ -33,6 +33,7 @@ import org.irri.entity.MockData;
 import org.irri.entity.Study;
 import org.irri.entity.StudyMetadata;
 import org.irri.entity.StudyMetadataList;
+import org.irri.entity.VariableSet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -205,13 +206,18 @@ public class StudyListActivity extends AppCompatActivity {
 
     public class JSONTaskGetStudy extends AsyncTask<String,String,String> {
 
+        String studyId;
+
         @Override
         protected String doInBackground(String... params) {
 
             HttpURLConnection con = null;
             BufferedReader reader = null;
+            String toreturn = null;
 
             try {
+
+                //get study metadata
                 URL url = new URL(params[0]);
                 con=(HttpURLConnection) url.openConnection();
                 con.connect();
@@ -225,7 +231,40 @@ public class StudyListActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
-                return buffer.toString();
+                toreturn=buffer.toString()+"#";
+
+                //get plotdata
+
+/*                URL urlPlot = new URL(params[2]);
+                con=(HttpURLConnection) urlPlot.openConnection();
+                con.connect();
+
+                InputStream streamPlot = con.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(streamPlot));
+
+                StringBuffer bufferPlot = new StringBuffer();
+                String linePlot;
+
+                while ((linePlot = reader.readLine()) != null) {
+                    bufferPlot.append(line);
+                }
+                toreturn=toreturn+bufferPlot.toString();*/
+
+                MockData mockData= new MockData();
+                String header= mockData.getPlotDataHeader();
+                String row="";
+                String sData=mockData.getPlotData().toString();
+
+     /*           for(String s:sData){
+                    row=row+s+"%";
+                    System.out.println(row);
+                }*/
+                String plotData=header+"@"+sData;
+
+                toreturn=toreturn+plotData+"#"+mockData.getVariableSet();
+
+
+                return toreturn;
 
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -245,8 +284,12 @@ public class StudyListActivity extends AppCompatActivity {
 
             //todo save data to database
 
+            String[] res= result.split("#");
+
             Gson gson = new Gson();
-            StudyMetadata studyMetadata = gson.fromJson(result, StudyMetadata.class);
+            StudyMetadata studyMetadata = gson.fromJson(res[0], StudyMetadata.class);
+
+            // insert study record to master table
             DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
             dbTool.openDBMaster();
             SQLiteDatabase database = dbTool.getDatabase();
@@ -258,7 +301,7 @@ public class StudyListActivity extends AppCompatActivity {
             studyInfo.put("program", studyMetadata.getData().getProgram().toString());
             studyInfo.put("phase", studyMetadata.getData().getPhase().toString());
             studyInfo.put("season", studyMetadata.getData().getSeason().toString());
-            mgr.insertRecord(studyInfo);
+            mgr.insertStudyBasicInfoRecord(studyInfo);
 
             // create new study database
 
@@ -277,7 +320,10 @@ public class StudyListActivity extends AppCompatActivity {
             context.put("program", studyMetadata.getData().getProgram().toString());
             context.put("phase", studyMetadata.getData().getPhase().toString());
             context.put("season", studyMetadata.getData().getSeason().toString());
-            mgrStudy.insertRecord(context);
+            context.put("place", studyMetadata.getData().getPlace().toString());
+            context.put("year", String.valueOf(studyMetadata.getData().getYear()));
+            mgrStudy.insertStudyBasicInfoRecord(context);
+
 
             // save study metadata information
 
@@ -287,13 +333,56 @@ public class StudyListActivity extends AppCompatActivity {
                 ContentValues contextMeta= new ContentValues();
                 contextMeta.put("variable", rec.getVariable_id().getValue());
                 contextMeta.put("value", rec.getValue());
-                mgrStudy.insertRecordMetadata(context);
+                mgrStudy.insertStudyMetaData(contextMeta);
             }
 
 
+            String plotData=res[1];
+            String[] tempPlot=plotData.split("@");
+            String plotHeader=tempPlot[0];
+            String plotItem=tempPlot[1];
+            String[] plotItemList=plotItem.split("%");
 
+            // create plot table
 
+            dbTool.createStudyPlotTable(studyDatabase, plotHeader);
+            int recno=1;
+            // save plot data
+            for(int i=0;i < plotItemList.length;i++ ){
+                String r=plotItemList[i];
+                String newFormat=addQuoteToSting(r);
+                mgrStudy.insertPlotData("recno,"+plotHeader,recno,newFormat);
+                recno++;
+            }
 
+            // save plot header
+
+            String[] plotHeaderItem=plotHeader.split(",");
+            for(int i=0;i < plotHeaderItem.length;i++ ){
+                String name=plotHeaderItem[i];
+                ContentValues contextValue= new ContentValues();
+                contextValue.put("name", name);
+                contextValue.put("is_hidden","FALSE");
+                mgrStudy.insertPlotHeader(contextValue);
+                recno++;
+            }
+
+            // save variable set
+            // mock data
+
+            VariableSet variableSet = gson.fromJson(res[2], VariableSet.class);
+
+            for(VariableSet.DataEntity.ItemsEntity item:variableSet.getData().getItems()){
+                ContentValues contextVariable= new ContentValues();
+                contextVariable.put("variable_id", item.getId());
+                contextVariable.put("abbrev", item.getAbbrev());
+                contextVariable.put("label",item.getLabel());
+                contextVariable.put("name", item.getName());
+                contextVariable.put("data_type",item.getData_type());
+                contextVariable.put("display_name", item.getDisplay_name());
+                contextVariable.put("scale_value", String.valueOf(item.getScales().getScale_value()));
+                mgrStudy.insertVariableSet(contextVariable);
+            }
 
             dbTool.closeDB();
             setResult(RESULT_OK,null) ;
@@ -301,6 +390,20 @@ public class StudyListActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    protected String addQuoteToSting(String s){
+        String[] line=s.split(",");
+        StringBuffer sb= new StringBuffer();
+        for(int i=0;i < line.length;i++){
+            sb.append("'"+line[i]+"'"+",");
+        }
+        String toreturn=sb.toString().substring(0,sb.length()-1);
+        return toreturn;
+    }
+
+
+
+
 
     public class JSONTaskViewStudy extends AsyncTask<String,String,String> {
 

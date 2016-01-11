@@ -31,8 +31,8 @@ public class TableData {
                 "`userid` INTEGER," +
                 "`transaction_id` TEXT," +
                 "`program` TEXT," +
-                "`place` INTEGER," +
-                "`phase` INTEGER," +
+                "`place` TEXT," +
+                "`phase` TEXT," +
                 "`year` TEXT," +
                 "`season` TEXT," +
                 "`name` TEXT," +
@@ -45,13 +45,45 @@ public class TableData {
                 "`is_uploaded` TEXT" +
                 ");";
 
-    public static String CREATE_STUDY_NETADATA_TABLE="CREATE TABLE `study_metadata` (" +
+    public static String CREATE_STUDY_METADATA_TABLE="CREATE TABLE `study_metadata` (" +
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             "`id` INTEGER," +
             "`userid` INTEGER," +
             "`transaction_id` TEXT," +
             "`variable` TEXT," +
             "`value` TEXT" +
+            ");";
+
+    public static String CREATE_STUDY_PLOT_TABLE="CREATE TABLE `plot` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`recno` INTEGER";
+
+    public static String CREATE_VARIABLE_SET_TABLE="CREATE TABLE `variable_set` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`variable_id` INTEGER," +
+            "`abbrev` TEXT," +
+            "`label` TEXT," +
+            "`name` TEXT," +
+            "`data_type` TEXT," +
+            "`display_name` TEXT," +
+            "`scale_value` TEXT" +
+            ");";
+
+    public static String CREATE_VARIABLE_MEASURING_TABLE="CREATE TABLE `variable_measuring` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`variable_id` INTEGER," +
+            "`abbrev` TEXT," +
+            "`label` TEXT," +
+            "`name` TEXT," +
+            "`data_type` TEXT," +
+            "`display_name` TEXT," +
+            "`scale_value` TEXT" +
+            ");";
+
+    public static String CREATE_PLOT_HEADER_TABLE="CREATE TABLE `plot_header` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`name` TEXT," +
+            "`is_hidden` TEXT"+
             ");";
 
 

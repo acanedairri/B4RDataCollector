@@ -2,6 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.irri.activity.StudyMainActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+
+
+    <item android:id="@+id/action_data_entry" android:title="@string/action_data_entry"
         android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_trait_measuring" android:title="@string/action_trait_measuring"
+        android:orderInCategory="200" app:showAsAction="never" />
+
+    <item android:id="@+id/action_log_recording" android:title="@string/action_log_recording"
+        android:orderInCategory="200" app:showAsAction="never" />
+
 </menu>

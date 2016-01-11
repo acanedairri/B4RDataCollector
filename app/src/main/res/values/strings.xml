@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">B4RDataCollectorApp</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="action_loadstudy">Load Study</string>
     <string name="menu_settings">Settings</string>
-
     <string name="contentMenuLoadStudy">Load</string>
 
+
+    <!-- TODO: Action Menu Study -->
+    <string name="action_data_entry">Data Entry</string>
+    <string name="action_trait_measuring">Trait Measuring</string>
+    <string name="action_log_recording">Log Record</string>
+
+    <!-- TODO: Action Menu Studies -->
+    <string name="action_load_study">Load Study</string>
 
 
     <string name="barcode">Barcode</string>
@@ -39,10 +44,15 @@
     <string name="title_activity_oauth_testing">OauthTestingActivity</string>
     <string name="title_activity_load_study">Load Study</string>
     <string name="title_activity_image_loader">ImageLoaderActivity</string>
+    <string name="title_activity_study_info">Study Information</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_internal_storage">InternalStorageActivity</string>
     <string name="title_activity_study_main">StudyMainActivity</string>
+    <string name="title_activity_plot_data_entry">Plot Data Entry</string>
+    <string name="title_activity_trait_measuring">Trait Measuring</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

@@ -12,6 +12,8 @@ import android.util.Log;
 import org.irri.constant.AppDirectory;
 import org.irri.utility.ApplicationPath;
 
+import java.util.ArrayList;
+
 /**
  * Created by ACañeda on 2015-11-27.
  */
@@ -29,7 +31,9 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
 
     }
 
-    DatabaseMasterTool(Context context, String databaseName )
+
+
+    public DatabaseMasterTool(Context context, String databaseName )
     {
         super(new DatabaseContext(context), databaseName, null, 1);
     }
@@ -72,7 +76,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     }
 
     public void openDb(String dbName){
-        String myPath = AppDirectory.DB_PATH + dbName;
+        String myPath = ApplicationPath.AppFolderStudy + dbName;
         database = SQLiteDatabase.openDatabase(myPath, null,
                 SQLiteDatabase.OPEN_READWRITE);
         setDatabase(database);
@@ -108,8 +112,36 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
 
     public void createStudyDatabaseTable(SQLiteDatabase db){
         db.execSQL(TableData.CREATE_STUDY_TABLE);
-        db.execSQL(TableData.CREATE_STUDY_NETADATA_TABLE);
+        db.execSQL(TableData.CREATE_STUDY_METADATA_TABLE);
+        db.execSQL(TableData.CREATE_VARIABLE_SET_TABLE);
+        db.execSQL(TableData.CREATE_VARIABLE_MEASURING_TABLE);
+        db.execSQL(TableData.CREATE_PLOT_HEADER_TABLE);
+
+
     }
+
+
+    public void createStudyPlotTable(SQLiteDatabase db,String header) {
+
+        try {
+            int i;
+            String querryString;
+            querryString=TableData.CREATE_STUDY_PLOT_TABLE;
+
+            String[] h=header.split(",");
+
+            for(String s:h){
+                querryString += ",`"+s;
+                querryString +="` TEXT";
+            }
+
+            db.execSQL(querryString);
+
+        } catch (SQLException ex) {
+            Log.i("CreateDB Exception ",ex.getMessage());
+        }
+    }
+
 
     private boolean checkDataBase(String databaseName) {
 

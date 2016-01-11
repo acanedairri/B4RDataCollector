@@ -1,32 +1,24 @@
 package org.irri.activity;
 
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class StudyMainActivity extends AppCompatActivity {
+import org.irri.activity.R;
+
+public class TraitMeasuringActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_study_main);
-        Bundle bundle = getIntent().getExtras();
-        String studyname=bundle.getString("STUDYNAME");
-
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            StudyInfoFragment fragment = new StudyInfoFragment(studyname,this);
-            transaction.replace(R.id.sample_content_fragment, fragment);
-            transaction.commit();
-        }
+        setContentView(R.layout.activity_trait_measuring);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_study_main, menu);
+        getMenuInflater().inflate(R.menu.menu_trait_measuring, menu);
         return true;
     }
 
@@ -38,13 +30,9 @@ public class StudyMainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_data_entry) {
-
+        if (id == R.id.action_settings) {
             return true;
-        }else if(id == R.id.action_trait_measuring){
-
         }
-
 
         return super.onOptionsItemSelected(item);
     }

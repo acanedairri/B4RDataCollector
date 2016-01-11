@@ -1,4 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context="org.irri.activity.StudyActivity">
+
+    <item android:id="@+id/action_data_entry"
+        android:orderInCategory="100"
+        android:title="@string/action_data_entry"
+        android:icon="@drawable/load"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/action_trait_measuring"
+        android:orderInCategory="100"
+        android:title="@string/action_data_entry"
+        android:icon="@drawable/load"
+        app:showAsAction="always" />
+
 </menu>
