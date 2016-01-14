@@ -9,10 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.irri.activity.R;
-import org.irri.utility.FileOperationsHelper;
-
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class InternalStorageActivity extends AppCompatActivity {
@@ -35,13 +31,13 @@ public class InternalStorageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                try {
-                    String data=FileOperationsHelper.getInstance().readFile(getApplicationContext(),FILE_NAME);
+/*                try {
+                   // String data=FileOperationsHelper.getInstance().readFile(getApplicationContext(),FILE_NAME);
                     tvData.setText(data);
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
 
 
             }
@@ -52,12 +48,14 @@ public class InternalStorageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+/*
                 String dataToSave= etData.getText().toString();
                 try {
-                    FileOperationsHelper.getInstance().saveFile(getApplicationContext(),FILE_NAME,dataToSave);
+                   // FileOperationsHelper.getInstance().saveFile(getApplicationContext(),FILE_NAME,dataToSave);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+*/
 
 
             }

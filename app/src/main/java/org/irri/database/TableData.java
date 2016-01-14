@@ -66,7 +66,8 @@ public class TableData {
             "`name` TEXT," +
             "`data_type` TEXT," +
             "`display_name` TEXT," +
-            "`scale_value` TEXT" +
+            "`scale_value` TEXT," +
+            "`is_selected` TEXT" +
             ");";
 
     public static String CREATE_VARIABLE_MEASURING_TABLE="CREATE TABLE `variable_measuring` (" +
@@ -77,7 +78,9 @@ public class TableData {
             "`name` TEXT," +
             "`data_type` TEXT," +
             "`display_name` TEXT," +
-            "`scale_value` TEXT" +
+            "`scale_value` TEXT," +
+            "`is_selected` TEXT" +
+            "`order` INTEGER" +
             ");";
 
     public static String CREATE_PLOT_HEADER_TABLE="CREATE TABLE `plot_header` (" +

@@ -129,6 +129,10 @@
             android:name=".TraitMeasuringActivity"
             android:label="@string/title_activity_trait_measuring" >
         </activity>
+        <activity
+            android:name=".VariableSetActivity"
+            android:label="@string/title_activity_variable_set" >
+        </activity>
     </application>
 
 </manifest>

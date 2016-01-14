@@ -65,6 +65,48 @@ public class StudyManager {
         return null;
     }
 
+    public Cursor getVariableSet() {
+        try {
+            String sql = "SELECT * from variable_set";
+            Cursor cursor = database.rawQuery(sql, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return null;
+    }
+
+    public Cursor getVariableSet(String filter) {
+        try {
+            String sql = "SELECT * from variable_set where abbrev like '"+filter+"%'";
+            Cursor cursor = database.rawQuery(sql, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return null;
+    }
+
+    public Cursor getVariableSetByAbbrev(String abbrev) {
+        try {
+            String sql = "SELECT * from variable_set where abbrev='"+abbrev+"'";
+            Cursor cursor = database.rawQuery(sql, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return null;
+    }
+
 
     public Cursor getStudyBasicInfo() {
         try {
@@ -145,4 +187,22 @@ public class StudyManager {
 
     }
 
+    public void updateVariableSet(String abbrev, String is_selected) {
+        String query="Update variable_set set is_selected='"+is_selected+"' where abbrev='"+abbrev+"'";
+        database.execSQL(query);
+    }
+
+    public Cursor getVariableSetSelected() {
+        try {
+            String sql = "SELECT * from variable_set where is_selected='true'";
+            Cursor cursor = database.rawQuery(sql, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return null;
+    }
 }

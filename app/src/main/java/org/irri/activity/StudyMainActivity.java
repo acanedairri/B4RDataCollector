@@ -1,5 +1,6 @@
 package org.irri.activity;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,16 +9,18 @@ import android.view.MenuItem;
 
 public class StudyMainActivity extends AppCompatActivity {
 
+    String studyName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study_main);
         Bundle bundle = getIntent().getExtras();
-        String studyname=bundle.getString("STUDYNAME");
+        studyName=bundle.getString("STUDYNAME");
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            StudyInfoFragment fragment = new StudyInfoFragment(studyname,this);
+            StudyInfoFragment fragment = new StudyInfoFragment(studyName,this);
             transaction.replace(R.id.sample_content_fragment, fragment);
             transaction.commit();
         }
@@ -42,7 +45,9 @@ public class StudyMainActivity extends AppCompatActivity {
 
             return true;
         }else if(id == R.id.action_trait_measuring){
-
+            Intent intent = new Intent(StudyMainActivity.this, TraitMeasuringActivity.class);
+            intent.putExtra("STUDYNAME",studyName);
+            startActivity(intent);
         }
 
 

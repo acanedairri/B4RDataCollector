@@ -11,7 +11,10 @@ public class Authentication {
     public static String CLIENT_SECRET="777q382Jf4";
     public static String RESPONSE_TYPE="code";
 
-    //http://api.breeding4rice.irri.org/v1/authenticate?client_id=pocketapp@breeding4rice.irri.org&redirect_uri=http://localhost/callback&client_secret=777q382Jf4&response_type=code
+    /*
+    http://api.breeding4rice.irri.org/v1/authenticate?client_id=pocketapp@breeding4rice.irri.org&redirect_uri=http://localhost/callback&client_secret=777q382Jf4&response_type=code
+
+     */
     public static String LOGIN_URL="http://api.breeding4rice.irri.org/v1/authenticate?client_id=pocketapp@breeding4rice.irri.org&redirect_uri=http://localhost/callback&client_secret=777q382Jf4&response_type=code";
 
 

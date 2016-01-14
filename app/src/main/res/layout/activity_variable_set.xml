@@ -1,0 +1,42 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" >
+
+            <TableRow
+                android:id="@+id/TableRow01"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+            </TableRow>
+
+            <EditText
+                android:id="@+id/txtFilter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10" />
+
+        </TableLayout>
+
+        <ExpandableListView
+            android:id="@+id/exp_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+        </ExpandableListView>
+
+    </LinearLayout>

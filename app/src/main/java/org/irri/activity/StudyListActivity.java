@@ -380,7 +380,9 @@ public class StudyListActivity extends AppCompatActivity {
                 contextVariable.put("name", item.getName());
                 contextVariable.put("data_type",item.getData_type());
                 contextVariable.put("display_name", item.getDisplay_name());
-                contextVariable.put("scale_value", String.valueOf(item.getScales().getScale_value()));
+                String scaleValue=String.valueOf(item.getScales().getScale_value());
+                contextVariable.put("scale_value", scaleValue);
+                contextVariable.put("is_selected","false");
                 mgrStudy.insertVariableSet(contextVariable);
             }
 
