@@ -8,11 +8,14 @@
 
     <!-- TODO: Action Menu Study -->
     <string name="action_data_entry">Data Entry</string>
-    <string name="action_trait_measuring">Trait Measuring</string>
+    <string name="action_trait_measuring">Trait To Measure</string>
     <string name="action_log_recording">Log Record</string>
 
     <!-- TODO: Action Menu Studies -->
     <string name="action_load_study">Load Study</string>
+
+    <!-- TODO: Action Menu Variable Set -->
+    <string name="action_load_variable_set">Load Variable Set</string>
 
 
     <string name="barcode">Barcode</string>
@@ -51,7 +54,7 @@
     <string name="title_activity_internal_storage">InternalStorageActivity</string>
     <string name="title_activity_study_main">StudyMainActivity</string>
     <string name="title_activity_plot_data_entry">Plot Data Entry</string>
-    <string name="title_activity_trait_measuring">Trait Measuring</string>
+    <string name="title_activity_trait_measuring">Trait To Measure</string>
     <string name="title_activity_variable_set">Variable Set</string>
 
     <string name="hello_world">Hello world!</string>

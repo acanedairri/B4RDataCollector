@@ -28,7 +28,7 @@ public class LoginActivity extends Activity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="4knRVRxKCoU6PK8n2gJ962THzgE0yr0jhx3eaiwb";
+    private String token="9sSIKpOn9Tk9Fs4oEahbQpsjpWdWjcsoHdVvSSKQ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

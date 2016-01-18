@@ -10,7 +10,12 @@
     <item android:id="@+id/action_trait_measuring" android:title="@string/action_trait_measuring"
         android:orderInCategory="200" app:showAsAction="never" />
 
-    <item android:id="@+id/action_log_recording" android:title="@string/action_log_recording"
-        android:orderInCategory="200" app:showAsAction="never" />
+    <item android:id="@+id/action_log_recording" android:title="@string/action_load_variable_set"
+        android:orderInCategory="400" app:showAsAction="never" />
+
+    <item android:id="@+id/action_load_variable_set" android:title="@string/action_log_recording"
+        android:orderInCategory="300" app:showAsAction="never" />
+
+
 
 </menu>

@@ -42,7 +42,9 @@ public class StudyMainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_data_entry) {
-
+            Intent intent = new Intent(StudyMainActivity.this, DataEntryActivity.class);
+            intent.putExtra("STUDYNAME",studyName);
+            startActivity(intent);
             return true;
         }else if(id == R.id.action_trait_measuring){
             Intent intent = new Intent(StudyMainActivity.this, TraitMeasuringActivity.class);

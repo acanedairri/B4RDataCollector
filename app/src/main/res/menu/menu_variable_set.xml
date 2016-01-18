@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.irri.activity.DataEntryActivity">
-    <item android:id="@+id/action_trait_measuring" android:title="@string/action_trait_measuring"
+    tools:context="org.irri.activity.VariableSetActivity">
+    <item android:id="@+id/action_load_variable_set" android:title="@string/action_load_variable_set"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

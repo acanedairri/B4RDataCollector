@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.intermec.aidc.*;
@@ -15,6 +16,7 @@ public class BarcodeActivity extends Activity implements BarcodeReadListener{
 	
 	private com.intermec.aidc.BarcodeReader bcr;
 	private ListView barcodeList;
+	private EditText etBarcode;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {		
@@ -25,6 +27,7 @@ public class BarcodeActivity extends Activity implements BarcodeReadListener{
 		//otherwise, the onDestory will trigger
 		//when orientation changes
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		etBarcode = (EditText) findViewById(R.id.etBarcode);
 		
 		try {
 			//get bar code instance from MainActivity
@@ -50,6 +53,9 @@ public class BarcodeActivity extends Activity implements BarcodeReadListener{
 	@Override
 	public void barcodeRead(BarcodeReadEvent aBarcodeReadEvent)
 	{
+
+		etBarcode.setText(aBarcodeReadEvent.getBarcodeData());
+
       	List<String> list = new ArrayList<String>();
       	list.add("Device ID: " + aBarcodeReadEvent.getDeviceId());
       	list.add("Barcode data: " + aBarcodeReadEvent.getBarcodeData());
