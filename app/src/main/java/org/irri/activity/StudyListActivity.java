@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,6 +34,8 @@ import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
 import org.irri.entity.MockData;
 import org.irri.entity.Study;
+import org.irri.entity.StudyListData;
+import org.irri.entity.StudyListModel;
 import org.irri.entity.StudyMetadata;
 import org.irri.entity.StudyMetadataList;
 import org.irri.entity.VariableSet;
@@ -56,6 +61,10 @@ public class StudyListActivity extends AppCompatActivity {
     private String studyNameSelected;
     protected Object mActionMode;
     public int selectedItem = -1;
+    private EditText etSearchStudy;
+    StudyListAdapter adapter;
+    List<Study.DataEntity.ItemsEntity> studyList;
+    List<StudyListModel> studyListModel;
 
 
     @Override
@@ -69,23 +78,126 @@ public class StudyListActivity extends AppCompatActivity {
 
         Gson gson = new Gson();
         Study study = gson.fromJson(studyObj, Study.class);
-        StudyListAdapter adapter = new StudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,study.getData().getItems());
+        studyListModel=populateStudyList(study.getData().getItems());
+        studyList=study.getData().getItems();
+        adapter = new StudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyListModel);
         lvStudyList.setAdapter(adapter);
         //lvStudyList.setOnItemClickListener(mMessageClickedHandler);
         //lvStudyList.setOnItemLongClickListener(longClickItem);
         registerForContextMenu(lvStudyList);
 
+        etSearchStudy=(EditText) findViewById(R.id.etSearchStudy);
+        etSearchStudy.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+                // you can call or do what you want with your EditText here
+
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                studyListModel.clear();
+                studyListModel = getMyStudyList(etSearchStudy.getText().toString());
+                adapter = new StudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyListModel);
+                adapter.notifyDataSetChanged();
+                lvStudyList.setAdapter(adapter);
+
+            }
+        });
+
 
 
 
     }
+
+    private List<StudyListModel> populateStudyList(List<Study.DataEntity.ItemsEntity>  items) {
+
+        List<StudyListModel> toreturn=new ArrayList<StudyListModel>();
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database=dbTool.openDBMaster();
+        StudyManager mgr= new StudyManager();
+
+        mgr.deleteStudyList(database);
+        //insert new studylist
+        for(Study.DataEntity.ItemsEntity rec:items){
+            ContentValues contextValue = new ContentValues();
+            contextValue.put("studyid",rec.getId());
+            contextValue.put("name",rec.getName());
+            mgr.insertStudyList(database,contextValue);
+        }
+
+        Cursor studyList= mgr.getAllStudyList(database);
+
+        if(studyList != null && studyList.getCount() > 0){
+
+            if (studyList.moveToFirst()) {
+                do {
+                    int id=studyList.getInt(studyList.getColumnIndex("studyid"));
+                    String name=studyList.getString(studyList.getColumnIndex("name"));
+
+                    StudyListModel rec = new StudyListModel();
+                    rec.setId(id);
+                    rec.setName(name);
+
+                    toreturn.add(rec);
+                } while (studyList.moveToNext());
+            }
+        }
+
+        dbTool.closeDB(database);
+
+        return toreturn;
+
+    }
+
+    private List<StudyListModel> getMyStudyList(String filter) {
+        List<StudyListModel> toreturn=new ArrayList<StudyListModel>();
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database=dbTool.openDBMaster();
+        StudyManager mgr= new StudyManager();
+        Cursor studyList;
+        if(filter.length() > 0) {
+            studyList = mgr.getStudyListByName(database,filter);
+        }else{
+
+            studyList = mgr.getAllStudyList(database);
+        }
+
+        if(studyList != null && studyList.getCount() > 0){
+
+            if (studyList.moveToFirst()) {
+                do {
+                    int id=studyList.getInt(studyList.getColumnIndex("studyid"));
+                    String name=studyList.getString(studyList.getColumnIndex("name"));
+
+                    StudyListModel rec = new StudyListModel();
+                    rec.setId(id);
+                    rec.setName(name);
+                    toreturn.add(rec);
+                } while (studyList.moveToNext());
+            }
+        }
+
+        dbTool.closeDB(database);
+
+        return toreturn;
+
+    }
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         ListView lv = (ListView) v;
         AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Study.DataEntity.ItemsEntity obj = (Study.DataEntity.ItemsEntity) lv.getItemAtPosition(acmi.position);
+        StudyListModel obj = (StudyListModel) lv.getItemAtPosition(acmi.position);
         menu.setHeaderTitle(obj.getName());
         menu.add(0, obj.getId(), 0, "Get Study");
         menu.add(1,obj.getId(), 0, "View Info");
@@ -170,12 +282,12 @@ public class StudyListActivity extends AppCompatActivity {
 
     public class StudyListAdapter extends ArrayAdapter{
 
-        public List<Study.DataEntity.ItemsEntity> studyModelEntity;
+        public List<StudyListModel> studyModelEntity;
         private int resource;
         private LayoutInflater inflater;
 
 
-        public StudyListAdapter(Context context, int resource,  List<Study.DataEntity.ItemsEntity> objects) {
+        public StudyListAdapter(Context context, int resource,List<StudyListModel> objects) {
             super(context, resource, objects);
             studyModelEntity=objects;
             this.resource=resource;
@@ -231,37 +343,7 @@ public class StudyListActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
-                toreturn=buffer.toString()+"#";
-
-                //get plotdata
-
-/*                URL urlPlot = new URL(params[2]);
-                con=(HttpURLConnection) urlPlot.openConnection();
-                con.connect();
-
-                InputStream streamPlot = con.getInputStream();
-                reader = new BufferedReader(new InputStreamReader(streamPlot));
-
-                StringBuffer bufferPlot = new StringBuffer();
-                String linePlot;
-
-                while ((linePlot = reader.readLine()) != null) {
-                    bufferPlot.append(line);
-                }
-                toreturn=toreturn+bufferPlot.toString();*/
-
-                MockData mockData= new MockData();
-                String header= mockData.getPlotDataHeader();
-                String row="";
-                String sData=mockData.getPlotData().toString();
-
-     /*           for(String s:sData){
-                    row=row+s+"%";
-                    System.out.println(row);
-                }*/
-                String plotData=header+"@"+sData;
-
-                toreturn=toreturn+plotData+"#"+mockData.getVariableSet();
+                toreturn=buffer.toString();
 
 
                 return toreturn;
@@ -282,6 +364,16 @@ public class StudyListActivity extends AppCompatActivity {
         protected void onPostExecute(String result){
             super.onPostExecute(result);
 
+/*            Intent data = new Intent();
+            data.putExtra("data", result);
+            setResult(RESULT_OK, data);*/
+            populateData(result);
+            setResult(RESULT_OK, null);
+            finish();
+        }
+
+        private void populateData(String result) {
+
             //todo save data to database
 
             String[] res= result.split("#");
@@ -291,9 +383,8 @@ public class StudyListActivity extends AppCompatActivity {
 
             // insert study record to master table
             DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
-            dbTool.openDBMaster();
-            SQLiteDatabase database = dbTool.getDatabase();
-            StudyManager mgr = new StudyManager(database);
+            SQLiteDatabase database =  dbTool.openDBMaster();
+            StudyManager mgr = new StudyManager();
             ContentValues studyInfo= new ContentValues();
             studyInfo.put("id", studyMetadata.getData().getId());
             studyInfo.put("name", studyMetadata.getData().getName().toString());
@@ -301,15 +392,16 @@ public class StudyListActivity extends AppCompatActivity {
             studyInfo.put("program", studyMetadata.getData().getProgram().toString());
             studyInfo.put("phase", studyMetadata.getData().getPhase().toString());
             studyInfo.put("season", studyMetadata.getData().getSeason().toString());
-            mgr.insertStudyBasicInfoRecord(studyInfo);
+            mgr.insertStudyBasicInfoRecord(database,studyInfo);
+            dbTool.closeDB(database);
 
             // create new study database
-
-            dbTool.createStudyDatabase(studyMetadata.getData().getName().toString());
-            dbTool.openStudyDatabase(studyMetadata.getData().getName().toString());
-            SQLiteDatabase studyDatabase=dbTool.getDatabase();
-            dbTool.createStudyDatabaseTable(studyDatabase);
-            StudyManager mgrStudy = new StudyManager(studyDatabase);
+            DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyMetadata.getData().getName().toString());
+            SQLiteDatabase databaseStudy=dbToolStudy.createStudyDatabase(getApplicationContext(), studyMetadata.getData().getName().toString());
+            dbToolStudy.openStudyDatabase(studyMetadata.getData().getName().toString());
+            SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+            dbToolStudy.createStudyDatabaseTable(studyDatabase);
+            StudyManager mgrStudy = new StudyManager();
 
             // save study information
 
@@ -322,7 +414,7 @@ public class StudyListActivity extends AppCompatActivity {
             context.put("season", studyMetadata.getData().getSeason().toString());
             context.put("place", studyMetadata.getData().getPlace().toString());
             context.put("year", String.valueOf(studyMetadata.getData().getYear()));
-            mgrStudy.insertStudyBasicInfoRecord(context);
+            mgrStudy.insertStudyBasicInfoRecord(studyDatabase,context);
 
 
             // save study metadata information
@@ -333,44 +425,42 @@ public class StudyListActivity extends AppCompatActivity {
                 ContentValues contextMeta= new ContentValues();
                 contextMeta.put("variable", rec.getVariable_id().getValue());
                 contextMeta.put("value", rec.getValue());
-                mgrStudy.insertStudyMetaData(contextMeta);
+                mgrStudy.insertStudyMetaData(studyDatabase,contextMeta);
             }
-
-
-            String plotData=res[1];
-            String[] tempPlot=plotData.split("@");
-            String plotHeader=tempPlot[0];
-            String plotItem=tempPlot[1];
-            String[] plotItemList=plotItem.split("%");
 
             // create plot table
 
-            dbTool.createStudyPlotTable(studyDatabase, plotHeader);
+
             int recno=1;
             // save plot data
-            for(int i=0;i < plotItemList.length;i++ ){
-                String r=plotItemList[i];
-                String newFormat=addQuoteToSting(r);
-                mgrStudy.insertPlotData("recno,"+plotHeader,recno,newFormat);
-                recno++;
+
+            for(int i=1;i<=50;i++){
+                ContentValues cv= new ContentValues();
+
+                cv.put("recno",i);
+                String s=String.valueOf(i);
+                cv.put("plot_key","1012312561"+s);
+                cv.put("rep","1");
+                cv.put("plotno",s);
+                cv.put("entno","ir"+s);
+                cv.put("entcode","ir63"+s);
+                cv.put("designation","ir-b-01"+s);
+                cv.put("parentage","iirri-b-01"+s);
+                cv.put("generation","getn1"+s);
+                cv.put("qr_code","qrcode"+s);
+                cv.put("fldrow_cont","");
+                cv.put("fldcol_cont","");
+                mgrStudy.insertPlot(studyDatabase,cv);
             }
 
-            // save plot header
 
-            String[] plotHeaderItem=plotHeader.split(",");
-            for(int i=0;i < plotHeaderItem.length;i++ ){
-                String name=plotHeaderItem[i];
-                ContentValues contextValue= new ContentValues();
-                contextValue.put("name", name);
-                contextValue.put("is_hidden","FALSE");
-                mgrStudy.insertPlotHeader(contextValue);
-                recno++;
-            }
 
             // save variable set
             // mock data
+            MockData mockData = new MockData();
 
-            VariableSet variableSet = gson.fromJson(res[2], VariableSet.class);
+
+            VariableSet variableSet = gson.fromJson(mockData.getVariableSet(), VariableSet.class);
 
             for(VariableSet.DataEntity.ItemsEntity item:variableSet.getData().getItems()){
                 ContentValues contextVariable= new ContentValues();
@@ -383,15 +473,15 @@ public class StudyListActivity extends AppCompatActivity {
                 String scaleValue=String.valueOf(item.getScales().getScale_value());
                 contextVariable.put("scale_value", scaleValue);
                 contextVariable.put("is_selected","false");
-                mgrStudy.insertVariableSet(contextVariable);
+                mgrStudy.insertVariableSet(studyDatabase,contextVariable);
             }
 
-            dbTool.closeDB();
-            setResult(RESULT_OK,null) ;
 
-            finish();
+            dbToolStudy.closeDB(studyDatabase);
         }
     }
+
+
 
     protected String addQuoteToSting(String s){
         String[] line=s.split(",");

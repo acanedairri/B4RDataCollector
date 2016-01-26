@@ -45,6 +45,12 @@ public class TableData {
                 "`is_uploaded` TEXT" +
                 ");";
 
+    public static String CREATE_STUDY_LIST="CREATE TABLE `study_list` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`studyid` INTEGER," +
+            "`name` TEXT" +
+            ");";
+
     public static String CREATE_STUDY_METADATA_TABLE="CREATE TABLE `study_metadata` (" +
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             "`id` INTEGER," +
@@ -54,9 +60,42 @@ public class TableData {
             "`value` TEXT" +
             ");";
 
-    public static String CREATE_STUDY_PLOT_TABLE="CREATE TABLE `plot` (" +
+    public static String CREATE_PLOT_TABLE="CREATE TABLE `plot` (" +
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-            "`recno` INTEGER";
+            "`recno` INTEGER,"+
+            "`plot_key` TEXT,"+
+            "`rep` TEXT,"+
+            "`code` TEXT,"+
+            "`plotno` TEXT,"+
+            "`entno` TEXT,"+
+            "`entcode` TEXT,"+
+            "`designation` TEXT,"+
+            "`parentage` TEXT,"+
+            "`generation` TEXT,"+
+            "`qr_code` TEXT,"+
+            "`fldrow_cont` TEXT,"+
+            "`fldcol_cont` TEXT"+
+            ");";
+
+    public static String CREATE_PLOT_DATA="CREATE TABLE `plot_data` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`plot_key` TEXT," +
+            "`plotno` TEXT," +
+            "`qr_code` TEXT," +
+            "`variable_id` INTEGER," +
+            "`abbrev` TEXT," +
+            "`value` TEXT," +
+            "`userid` TEXT," +
+            "`timestamp` TEXT"+
+            ");";
+
+    public static String CREATE_SETTINGS="CREATE TABLE `settings` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`datafield1` TEXT," +
+            "`datafield2` TEXT," +
+            "`datafield3` TEXT," +
+            "`datafield4` TEXT" +
+            ");";
 
     public static String CREATE_VARIABLE_SET_TABLE="CREATE TABLE `variable_set` (" +
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +

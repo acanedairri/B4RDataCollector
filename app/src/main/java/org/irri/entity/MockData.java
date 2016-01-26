@@ -16,9 +16,16 @@ public class MockData {
     public String variableSet;
     public String plotDataHeader;
     public StringBuffer plotData;
+    public String observationData;
 
 
+    public String getObservationData() {
+        return observationData;
+    }
 
+    public void setObservationData(String observationData) {
+        this.observationData = observationData;
+    }
 
     public String getVariableSet() {
         return variableSet;
@@ -89,12 +96,44 @@ public class MockData {
         this.plotDataHeader="PLOTNO,ENTNO,ENTCODE,GID,DESIGNATION,BARCODE";
         this.plotData= new StringBuffer();
         plotData.append("1,1,2064,3873599,IR 93326:1-B-8-4-7-1RGA-2RGA-1-B,201325-00001-0003873599%");
-        plotData.append("2,2,2065,3873600,IR 93326:2-B-8-5-7-1RGA-2RGA-1-B,201325-00002-0003873600");
-/*        plotData.append("3,3,2066,3873601,IR 93326:3-B-13-11-8-1RGA-2RGA-1-B,201325-00003-0003873601");
-        plotData.append("4,4,2067,3873602,IR 93326:4-B-19-3-3-1RGA-2RGA-1-B,201325-00004-0003873602");
-        plotData.append("5,5,2068,3873603,IR 93326:5-B-8-1-5-1RGA-2RGA-1-B,201325-00005-0003873603");*/
+        plotData.append("2,2,2065,3873600,IR 93326:2-B-8-5-7-1RGA-2RGA-1-B,201325-00002-0003873600%");
+        plotData.append("3,3,2066,3873601,IR 93326:3-B-13-11-8-1RGA-2RGA-1-B,201325-00003-0003873601%");
+        plotData.append("4,4,2067,3873602,IR 93326:4-B-19-3-3-1RGA-2RGA-1-B,201325-00004-0003873602%");
+        plotData.append("52,52,2068,3873603,IR 93326:5-B-8-1-5-1RGA-2RGA-1-B,201325-00005-0003873603%");
+        plotData.append("6,6,2068,3873673,IR 93326:5-B-8-1-5-1RGA-2RGA-1-B,201325-00005-0003873603%");
 
-
+this.observationData="{\n" +
+        "  \"PLOT_KEY\": \"10110009116201512131013111\",\n" +
+        "  \"REP\": 1,\n" +
+        "  \"CODE\": \"152BH1216\",\n" +
+        "  \"PLOTNO\": 216,\n" +
+        "  \"ENTNO\": \"\",\n" +
+        "  \"ENTCODE\": \"\",\n" +
+        "  \"DESIGNATION\": \"\",\n" +
+        "  \"PARENTAGE\": \"\",\n" +
+        "  \"GENERATION\": \"\",\n" +
+        "  \"QR_CODE\": \"\",\n" +
+        "  \"FLDROW_CONT\": \"\",\n" +
+        "  \"FLDCOL_CONT\": \"\",\n" +
+        "  \"observations\": [\n" +
+        "    {\n" +
+        "      \"abbrev\": \"AG_SCOR_1_9\",\n" +
+        "      \"value\": \"9\",\n" +
+        "      \"variable\": {\n" +
+        "        \"id\": 692,\n" +
+        "        \"href\": \"http://api.breeding4rice.irri.org/v1/variables/692\"\n" +
+        "      }\n" +
+        "    },\n" +
+        "    {\n" +
+        "      \"abbrev\": \"FLW_CONT\",\n" +
+        "      \"value\": \"102\",\n" +
+        "      \"variable\": {\n" +
+        "        \"id\": 78,\n" +
+        "        \"href\": \"http://api.breeding4rice.irri.org/v1/variables/78\"\n" +
+        "      }\n" +
+        "    }\n" +
+        " ]\n" +
+        "}";
 
     }
 

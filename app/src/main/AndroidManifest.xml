@@ -133,6 +133,7 @@
             android:name=".VariableSetActivity"
             android:label="@string/title_activity_variable_set" >
         </activity>
+
     </application>
 
 </manifest>

@@ -128,9 +128,9 @@ public class SimplerExpandableListAdapter extends BaseExpandableListAdapter
         DatabaseMasterTool dbTool = new DatabaseMasterTool(mContext,studyName);
         dbTool.openStudyDatabase(studyName);
         SQLiteDatabase database = dbTool.getDatabase();
-        StudyManager mgr = new StudyManager(database);
-        mgr.updateVariableSet(abbrev,is_selected);
-        dbTool.closeDB();
+        StudyManager mgr = new StudyManager();
+        mgr.updateVariableSet(database,abbrev,is_selected);
+        dbTool.closeDB(database);
 
       }
     });

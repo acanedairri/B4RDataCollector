@@ -1,12 +1,17 @@
 package org.irri.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +32,14 @@ import org.irri.database.AccountManager;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
 import org.irri.entity.AccessToken;
+import org.irri.entity.MockData;
+import org.irri.entity.PlotData;
 import org.irri.entity.Study;
 import org.irri.entity.StudyListData;
+import org.irri.entity.StudyMetadata;
 import org.irri.entity.User;
+import org.irri.entity.VariableSet;
+import org.irri.expandablelist.ListObject;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -56,6 +68,9 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     private int REQUEST_CODE = 0X1;
     List<StudyListData> studyList;
     MyStudyListAdapter adapter;
+    private TableRow tblRowSearch;
+    private EditText etSearchStudy;
+    int searchFlag=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,23 +78,57 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         setContentView(R.layout.activity_studies);
         Bundle bundle = getIntent().getExtras();
         accessToken=bundle.getString("ACCESS_TOKEN");
-        studyList= getMyStudyList();
+        studyList= getMyStudyList(null);
         lvStudyList= (ListView) findViewById(R.id.lvStudyList);
         adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyList);
         lvStudyList.setAdapter(adapter);
         lvStudyList.setOnItemClickListener(this);
 
+        tblRowSearch = (TableRow) findViewById(R.id.tblRowSearch);
+        tblRowSearch.setVisibility(View.GONE);
+
+        etSearchStudy=(EditText) findViewById(R.id.etSearchStudy);
+
+        etSearchStudy.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+                // you can call or do what you want with your EditText here
+
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                studyList.clear();
+                studyList= getMyStudyList(etSearchStudy.getText().toString());
+                adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyList);
+                adapter.notifyDataSetChanged();
+                lvStudyList.setAdapter(adapter);
+
+            }
+        });
+
     }
 
-    private List<StudyListData> getMyStudyList() {
+    private List<StudyListData> getMyStudyList(String filter) {
         List<StudyListData> toreturn= new ArrayList<StudyListData>();
 
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-        dbTool.openDBMaster();
-        SQLiteDatabase database = dbTool.getDatabase();
-        StudyManager mgr = new StudyManager(database);
+        SQLiteDatabase database = dbTool.openDBMaster();
+        StudyManager mgr = new StudyManager();
+        Cursor cursor=null;
+        if(filter==null){
+            cursor = mgr.getAllStudyRecords(database);
+        }else{
+            cursor = mgr.getStudyByName(database,filter);
+        }
 
-        Cursor cursor = mgr.getAllRecords();
         if(cursor != null && cursor.getCount() > 0){
 
             if (cursor.moveToFirst()) {
@@ -118,6 +167,18 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             case R.id.action_loadstudy:
                 String urlString="http://api.breeding4rice.irri.org/v1/studies?accessToken="+accessToken;
                 new JSONTask().execute(urlString);
+                break;
+            case R.id.action_search:
+                if(searchFlag==0) {
+                    tblRowSearch.setVisibility(View.VISIBLE);
+                    item.setIcon(R.drawable.search_minus);
+                    searchFlag=1;
+
+                }else{
+                    item.setIcon(R.drawable.search);
+                    tblRowSearch.setVisibility(View.GONE);
+                    searchFlag=0;
+                }
                 break;
             case R.id.action_help:
                 break;
@@ -228,8 +289,18 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE) {
+                /*Bundle extras = data.getExtras();
+                final String dataString =extras.getString("data");
+
+                Handler refresh = new Handler(Looper.getMainLooper());
+                refresh.post(new Runnable() {
+                    public void run() {
+                        populateData(dataString);
+                    }
+                });*/
+
                 studyList.clear();
-                studyList= getMyStudyList();
+                studyList= getMyStudyList(null);
                 adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyList);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
@@ -238,6 +309,17 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         }
 
 
+    }
+
+
+
+    public void actionBtnSearchHide(View v) {
+        tblRowSearch.setVisibility(View.GONE);
+    }
+
+    public void actionBtnSearchClear(View v){
+        etSearchStudy.setText("");
+        etSearchStudy.requestFocus();
     }
 
 }

@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.irri.database.DatabaseMasterTool;
@@ -41,6 +43,8 @@ public class VariableSetActivity extends AppCompatActivity
 	private EditText txtFilter;
 	private HashMap<String, Boolean> selectedTraits = new HashMap<String,Boolean>();
 	private String studyName;
+	private ImageView btnClearSearch;
+	private EditText etFilter;
 
 	
 	public void onCreate(Bundle paramBundle)
@@ -50,11 +54,12 @@ public class VariableSetActivity extends AppCompatActivity
 		traitMeasuringModel = (TraitMeasuringModel) getIntent().getSerializableExtra("TRAIT_MEASURING_MODEL");
 		Bundle bundle = getIntent().getExtras();
 		studyName=bundle.getString("STUDYNAME");
+		btnClearSearch =(ImageView) findViewById(R.id.btnClearSearch);
 
 
 
 		refreshList(null);
-		txtFilter = (EditText) findViewById(R.id.txtFilter);
+		etFilter = (EditText) findViewById(R.id.etFilter);
 /*		findViewById(R.id.btnCancel).setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -74,8 +79,8 @@ public class VariableSetActivity extends AppCompatActivity
 
 			}});*/
 
-		
-		 txtFilter.addTextChangedListener(new TextWatcher() {
+
+		etFilter.addTextChangedListener(new TextWatcher() {
 
 			 public void afterTextChanged(Editable s) {
 
@@ -100,7 +105,7 @@ public class VariableSetActivity extends AppCompatActivity
 
 			 public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-				 refreshList(txtFilter.getText().toString());
+				 refreshList(etFilter.getText().toString());
 			 }
 		 });
 	 
@@ -155,12 +160,12 @@ public class VariableSetActivity extends AppCompatActivity
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
 		dbTool.openStudyDatabase(studyName);
 		SQLiteDatabase database = dbTool.getDatabase();
-		StudyManager mgr = new StudyManager(database);
+		StudyManager mgr = new StudyManager();
 		Cursor variableSet;
 		if(filter==null) {
-			variableSet = mgr.getVariableSet();
+			variableSet = mgr.getVariableSet(database);
 		}else{
-			variableSet = mgr.getVariableSet(filter);
+			variableSet = mgr.getVariableSet(database,filter);
 		}
 
 
@@ -191,7 +196,7 @@ public class VariableSetActivity extends AppCompatActivity
 
 			//FieldModel data = createFieldBookModel.getFieldTraitModel(traitCode);
 			if(true){ //data.visible && !createFieldBookModel.selectedTraitList.contains(data.traitCode)
-				Cursor variableSetData=mgr.getVariableSetByAbbrev(traitCode);
+				Cursor variableSetData=mgr.getVariableSetByAbbrev(database,traitCode);
 				//traitData = fieldManager.getDataByTraitCode(traitCode);
 
 				if(variableSetData != null && variableSetData.getCount() > 0){
@@ -244,7 +249,7 @@ public class VariableSetActivity extends AppCompatActivity
 		siteTraits = listData;
 		listAdapter = new SimplerExpandableListAdapter(this, siteTraits, listHeader,studyName);
 		explvlist.setAdapter(listAdapter);
-		dbTool.closeDB();
+		dbTool.closeDB(database);
 
 	}
 	@Override
@@ -256,5 +261,10 @@ public class VariableSetActivity extends AppCompatActivity
 		}
 	}
 
+
+	public void actionBtnClearSearch(View v){
+		etFilter.setText("");
+		etFilter.requestFocus();
+	}
 
 }

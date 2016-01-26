@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,13 +23,13 @@ import org.irri.utility.FileManager;
 
 import java.io.IOException;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends AppCompatActivity {
     private int REQUEST_CODE = 0X1;
     private AccessToken accessToken;
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="9sSIKpOn9Tk9Fs4oEahbQpsjpWdWjcsoHdVvSSKQ";
+    private String token="KIxTbXDmboz53qrkWl6CHZCOTZ0r3myxi3Bvu0oe";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +90,12 @@ public class LoginActivity extends Activity {
         username = (EditText) findViewById(R.id.txtUsername);
         password = (EditText) findViewById(R.id.txtPassword);
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-        dbTool.openDBMaster();
-        SQLiteDatabase database = dbTool.getDatabase();
+
+        SQLiteDatabase database = dbTool.openDBMaster();
         AccountManager mgr = new AccountManager(database);
 
-        Cursor cursor = mgr.getUserToken(username.getText().toString(),password.getText().toString());
+        Cursor cursor = mgr.getUserToken(database,username.getText().toString(),password.getText().toString());
+
 
         if(cursor != null && cursor.getCount() > 0){
             cursor.moveToFirst();
@@ -107,6 +109,8 @@ public class LoginActivity extends Activity {
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);
         }
+
+        dbTool.closeDB(database);
     }
 
 

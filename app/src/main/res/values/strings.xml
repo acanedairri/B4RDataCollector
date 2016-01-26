@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">B4RDataCollectorApp</string>
+    <string name="app_name">B4R Mobile </string>
 
     <string name="action_settings">Settings</string>
     <string name="menu_settings">Settings</string>
@@ -10,12 +10,18 @@
     <string name="action_data_entry">Data Entry</string>
     <string name="action_trait_measuring">Trait To Measure</string>
     <string name="action_log_recording">Log Record</string>
+    <string name="action_commit_history">Commit History</string>
+
+    <!-- TODO: Action Data Entry Study -->
+    <string name="action_search_study">Search</string>
+    <string name="action_add_trait">Add Trait</string>
+    <string name="action_summary">Summary</string>
 
     <!-- TODO: Action Menu Studies -->
     <string name="action_load_study">Load Study</string>
 
     <!-- TODO: Action Menu Variable Set -->
-    <string name="action_load_variable_set">Load Variable Set</string>
+    <string name="action_load_variable_set">Variable Set</string>
 
 
     <string name="barcode">Barcode</string>
@@ -59,4 +65,23 @@
 
     <string name="hello_world">Hello world!</string>
 
+
+    <!-- plot field spinner-->
+
+    <string-array name="spinner_plot_field">
+        <item>plot_key</item>
+        <item>rep</item>
+        <item>code</item>
+        <item>qr_code</item>
+        <item>plotno</item>
+        <item>entno</item>
+        <item>entcode</item>
+        <item>designation</item>
+        <item>parentage</item>
+        <item>generation</item>
+        <item>qr_code</item>
+        <item>fldrow_cont</item>
+        <item>fldcol_cont</item>
+
+    </string-array>
 </resources>

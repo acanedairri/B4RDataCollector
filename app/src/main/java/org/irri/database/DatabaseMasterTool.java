@@ -32,7 +32,6 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     }
 
 
-
     public DatabaseMasterTool(Context context, String databaseName )
     {
         super(new DatabaseContext(context), databaseName, null, 1);
@@ -63,6 +62,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
 
         db.execSQL(TableData.CREATE_USER_TABLE);
         db.execSQL(TableData.CREATE_STUDY_TABLE);
+        db.execSQL(TableData.CREATE_STUDY_LIST);
 
     }
 
@@ -71,8 +71,9 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
 
     }
 
-    public void openDBMaster(){
-        database = getWritableDatabase();
+    public  SQLiteDatabase openDBMaster(){
+        SQLiteDatabase database = getWritableDatabase();
+        return database;
     }
 
     public void openDb(String dbName){
@@ -82,7 +83,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         setDatabase(database);
     }
 
-    public void closeDB(){
+    public void closeDB(SQLiteDatabase database){
 
         if(database != null && database.isOpen()){
             database.close();
@@ -90,7 +91,8 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
 
     }
 
-    public void createStudyDatabase(String studyname) {
+    public SQLiteDatabase createStudyDatabase(Context context,String studyname) {
+        SQLiteDatabase database;
         boolean dbExist = checkDataBase(studyname);
         String myPath = ApplicationPath.AppFolderStudy + studyname;
         if (dbExist) {
@@ -99,13 +101,14 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         }else {
             database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
         }
+        return database;
     }
 
     public void openStudyDatabase(String databaseName) throws SQLException {
 
         // Open the database
         String myPath = ApplicationPath.AppFolderStudy + databaseName;
-        database = SQLiteDatabase.openDatabase(myPath, null,
+        SQLiteDatabase database = SQLiteDatabase.openDatabase(myPath, null,
                 SQLiteDatabase.OPEN_READWRITE);
         setDatabase(database);
     }
@@ -115,13 +118,27 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         db.execSQL(TableData.CREATE_STUDY_METADATA_TABLE);
         db.execSQL(TableData.CREATE_VARIABLE_SET_TABLE);
         db.execSQL(TableData.CREATE_VARIABLE_MEASURING_TABLE);
-        db.execSQL(TableData.CREATE_PLOT_HEADER_TABLE);
+        db.execSQL(TableData.CREATE_PLOT_TABLE);
+        db.execSQL(TableData.CREATE_PLOT_DATA);
+        db.execSQL(TableData.CREATE_SETTINGS);
+        populateSettingValues(db);
+    }
 
+    private void populateSettingValues(SQLiteDatabase db) {
+        ContentValues contentSettings = new ContentValues();
+        contentSettings.put("datafield1","entno");
+        contentSettings.put("datafield2","designation");
+        contentSettings.put("datafield3","plotno");
+        contentSettings.put("datafield4","rep");
+        database.insert("settings", null, contentSettings);
 
     }
 
+    public void createPlotTable(SQLiteDatabase db){
+        db.execSQL(TableData.CREATE_PLOT_TABLE);
+    }
 
-    public void createStudyPlotTable(SQLiteDatabase db,String header) {
+/*    public void createStudyPlotTable(SQLiteDatabase db,String header) {
 
         try {
             int i;
@@ -134,13 +151,14 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
                 querryString += ",`"+s;
                 querryString +="` TEXT";
             }
+            String s=querryString+");";
 
-            db.execSQL(querryString);
+            db.execSQL(s);
 
         } catch (SQLException ex) {
             Log.i("CreateDB Exception ",ex.getMessage());
         }
-    }
+    }*/
 
 
     private boolean checkDataBase(String databaseName) {

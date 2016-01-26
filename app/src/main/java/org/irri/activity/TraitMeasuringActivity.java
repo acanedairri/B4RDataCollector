@@ -83,17 +83,7 @@ public class TraitMeasuringActivity extends AppCompatActivity
 
 		});		
 		
-		findViewById(R.id.btnBrowseTrait).setOnClickListener(new OnClickListener() {
 
-			public void onClick(View v) {
-				Intent i = new Intent(TraitMeasuringActivity.this, VariableSetActivity.class);
-
-				i.putExtra("STUDYNAME", studyName);
-				i.putExtra("TRAIT_MEASURING_MODEL", traitMeasuringModel);
-				startActivityForResult(i, REQUEST_CODE );
-			}
-
-		});
 
 
 	}
@@ -101,30 +91,28 @@ public class TraitMeasuringActivity extends AppCompatActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
 
-//		menu.add(0,1,0,"Manage Fields");
-
-
+		getMenuInflater().inflate(R.menu.menu_trait_measuring, menu);
 		return true;
+
 
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		int id = item.getItemId();
 
-		Intent intent ;
-		/*if(item.getItemId() == 0)
-			intent = new Intent(this, CreateFieldBookFormEntityManagerActivity.class);
-		else
-			intent = new Intent(this, CreateFieldBookSelectFormEntityActivity.class);
-
-		intent.putExtra("CATEGORY", "VARIATE");
-		intent.putExtra("FieldBookModel", createFieldBookModel);
-		startActivityForResult(intent, 10);*/
-
-
+		//noinspection SimplifiableIfStatement
+		if(id == R.id.action_add_trait){
+			Intent i = new Intent(TraitMeasuringActivity.this, VariableSetActivity.class);
+			i.putExtra("STUDYNAME", studyName);
+			i.putExtra("TRAIT_MEASURING_MODEL", traitMeasuringModel);
+			startActivityForResult(i, REQUEST_CODE );
+		}
 
 		return super.onOptionsItemSelected(item);
+
+
 	}
 
 	@Override
@@ -148,10 +136,10 @@ public class TraitMeasuringActivity extends AppCompatActivity
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
 		dbTool.openStudyDatabase(studyName);
 		SQLiteDatabase database = dbTool.getDatabase();
-		StudyManager mgr = new StudyManager(database);
+		StudyManager mgr = new StudyManager();
 		Cursor variableSet;
 
-		variableSet = mgr.getVariableSetSelected();
+		variableSet = mgr.getVariableSetSelected(database);
 		if(variableSet != null && variableSet.getCount() > 0){
 
 			if (variableSet.moveToFirst()) {
@@ -172,7 +160,7 @@ public class TraitMeasuringActivity extends AppCompatActivity
 			String scaleValue="";
 			String is_selected="false";
 
-			Cursor variableSetData=mgr.getVariableSetByAbbrev(traitCode);
+			Cursor variableSetData=mgr.getVariableSetByAbbrev(database,traitCode);
 			//traitData = fieldManager.getDataByTraitCode(traitCode);
 
 			if(variableSetData != null && variableSetData.getCount() > 0){
@@ -242,9 +230,9 @@ public class TraitMeasuringActivity extends AppCompatActivity
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
 		dbTool.openStudyDatabase(studyName);
 		SQLiteDatabase database = dbTool.getDatabase();
-		StudyManager mgr = new StudyManager(database);
-		mgr.updateVariableSet(abbrev,is_selected);
-		dbTool.closeDB();
+		StudyManager mgr = new StudyManager();
+		mgr.updateVariableSet(database,abbrev,is_selected);
+		dbTool.closeDB(database);
 
 	}
 /*	@Override
@@ -278,5 +266,10 @@ public class TraitMeasuringActivity extends AppCompatActivity
 		}
 	}*/
 
+	@Override
+	public void finish(){
+			setResult(RESULT_OK);
+			super.finish();
+	}
 
 }

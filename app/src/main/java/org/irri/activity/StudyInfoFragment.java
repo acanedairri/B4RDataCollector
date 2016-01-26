@@ -79,9 +79,9 @@ public class StudyInfoFragment extends Fragment {
         DatabaseMasterTool dbTool = new DatabaseMasterTool(context,studyName);
         dbTool.openStudyDatabase(studyName);
         SQLiteDatabase database = dbTool.getDatabase();
-        StudyManager mgr = new StudyManager(database);
+        StudyManager mgr = new StudyManager();
 
-        Cursor cursor = mgr.getStudyBasicInfo();
+        Cursor cursor = mgr.getStudyBasicInfo(database);
         if(cursor != null && cursor.getCount() > 0){
 
             if (cursor.moveToFirst()) {
@@ -99,7 +99,7 @@ public class StudyInfoFragment extends Fragment {
             }
         }
 
-        Cursor cursorStudyMetadata = mgr.getStudyMetaData();
+        Cursor cursorStudyMetadata = mgr.getStudyMetaData(database);
         if(cursorStudyMetadata != null && cursorStudyMetadata.getCount() > 0){
 
             if (cursorStudyMetadata.moveToFirst()) {

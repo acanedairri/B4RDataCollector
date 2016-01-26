@@ -4,17 +4,26 @@
     tools:context="org.irri.activity.StudyMainActivity">
 
 
-    <item android:id="@+id/action_data_entry" android:title="@string/action_data_entry"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_data_entry" android:title="@string/action_data_entry"  android:icon="@drawable/dataentry"
+        android:orderInCategory="100" app:showAsAction="always" />
 
-    <item android:id="@+id/action_trait_measuring" android:title="@string/action_trait_measuring"
-        android:orderInCategory="200" app:showAsAction="never" />
+    <item android:id="@+id/action_trait_measuring" android:title="Set Trait" android:icon="@drawable/scale16"
+        android:orderInCategory="200" app:showAsAction="always" />
 
-    <item android:id="@+id/action_log_recording" android:title="@string/action_load_variable_set"
+    <item android:id="@+id/action_help"
+        android:orderInCategory="300"
+        android:icon="@drawable/help"
+        app:showAsAction="always"
+        android:title="Help"/>
+
+    <item android:id="@+id/action_log_recording" android:title="@string/action_load_variable_set" android:icon="@drawable/logrecord"
         android:orderInCategory="400" app:showAsAction="never" />
 
-    <item android:id="@+id/action_load_variable_set" android:title="@string/action_log_recording"
-        android:orderInCategory="300" app:showAsAction="never" />
+    <item android:id="@+id/action_load_variable_set" android:title="@string/action_log_recording" android:icon="@drawable/logrecord"
+        android:orderInCategory="500" app:showAsAction="never" />
+
+    <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
+        android:orderInCategory="600" app:showAsAction="never" />
 
 
 
