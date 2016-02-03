@@ -89,6 +89,33 @@ public class StudyManager {
         return cursor;
     }
 
+    public Cursor getPlotData(SQLiteDatabase database,String plotNo,int variable_id) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from plot_data where plotno='"+plotNo+"' and variable_id="+variable_id;
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
+    public Cursor getPlotRecordByPlotNo(SQLiteDatabase database,String plotNo) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from plot where plotno='"+plotNo+"'";
+            cursor = database.rawQuery(sql, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
     public Cursor getRecordByName(SQLiteDatabase database,String name) {
         try {
             String sql = "SELECT * from study where name ='" + name + "'";
@@ -253,11 +280,18 @@ public class StudyManager {
         }
     }
 
-    public void updateSettingsDataField(SQLiteDatabase database,String field, String value) {
+    public void updateSettingsDataField(SQLiteDatabase database, String datafield1,String datafield2,String datafield3,String datafield4) {
         try {
-            ContentValues args = new ContentValues();
-            args.put("`" + field + "`", value);
-            database.update("settings", args, null, null);
+            String sql="Update settings set datafield1='"+datafield1+"', datafield2='"+datafield2+"',datafield3='"+datafield3+"',datafield4='"+datafield4+"'";
+           database.execSQL(sql);
+        } catch (SQLiteException e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    public void insertPlotRecord(SQLiteDatabase database,ContentValues contentValues) {
+        try {
+            database.insert("plot_data", null, contentValues);
         } catch (SQLiteException e) {
 
         }

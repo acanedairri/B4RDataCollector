@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -108,6 +109,9 @@ public class VariableSetActivity extends AppCompatActivity
 				 refreshList(etFilter.getText().toString());
 			 }
 		 });
+		btnClearSearch.requestFocus();
+		hideSoftKeyboard();
+		etFilter.clearFocus();
 	 
 	}
 
@@ -265,6 +269,25 @@ public class VariableSetActivity extends AppCompatActivity
 	public void actionBtnClearSearch(View v){
 		etFilter.setText("");
 		etFilter.requestFocus();
+	}
+
+	/**
+	 * Hides the soft keyboard
+	 */
+	public void hideSoftKeyboard() {
+		if(getCurrentFocus()!=null) {
+			InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+		}
+	}
+
+	/**
+	 * Shows the soft keyboard
+	 */
+	public void showSoftKeyboard(View view) {
+		InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		view.requestFocus();
+		inputMethodManager.showSoftInput(view, 0);
 	}
 
 }

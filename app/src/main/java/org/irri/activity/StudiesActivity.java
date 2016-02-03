@@ -1,7 +1,10 @@
 package org.irri.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -249,6 +252,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 con=(HttpURLConnection) url.openConnection();
                 con.connect();
 
+
                 InputStream stream = con.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(stream));
 
@@ -256,29 +260,66 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 String line;
 
                 while ((line = reader.readLine()) != null) {
+                    if(line.contains("DOCTYPE")){
+                        return null;
+                    }
                     buffer.append(line);
                 }
                 return buffer.toString();
 
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                return null;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                return null;
             } catch (ProtocolException e) {
                 e.printStackTrace();
+                return null;
             } catch (IOException e) {
                 e.printStackTrace();
+                return null;
             }
 
-            return  null;
+
         }
 
         protected void onPostExecute(String result){
             super.onPostExecute(result);
-            Intent intent = new Intent(getApplicationContext(), StudyListActivity.class);
-            intent.putExtra("ACCESS_TOKEN", accessToken);
-            intent.putExtra("STUDY",result);
-            startActivityForResult(intent, REQUEST_CODE);
+            if(result!=null) {
+                Intent intent = new Intent(getApplicationContext(), StudyListActivity.class);
+                intent.putExtra("ACCESS_TOKEN", accessToken);
+                intent.putExtra("STUDY", result);
+                startActivityForResult(intent, REQUEST_CODE);
+            }else{
+               /* Dialog dialog = new Dialog(getApplicationContext());
+                dialog.setContentView(R.layout.messagedialog);
+                TextView tvMessage=(TextView) dialog.findViewById(R.id.tvMessageId);
+                tvMessage.setText("Cannot connect to web service, Please check your internet connection");
+                dialog.show();*/
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        StudiesActivity.this).create();
+
+                // Setting Dialog Title
+                alertDialog.setTitle("Error Message");
+
+                // Setting Dialog Message
+                alertDialog.setMessage("Cannot connect to web service. Please check your internet connection");
+
+                // Setting Icon to Dialog
+                alertDialog.setIcon(R.drawable.info);
+
+                // Setting OK Button
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Showing Alert Message
+                alertDialog.show();
+            }
         }
 
     }

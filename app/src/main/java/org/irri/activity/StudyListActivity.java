@@ -33,6 +33,7 @@ import org.irri.database.AccountManager;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
 import org.irri.entity.MockData;
+import org.irri.entity.ObservationData;
 import org.irri.entity.Study;
 import org.irri.entity.StudyListData;
 import org.irri.entity.StudyListModel;
@@ -209,8 +210,9 @@ public class StudyListActivity extends AppCompatActivity {
 
         if (item.getTitle() == "Get Study") {
             // TODO: 2015-12-08
-            String urlString="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
-            new JSONTaskGetStudy().execute(urlString);
+            String urlStringStudy="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
+            String urlStringObsevationData="http://api.breeding4rice.irri.org/dev/v1/studies/2026/data-collection?accessToken="+accessToken;
+            new JSONTaskGetStudy().execute(urlStringStudy,urlStringObsevationData);
         }else if(item.getTitle() == "View Info") {
             // TODO: 2015-12-08  get study metadata and open to activity
             String urlString="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
@@ -324,8 +326,11 @@ public class StudyListActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
 
             HttpURLConnection con = null;
+            HttpURLConnection con2=null;
             BufferedReader reader = null;
+            BufferedReader readerData = null;
             String toreturn = null;
+
 
             try {
 
@@ -343,8 +348,27 @@ public class StudyListActivity extends AppCompatActivity {
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
-                toreturn=buffer.toString();
 
+                buffer.append("#");
+
+
+                //get observation
+                URL urlData = new URL(params[1]);
+                con2=(HttpURLConnection) urlData.openConnection();
+                con2.connect();
+
+                InputStream streamData = con2.getInputStream();
+                readerData = new BufferedReader(new InputStreamReader(streamData));
+
+                StringBuffer bufferData = new StringBuffer();
+                String lineData;
+
+                while ((lineData = readerData.readLine()) != null) {
+                    bufferData.append(lineData);
+                }
+
+
+                toreturn=buffer.toString()+bufferData.toString();
 
                 return toreturn;
 
@@ -357,6 +381,9 @@ public class StudyListActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+
+
 
             return  null;
         }
@@ -429,28 +456,32 @@ public class StudyListActivity extends AppCompatActivity {
             }
 
             // create plot table
-
+            Gson gsonData= new Gson();
+            ObservationData observationData = gsonData.fromJson(res[1], ObservationData.class);
 
             int recno=1;
             // save plot data
 
-            for(int i=1;i<=50;i++){
-                ContentValues cv= new ContentValues();
+            List<ObservationData.DataEntity.ItemsEntity> objectsData = observationData.getData().getItems();
 
-                cv.put("recno",i);
-                String s=String.valueOf(i);
-                cv.put("plot_key","1012312561"+s);
-                cv.put("rep","1");
-                cv.put("plotno",s);
-                cv.put("entno","ir"+s);
-                cv.put("entcode","ir63"+s);
-                cv.put("designation","ir-b-01"+s);
-                cv.put("parentage","iirri-b-01"+s);
-                cv.put("generation","getn1"+s);
-                cv.put("qr_code","qrcode"+s);
-                cv.put("fldrow_cont","");
-                cv.put("fldcol_cont","");
+            for(ObservationData.DataEntity.ItemsEntity rec:objectsData){
+
+                ContentValues cv= new ContentValues();
+                cv.put("recno",recno);
+                cv.put("plot_key",rec.getPLOT_KEY());
+                cv.put("rep",Integer.valueOf(rec.getREP()));
+                cv.put("plotno",Integer.valueOf(rec.getPLOTNO()));
+                cv.put("entno",Integer.valueOf(rec.getENTNO()));
+                cv.put("entcode",rec.getENTCODE());
+                cv.put("designation",rec.getDESIGNATION());
+                cv.put("parentage",rec.getPARENTAGE());
+                cv.put("generation",rec.getGENERATION());
+                cv.put("qr_code",String.valueOf(rec.getQR_CODE()));
+                cv.put("fldrow_cont",rec.getFLDROW_CONT());
+                cv.put("fldcol_cont",rec.getFLDCOL_CONT());
                 mgrStudy.insertPlot(studyDatabase,cv);
+                recno++;
+
             }
 
 
@@ -546,7 +577,7 @@ public class StudyListActivity extends AppCompatActivity {
             intent.putExtra("TITLE",studyMetadata.getData().getTitle());
             intent.putExtra("PROGRAM",studyMetadata.getData().getProgram());
             intent.putExtra("PLACE",studyMetadata.getData().getPlace());
-            intent.putExtra("PHASE",studyMetadata.getData().getPhase());
+            intent.putExtra("PHASE", studyMetadata.getData().getPhase());
             intent.putExtra("YEAR", String.valueOf(studyMetadata.getData().getYear()));
             intent.putExtra("SEASON", studyMetadata.getData().getSeason());
 

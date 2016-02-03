@@ -7,7 +7,7 @@
     <item android:id="@+id/action_data_entry" android:title="@string/action_data_entry"  android:icon="@drawable/dataentry"
         android:orderInCategory="100" app:showAsAction="always" />
 
-    <item android:id="@+id/action_trait_measuring" android:title="Set Trait" android:icon="@drawable/scale16"
+    <item android:id="@+id/action_trait_measuring" android:title="Set Trait" android:icon="@drawable/measure"
         android:orderInCategory="200" app:showAsAction="always" />
 
     <item android:id="@+id/action_help"

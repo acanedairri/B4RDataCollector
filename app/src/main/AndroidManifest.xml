@@ -25,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-      <activity
+        <activity
             android:name=".BarcodeActivity"
             android:label="@string/barcode" >
             <intent-filter>
@@ -79,7 +79,7 @@
         </activity>
         <activity
             android:name=".StudiesActivity"
-            android:label="My Studies" >
+            android:label="Studies" >
         </activity>
         <activity
             android:name=".StudyActivity"
@@ -91,7 +91,8 @@
         </activity>
         <activity
             android:name=".DataEntryActivity"
-            android:label="@string/title_activity_data_entry" >
+            android:label="@string/title_activity_data_entry"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity
             android:name=".OauthTestingActivity"
@@ -131,9 +132,13 @@
         </activity>
         <activity
             android:name=".VariableSetActivity"
-            android:label="@string/title_activity_variable_set" >
+            android:label="@string/title_activity_variable_set"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
-
+        <activity
+            android:name=".PlotOrderSettingActivity"
+            android:label="@string/title_activity_plot_order_setting" >
+        </activity>
     </application>
 
 </manifest>

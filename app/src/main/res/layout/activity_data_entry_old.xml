@@ -1,0 +1,337 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="org.irri.activity.DataEntryActivity"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:weightSum="1">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.53">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/tblRowSearch"
+            android:visibility="visible"
+            android:paddingStart="0dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:weightSum="1">
+
+                <EditText
+                    android:layout_width="186dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etSearchPlot"
+                    android:hint="Search PlotNo"
+                    android:inputType="number"
+                    android:layout_gravity="center_vertical" />
+
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Go"
+                    android:id="@+id/btnSearchPlot"
+                    android:onClick="searchPlotRecord" />
+
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:weightSum="1">
+
+                <Spinner
+                    android:layout_width="100dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/spinner_plot_field1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.22" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Text"
+                    android:id="@+id/tvPlotField1"
+                    android:textSize="20sp"
+                    android:layout_gravity="top" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:weightSum="1">
+
+                <Spinner
+                    android:layout_width="100dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/spinner_plot_field2"
+                    android:layout_weight="0.22"
+                    android:layout_gravity="center_vertical" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Text"
+                    android:id="@+id/tvPlotField2"
+                    android:textSize="20sp"
+                    android:textIsSelectable="true" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center|left">
+
+                <ImageView
+                    android:layout_width="@dimen/abc_action_button_min_width_material"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnPlotPrev"
+                    android:layout_row="0"
+                    android:layout_column="2"
+                    android:src="@drawable/previous64"
+                    android:padding="0dp"
+                    android:onClick="actionBtnPlotPrev" />
+
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="3"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1">
+
+                                <Spinner
+                                    android:layout_width="116dp"
+                                    android:layout_height="20dp"
+                                    android:id="@+id/spinner_plot_field3"
+                                    android:layout_gravity="center_vertical" />
+
+                                <TextView
+                                    android:layout_width="69dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="Plot No."
+                                    android:id="@+id/tvPlotField3"
+                                    android:layout_column="0"
+                                    android:layout_gravity="center_vertical"
+                                    android:textSize="30sp" />
+
+                            </LinearLayout>
+
+                        </TableRow>
+                    </LinearLayout>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <Spinner
+                                android:layout_width="116dp"
+                                android:layout_height="20dp"
+                                android:id="@+id/spinner_plot_field4"
+                                android:layout_gravity="center_vertical" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="New Text"
+                                android:id="@+id/tvPlotField4"
+                                android:layout_gravity="center_vertical"
+                                android:textSize="30sp" />
+
+                        </LinearLayout>
+                    </TableRow>
+
+                </TableLayout>
+
+                <ImageView
+                    android:layout_width="@dimen/abc_action_button_min_width_material"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnPlotNext"
+                    android:layout_column="1"
+                    android:src="@drawable/next64"
+                    android:onClick="actionBtnPlotNext"
+                    android:layout_row="0" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_column="0"
+                android:layout_gravity="center|left">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/previous64"
+                    android:id="@+id/btnTraitPrev"
+                    android:width="50dp"
+                    android:onClick="actionBtnTraitPrev" />
+
+                <EditText
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etTrait"
+                    android:text="No trait selected"
+                    android:enabled="true"
+                    android:editable="false"
+                    android:textSize="18dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/next64"
+                    android:id="@+id/btnTraitNext"
+                    android:width="50dp"
+                    android:onClick="actionBtnTraitNext" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvTraitLabel"
+                android:text="Flowering"
+                android:layout_gravity="center|left" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:weightSum="1"
+                android:layout_gravity="center|left">
+
+                <TableLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Value:"
+                                android:id="@+id/textView13"
+                                android:layout_column="0"
+                                android:layout_gravity="center|left" />
+
+                            <EditText
+                                android:layout_width="122dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/etValue"
+                                android:layout_column="0"
+                                android:singleLine="true"
+                                android:textSize="30sp"
+                                android:textIsSelectable="false"
+                                android:paddingLeft="15dp" />
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/btnClear"
+                                android:src="@drawable/clear"
+                                android:onClick="actionBtnClear" />
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/btnDate"
+                                android:src="@drawable/calendar32"
+                                android:onClick="actionBtnDate" />
+                        </LinearLayout>
+                    </TableRow>
+
+                </TableLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent">
+
+                    <ListView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/lvScale"
+
+                        android:minHeight="500px" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+        </TableRow>
+
+    </TableLayout>
+
+
+</LinearLayout>

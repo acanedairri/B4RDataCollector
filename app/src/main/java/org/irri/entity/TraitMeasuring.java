@@ -5,11 +5,20 @@ package org.irri.entity;
  */
 public class TraitMeasuring {
 
+    int variable_id;
     String abbrev;
     String display_name;
     String dataType;
     String scaleValue;
     String value;
+
+    public int getVariable_id() {
+        return variable_id;
+    }
+
+    public void setVariable_id(int variable_id) {
+        this.variable_id = variable_id;
+    }
 
     public String getValue() {
         return value;

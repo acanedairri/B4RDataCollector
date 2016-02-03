@@ -64,10 +64,10 @@ public class TableData {
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             "`recno` INTEGER,"+
             "`plot_key` TEXT,"+
-            "`rep` TEXT,"+
+            "`rep` INTEGER,"+
             "`code` TEXT,"+
-            "`plotno` TEXT,"+
-            "`entno` TEXT,"+
+            "`plotno` INTEGER,"+
+            "`entno` INTEGER,"+
             "`entcode` TEXT,"+
             "`designation` TEXT,"+
             "`parentage` TEXT,"+

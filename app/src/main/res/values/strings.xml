@@ -69,6 +69,7 @@
     <!-- plot field spinner-->
 
     <string-array name="spinner_plot_field">
+        <item></item>
         <item>plot_key</item>
         <item>rep</item>
         <item>code</item>
@@ -84,4 +85,5 @@
         <item>fldcol_cont</item>
 
     </string-array>
+    <string name="title_activity_plot_order_setting">Set Plot Display</string>
 </resources>

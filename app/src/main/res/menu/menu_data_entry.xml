@@ -10,24 +10,22 @@
         app:showAsAction="always" />
 
 
-
     <item android:id="@+id/action_trait_measuring"
         android:orderInCategory="200"
-        android:icon="@drawable/scale16"
+        android:icon="@drawable/measure"
         app:showAsAction="always"
         android:title="Trait Measuring"/>
 
-    <item android:id="@+id/action_summary"
-        android:orderInCategory="300"
-        android:title="@string/action_summary"
-        android:icon="@drawable/summary"
-        app:showAsAction="always" />
-
     <item android:id="@+id/action_help"
-        android:orderInCategory="400"
+        android:orderInCategory="300"
         android:icon="@drawable/help"
         app:showAsAction="always"
         android:title="Help"/>
+
+    <item android:id="@+id/action_plotorder"
+        android:orderInCategory="400"
+        app:showAsAction="withText"
+        android:title="Set Plot Display"/>
 
   <!--  <item android:id="@+id/action_trait_measuring" android:title="@string/action_trait_measuring"
         android:orderInCategory="100" app:showAsAction="never" />-->

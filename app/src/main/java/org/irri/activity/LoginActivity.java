@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="KIxTbXDmboz53qrkWl6CHZCOTZ0r3myxi3Bvu0oe";
+    private String token="T3kR7IffutamkJckRnddWHQD3SVbdkOlEsOMK5hX";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(cursor != null && cursor.getCount() > 0){
             cursor.moveToFirst();
-            //token = cursor.getString(cursor.getColumnIndex("access_token"));
+            token = cursor.getString(cursor.getColumnIndex("access_token"));
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);
