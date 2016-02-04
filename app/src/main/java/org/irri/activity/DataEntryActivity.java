@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,12 +55,15 @@ import org.irri.entity.TraitMeasuring;
 import org.w3c.dom.Text;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 import com.intermec.aidc.*;
@@ -112,6 +116,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
     TextView tvMetadata1;
     TextView tvMetadata2;
+    String plotMeta1;
+    String plotMeta2;
 
     TableRow tblRowMetadata1;
     TableRow tblRowMetadata2;
@@ -136,6 +142,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     String[] spinnerArray;
     HashMap<Integer,Integer> spinnerMap;
     ArrayAdapter<CharSequence> dataAdapterTrait;
+
 
     TableRow tblRowDate;
 
@@ -196,7 +203,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         tvMetadata1 = (TextView) findViewById(R.id.tvMetadata1);
         tvMetadata2 = (TextView) findViewById(R.id.tvMetadata2);
-
+        tblRowMetadata1 = (TableRow) findViewById(R.id.tblRowMetadata1);
+        tblRowMetadata2 = (TableRow) findViewById(R.id.tblRowMetadata2);
 
         getTraitToMeasure();
         // trait spinner
@@ -723,7 +731,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
-            ((EditText) getActivity().findViewById(R.id.etValue)).setText(year+"/"+month+1+"/"+day);
+            int mon=month+1;
+            ((EditText) getActivity().findViewById(R.id.etValue)).setText(year+"/"+mon+"/"+day);
         }
     }
 
@@ -762,8 +771,20 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     tvFieldOrderLabel2.setText(dataField2);
                     tvFieldOrder1.setText(plotCursor.getString(plotCursor.getColumnIndex(dataField1)));
                     tvFieldOrder2.setText(plotCursor.getString(plotCursor.getColumnIndex(dataField2)));
-                    tvMetadata1.setText(dataField3 + " : "+plotCursor.getString(plotCursor.getColumnIndex(dataField3)));
-                    tvMetadata2.setText(dataField4 + " : "+plotCursor.getString(plotCursor.getColumnIndex(dataField4)));
+                    if(!dataField3.equals("")) {
+                        plotMeta1=dataField3 + " : " + plotCursor.getString(plotCursor.getColumnIndex(dataField3));
+                        tvMetadata1.setText(plotMeta1);
+                        tblRowMetadata1.setVisibility(View.VISIBLE);
+                    }else {
+                        tblRowMetadata1.setVisibility(View.GONE);
+                    }
+                    if(!dataField4.equals("")) {
+                        plotMeta2=dataField4 + " : " + plotCursor.getString(plotCursor.getColumnIndex(dataField4));
+                        tvMetadata2.setText(plotMeta2);
+                        tblRowMetadata2.setVisibility(View.VISIBLE);
+                    }else{
+                        tblRowMetadata2.setVisibility(View.GONE);
+                    }
 
                     plotKey=plotCursor.getString(plotCursor.getColumnIndex("plot_key"));
                     plotNo=plotCursor.getString(plotCursor.getColumnIndex("plotno"));
@@ -792,8 +813,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 setTraitValue();
             }else if(requestCode == REQUEST_CODE2){
                 populateSettingValues();
-                setPlotRecordDisplay(Integer.valueOf(plotNo));
-                setTraitValue();
+                setPlotRecordDisplay(plotIndex);
+                tvMetadata1.setText(plotMeta1);
+                tvMetadata2.setText(plotMeta2);
             }
 
 
@@ -918,5 +940,59 @@ return data;
     }
 
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        tvMetadata1.setText(plotMeta1);
+        tvMetadata2.setText(plotMeta2);
+    }
+
+
+    public void actionBtnToday(View v) {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        etValue.setText(year+"/"+(month+1)+"/"+day);
+    }
+
+    public void actionBtnDateLess(View v) {
+        try {
+            String dateString = etValue.getText().toString();
+            DateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+            Date date = format.parse(dateString);
+            Date dateBefore = new Date(date.getTime() - 1 * 24 * 3600 * 1000L ); //Subtract n days
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateBefore);
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            etValue.setText(year+"/"+(month+1)+"/"+day);
+
+        }catch (Exception e) {
+            etValue.setText("");
+        }
+
+    }
+
+    public void actionBtnDateAdd(View v) throws ParseException {
+
+        try {
+
+            String dateString = etValue.getText().toString();
+            DateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+            Date date = format.parse(dateString);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.DATE, 1);
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            etValue.setText(year + "/" + (month + 1) + "/" + day);
+        }catch (Exception e){
+            etValue.setText("");
+        }
+    }
 
 }

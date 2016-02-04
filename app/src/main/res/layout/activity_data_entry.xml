@@ -406,21 +406,24 @@
                         android:text="-"
                         android:id="@+id/btnDateLess"
                         style="?android:attr/buttonStyleSmall"
-                        android:paddingLeft="20dp" />
+                        android:paddingLeft="20dp"
+                        android:onClick="actionBtnDateLess" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Today"
-                        android:id="@+id/Today" />
+                        android:id="@+id/btnToday"
+                        android:onClick="actionBtnToday" />
 
                     <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="+"
-                        android:id="@+id/btnDateAdd" />
+                        android:id="@+id/btnDateAdd"
+                        android:onClick="actionBtnDateAdd" />
 
                 </TableRow>
             </FrameLayout>

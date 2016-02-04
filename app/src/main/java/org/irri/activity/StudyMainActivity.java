@@ -10,6 +10,7 @@ import android.view.MenuItem;
 public class StudyMainActivity extends AppCompatActivity {
 
     String studyName;
+    String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +18,7 @@ public class StudyMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_study_main);
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
+        accessToken = bundle.getString("ACCESSTOKEN");
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -50,9 +52,14 @@ public class StudyMainActivity extends AppCompatActivity {
             Intent intent = new Intent(StudyMainActivity.this, TraitMeasuringActivity.class);
             intent.putExtra("STUDYNAME",studyName);
             startActivity(intent);
+        }else if(id == R.id.action_load_variable_set) {
+            Intent intent = new Intent(StudyMainActivity.this, GetVariableSetActivity.class);
+            intent.putExtra("STUDYNAME",studyName);
+            intent.putExtra("ACCESSTOKEN", accessToken);
+            startActivity(intent);
         }
 
 
-        return super.onOptionsItemSelected(item);
+            return super.onOptionsItemSelected(item);
     }
 }

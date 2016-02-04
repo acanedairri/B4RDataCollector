@@ -21,7 +21,7 @@
     <string name="action_load_study">Load Study</string>
 
     <!-- TODO: Action Menu Variable Set -->
-    <string name="action_load_variable_set">Variable Set</string>
+    <string name="action_load_variable_set">Get Variable Set</string>
 
 
     <string name="barcode">Barcode</string>
@@ -86,4 +86,5 @@
 
     </string-array>
     <string name="title_activity_plot_order_setting">Set Plot Display</string>
+    <string name="title_activity_get_variable_set">Get Variable Set</string>
 </resources>

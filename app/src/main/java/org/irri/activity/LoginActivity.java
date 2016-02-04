@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="T3kR7IffutamkJckRnddWHQD3SVbdkOlEsOMK5hX";
+    private String token="JpdDkvd2gLnVfGz3vfwo6ZGsgzEk7HCTpxqIT6Lh";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

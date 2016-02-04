@@ -200,6 +200,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         StudyListData study = (StudyListData) adapter.getItem(position);
         Intent intent = new Intent(getApplicationContext(), StudyMainActivity.class);
         intent.putExtra("STUDYNAME", study.getName());
+        intent.putExtra("ACCESSTOKEN", accessToken);
         startActivity(intent);
     }
 

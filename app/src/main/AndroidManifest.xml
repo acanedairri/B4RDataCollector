@@ -139,6 +139,10 @@
             android:name=".PlotOrderSettingActivity"
             android:label="@string/title_activity_plot_order_setting" >
         </activity>
+        <activity
+            android:name=".GetVariableSetActivity"
+            android:label="@string/title_activity_get_variable_set" >
+        </activity>
     </application>
 
 </manifest>

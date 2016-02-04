@@ -16,10 +16,10 @@
         app:showAsAction="always"
         android:title="Help"/>
 
-    <item android:id="@+id/action_log_recording" android:title="@string/action_load_variable_set" android:icon="@drawable/logrecord"
+    <item android:id="@+id/action_load_variable_set" android:title="@string/action_load_variable_set" android:icon="@drawable/logrecord"
         android:orderInCategory="400" app:showAsAction="never" />
 
-    <item android:id="@+id/action_load_variable_set" android:title="@string/action_log_recording" android:icon="@drawable/logrecord"
+    <item android:id="@+id/action_log_record" android:title="@string/action_log_recording" android:icon="@drawable/logrecord"
         android:orderInCategory="500" app:showAsAction="never" />
 
     <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
