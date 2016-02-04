@@ -119,11 +119,27 @@ public class GetVariableSetActivity extends AppCompatActivity {
     public void actionBtnSaveVariable(View v){
         TextView tv= (TextView) findViewById(R.id.tvVariableMembers);
         String variableMembers= tv.getText().toString();
-        Context context = getApplicationContext();
-        CharSequence text = String.valueOf(variableSetId);
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, variableMembers, duration);
-        toast.show();
+
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
+        dbTool.openStudyDatabase(studyName);
+        SQLiteDatabase database = dbTool.getDatabase();
+        StudyManager studyMgr = new StudyManager();
+
+        Gson gson = new Gson();
+        VariableSetMember variableSetMember = gson.fromJson(variableMembers, VariableSetMember.class);
+        List<VariableSetMember.DataEntity.MembersEntity> list=variableSetMember.getData().getMembers();
+        for(VariableSetMember.DataEntity.MembersEntity r:list){
+            ContentValues cv = new ContentValues();
+            cv.put("variable_id",r.getVariable_id().getValue());
+            cv.put("abbrev",r.getAbbrev());
+            cv.put("label",r.getLabel());
+            cv.put("name",r.getName());
+            cv.put("data_type",r.getData_type());
+            cv.put("display_name",r.getDisplay_name());
+            cv.put("scale_value",r.getScale_value());
+            cv.put("is_selected","false");
+            studyMgr.insertVariableSet(database,cv);
+        }
     }
 
     public class JSONTaskGetVariableSet extends AsyncTask<String,String,String> {
