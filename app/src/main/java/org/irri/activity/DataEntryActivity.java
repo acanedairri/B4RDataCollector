@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,6 +61,7 @@ import com.intermec.aidc.*;
 
 public class DataEntryActivity extends AppCompatActivity implements BarcodeReadListener,AdapterView.OnItemClickListener, View.OnClickListener {
 
+    private static final String TAG ="" ;
     private String studyName;
     private int REQUEST_CODE = 0X1;
     private int REQUEST_CODE2 = 0X2;
@@ -282,6 +284,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         tblRowDate=(TableRow) findViewById(R.id.tblRowDate);
         tblRowDate.setVisibility(View.GONE);
+
+
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
     }
 
@@ -800,7 +805,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE) {
                 getTraitToMeasure();
-                dataAdapterTrait = new ArrayAdapter<CharSequence>(this,android.R.layout.simple_spinner_item, spinnerArray);
+                dataAdapterTrait = new ArrayAdapter<CharSequence>(this,R.layout.spinner_layout, spinnerArray);
                 dataAdapterTrait.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerTrait.setAdapter(dataAdapterTrait);
                 spinnerTrait.setSelection(0);

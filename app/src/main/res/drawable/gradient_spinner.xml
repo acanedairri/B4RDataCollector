@@ -9,9 +9,9 @@
 
             <corners android:radius="4dp" />
 
-            <padding android:bottom="3dp" android:left="3dp" android:right="3dp" android:top="3dp" />
+            <padding android:bottom="2dp" android:left="3dp" android:right="3dp" android:top="2dp" />
         </shape></item>
-        <item ><bitmap android:gravity="bottom|right" android:src="@drawable/dataentry2" />
+        <item ><bitmap android:gravity="bottom|right" android:src="@drawable/downspinner" />
         </item>
     </layer-list></item>
 

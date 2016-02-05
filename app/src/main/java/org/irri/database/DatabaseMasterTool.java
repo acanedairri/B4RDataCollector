@@ -121,6 +121,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         db.execSQL(TableData.CREATE_PLOT_TABLE);
         db.execSQL(TableData.CREATE_PLOT_DATA);
         db.execSQL(TableData.CREATE_SETTINGS);
+        db.execSQL(TableData.CREATE_STUDY_COMMIT_HISTORY);
         populateSettingValues(db);
     }
 

@@ -12,7 +12,9 @@
             android:id="@+id/tvScaleValue"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:paddingLeft="2dp" />
+            android:paddingLeft="2dp"
+            android:textSize="18dp"
+            android:textIsSelectable="false" />
 
         <TextView
             android:layout_width="wrap_content"

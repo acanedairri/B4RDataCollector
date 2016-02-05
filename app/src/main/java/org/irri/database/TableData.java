@@ -42,6 +42,8 @@ public class TableData {
                 "`notes` TEXT," +
                 "`key` TEXT," +
                 "`number` INTEGER," +
+                "`last_sync` TEXT" +
+                "`uncommited` INTEGER" +
                 "`is_uploaded` TEXT" +
                 ");";
 
@@ -58,6 +60,15 @@ public class TableData {
             "`transaction_id` TEXT," +
             "`variable` TEXT," +
             "`value` TEXT" +
+            ");";
+
+    public static String CREATE_STUDY_COMMIT_HISTORY="CREATE TABLE `commit_history` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`id` INTEGER," +
+            "`userid` INTEGER," +
+            "`transaction_id` INTEGER," +
+            "`date_commit` TEXT," +
+            "`checksum` TEXT" +
             ");";
 
     public static String CREATE_PLOT_TABLE="CREATE TABLE `plot` (" +
@@ -86,6 +97,8 @@ public class TableData {
             "`abbrev` TEXT," +
             "`value` TEXT," +
             "`userid` TEXT," +
+            "`last_commited` TEXT," +
+            "`last_modified` TEXT," +
             "`timestamp` TEXT"+
             ");";
 
