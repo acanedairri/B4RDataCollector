@@ -26,6 +26,7 @@ class EasyWebViewClient extends WebViewClient {
     public EasyWebViewClient(EasySocialAuthActivity easySocialAuthActivity) {
         this._EasySocialAuthActivity = easySocialAuthActivity;
         _Dialog = new ProgressDialog(_EasySocialAuthActivity);
+        _Dialog.setMessage(" please wait while loading............");
         _Dialog.setCancelable(false);
         _Dialog.setCanceledOnTouchOutside(false);
 

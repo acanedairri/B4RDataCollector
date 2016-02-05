@@ -1,6 +1,7 @@
 package org.irri.activity;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -211,7 +212,7 @@ public class StudyListActivity extends AppCompatActivity {
         if (item.getTitle() == "Get Study") {
             // TODO: 2015-12-08
             String urlStringStudy="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
-            String urlStringObsevationData="http://api.breeding4rice.irri.org/dev/v1/studies/2026/data-collection?accessToken="+accessToken;
+            String urlStringObsevationData="http://api.breeding4rice.irri.org/dev/v1/studies/"+item.getItemId()+"/data-collection?accessToken="+accessToken;
             new JSONTaskGetStudy().execute(urlStringStudy,urlStringObsevationData);
         }else if(item.getTitle() == "View Info") {
             // TODO: 2015-12-08  get study metadata and open to activity
@@ -321,6 +322,14 @@ public class StudyListActivity extends AppCompatActivity {
     public class JSONTaskGetStudy extends AsyncTask<String,String,String> {
 
         String studyId;
+        private ProgressDialog Dialog = new ProgressDialog(StudyListActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Dialog.setMessage(" please wait while processing............");
+            Dialog.show();
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -397,6 +406,7 @@ public class StudyListActivity extends AppCompatActivity {
             populateData(result);
             setResult(RESULT_OK, null);
             finish();
+            Dialog.dismiss();
         }
 
         private void populateData(String result) {
@@ -471,11 +481,11 @@ public class StudyListActivity extends AppCompatActivity {
                 cv.put("plot_key",rec.getPLOT_KEY());
                 cv.put("rep",Integer.valueOf(rec.getREP()));
                 cv.put("plotno",Integer.valueOf(rec.getPLOTNO()));
-                cv.put("entno",Integer.valueOf(rec.getENTNO()));
+                cv.put("entno", Integer.valueOf(rec.getENTNO()));
                 cv.put("entcode",rec.getENTCODE());
                 cv.put("designation",rec.getDESIGNATION());
                 cv.put("parentage",rec.getPARENTAGE());
-                cv.put("generation",rec.getGENERATION());
+                cv.put("generation", rec.getGENERATION());
                 cv.put("qr_code",String.valueOf(rec.getQR_CODE()));
                 cv.put("fldrow_cont",rec.getFLDROW_CONT());
                 cv.put("fldcol_cont",rec.getFLDCOL_CONT());
@@ -484,7 +494,7 @@ public class StudyListActivity extends AppCompatActivity {
 
             }
 
-
+/*
 
             // save variable set
             // mock data
@@ -505,7 +515,7 @@ public class StudyListActivity extends AppCompatActivity {
                 contextVariable.put("scale_value", scaleValue);
                 contextVariable.put("is_selected","false");
                 mgrStudy.insertVariableSet(studyDatabase,contextVariable);
-            }
+            }*/
 
 
             dbToolStudy.closeDB(studyDatabase);
@@ -529,6 +539,16 @@ public class StudyListActivity extends AppCompatActivity {
 
 
     public class JSONTaskViewStudy extends AsyncTask<String,String,String> {
+
+
+        private ProgressDialog Dialog = new ProgressDialog(StudyListActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Dialog.setMessage(" please wait while loading............");
+            Dialog.show();
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -595,6 +615,7 @@ public class StudyListActivity extends AppCompatActivity {
             intent.putExtra("OTHER_METADATA", line);
 
             startActivity(intent);
+            Dialog.dismiss();
         }
     }
 

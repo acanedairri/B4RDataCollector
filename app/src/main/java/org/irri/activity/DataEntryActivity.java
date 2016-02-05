@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,22 +21,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.intermec.aidc.AidcManager;
 import com.intermec.aidc.BarcodeReadEvent;
 import com.intermec.aidc.BarcodeReadListener;
@@ -47,12 +40,9 @@ import com.intermec.aidc.VirtualWedgeException;
 
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
-import org.irri.entity.AccessToken;
 import org.irri.entity.PlotData;
 import org.irri.entity.ScaleValue;
-import org.irri.entity.StudyListData;
 import org.irri.entity.TraitMeasuring;
-import org.w3c.dom.Text;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -209,7 +199,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         getTraitToMeasure();
         // trait spinner
         spinnerTrait = (Spinner) findViewById(R.id.spinner_trait);
-        dataAdapterTrait = new ArrayAdapter<CharSequence>(this,android.R.layout.simple_spinner_item, spinnerArray);
+        dataAdapterTrait = new ArrayAdapter<CharSequence>(this,R.layout.spinner_layout, spinnerArray);
        // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
         dataAdapterTrait.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTrait.setAdapter(dataAdapterTrait);
@@ -343,7 +333,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             if (cursorTrait.moveToFirst()) {
                 do {
                     String abbrev=cursorTrait.getString(cursorTrait.getColumnIndex("abbrev"));
-                    String displayName=cursorTrait.getString(cursorTrait.getColumnIndex("display_name"));
+                    String displayName=cursorTrait.getString(cursorTrait.getColumnIndex("label"));
                     String dataType=cursorTrait.getString(cursorTrait.getColumnIndex("data_type"));
                     String scaleValue=cursorTrait.getString(cursorTrait.getColumnIndex("scale_value"));
                     int variable_id=cursorTrait.getInt(cursorTrait.getColumnIndex("variable_id"));
@@ -548,12 +538,12 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         if(!traitMeasuring.get(traitIndex).getScaleValue().equals("null")){
             lvScale.setVisibility(View.VISIBLE);
             scaleValueList.clear();
-            String[] scale=traitMeasuring.get(traitIndex).getScaleValue().split(",");
+            String[] scale=traitMeasuring.get(traitIndex).getScaleValue().split(";");
             for(int i=0;i <scale.length ; i++){
                 ScaleValue sv= new ScaleValue();
-                sv.setLabel(scale[i]);
+                sv.setLabel(scale[i].trim());
                 String[] val=scale[i].split("=");
-                sv.setValue(val[0]);
+                sv.setValue(val[0].trim());
                 scaleValueList.add(sv);
             }
 
@@ -588,7 +578,11 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             }
         }
 
-        tvTraitLabel.setText(traitMeasuring.get(traitIndex).getDisplay_name());
+        if(traitMeasuring.size() > 0 ) {
+            tvTraitLabel.setText(traitMeasuring.get(traitIndex).getDisplay_name());
+        }else{
+            tvTraitLabel.setText("");
+        }
         etValue.setText(value);
 
 

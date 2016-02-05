@@ -4,10 +4,10 @@
     tools:context="org.irri.activity.StudyMainActivity">
 
 
-    <item android:id="@+id/action_data_entry" android:title="@string/action_data_entry"  android:icon="@drawable/dataentry"
+    <item android:id="@+id/action_data_entry" android:title="@string/action_data_entry"  android:icon="@drawable/dataentry2"
         android:orderInCategory="100" app:showAsAction="always" />
 
-    <item android:id="@+id/action_trait_measuring" android:title="Set Trait" android:icon="@drawable/measure"
+    <item android:id="@+id/action_load_variable_set" android:title="Set Trait" android:icon="@drawable/variable"
         android:orderInCategory="200" app:showAsAction="always" />
 
     <item android:id="@+id/action_help"
@@ -16,13 +16,15 @@
         app:showAsAction="always"
         android:title="Help"/>
 
-    <item android:id="@+id/action_load_variable_set" android:title="@string/action_load_variable_set" android:icon="@drawable/logrecord"
+    <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
         android:orderInCategory="400" app:showAsAction="never" />
 
-    <item android:id="@+id/action_log_record" android:title="@string/action_log_recording" android:icon="@drawable/logrecord"
+    <item android:id="@+id/action_log_record" android:title="@string/action_log_recording"
         android:orderInCategory="500" app:showAsAction="never" />
 
-    <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
+
+
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="600" app:showAsAction="never" />
 
 

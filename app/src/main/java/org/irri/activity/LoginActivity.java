@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="JpdDkvd2gLnVfGz3vfwo6ZGsgzEk7HCTpxqIT6Lh";
+    private String token="raU6hHydeEX9vd3azuT6VWTyjfvfpo7gmtaMyvqO";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else if (resultCode == RESULT_CANCELED) {
             if (requestCode == REQUEST_CODE) {
-                Toast.makeText(this, data.getIntExtra("Error getting access token", 0) + "", Toast.LENGTH_LONG).show();
+              //  Toast.makeText(this, data.getIntExtra("Error getting access token", 0) + "", Toast.LENGTH_LONG).show();
             }
         }
 

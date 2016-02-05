@@ -2,6 +2,7 @@ package org.irri.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -83,7 +84,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         accessToken=bundle.getString("ACCESS_TOKEN");
         studyList= getMyStudyList(null);
         lvStudyList= (ListView) findViewById(R.id.lvStudyList);
-        adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyList);
+        adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
         lvStudyList.setAdapter(adapter);
         lvStudyList.setOnItemClickListener(this);
 
@@ -110,7 +111,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
                 studyList.clear();
                 studyList= getMyStudyList(etSearchStudy.getText().toString());
-                adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyList);
+                adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
 
@@ -241,6 +242,16 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
     public class JSONTask extends AsyncTask<String,String,String> {
 
+        private ProgressDialog Dialog = new ProgressDialog(StudiesActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Dialog.setMessage(" please wait while loading............");
+            Dialog.show();
+        }
+
+
 
         @Override
         protected String doInBackground(String... params) {
@@ -321,6 +332,8 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 // Showing Alert Message
                 alertDialog.show();
             }
+
+            Dialog.dismiss();
         }
 
     }
@@ -343,7 +356,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
                 studyList.clear();
                 studyList= getMyStudyList(null);
-                adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyList);
+                adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
 

@@ -1,5 +1,6 @@
 package org.irri.activity;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -140,6 +143,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
             cv.put("is_selected","false");
             studyMgr.insertVariableSet(database,cv);
         }
+        dbTool.closeDB(database);
     }
 
     public class JSONTaskGetVariableSet extends AsyncTask<String,String,String> {
@@ -151,11 +155,17 @@ public class GetVariableSetActivity extends AppCompatActivity {
         Spinner spinnerVariableSet;
         ArrayAdapter<CharSequence> adapterVariableSet;
 
+        private ProgressDialog Dialog = new ProgressDialog(GetVariableSetActivity.this);
         public JSONTaskGetVariableSet() {
 
         }
 
-
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Dialog.setMessage(" please wait while loading variable set selection");
+            Dialog.show();
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -164,6 +174,18 @@ public class GetVariableSetActivity extends AppCompatActivity {
             BufferedReader reader = null;
             BufferedReader readerData = null;
             String toreturn = null;
+
+            // progress bar
+
+           /* RelativeLayout layout = new RelativeLayout(GetVariableSetActivity.this);
+            progressBar = new ProgressBar(GetVariableSetActivity.this,null,android.R.attr.progressBarStyleLarge);
+            progressBar.setIndeterminate(true);
+            progressBar.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100,100);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            layout.addView(progressBar,params);*/
+
+        /*    setContentView(layout);*/
 
 
             try {
@@ -226,9 +248,9 @@ public class GetVariableSetActivity extends AppCompatActivity {
                                 AdapterView<?> parent, View view, int position, long id) {
                             try {
                                 variableSetId = spinnerMap.get(position);
-                                TextView tvVariableSetid= (TextView) findViewById(R.id.tvVariableSetId);
+                                TextView tvVariableSetid = (TextView) findViewById(R.id.tvVariableSetId);
                                 tvVariableSetid.setText(String.valueOf(variableSetId));
- ;
+                                ;
                             } catch (Exception e) {
 
                             }
@@ -239,7 +261,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
 
                         }
                     });
-
+            Dialog.dismiss();
         }
 
     }
@@ -249,7 +271,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
 
         String studyId;
         int variableSetId;
-
+        private ProgressDialog Dialog = new ProgressDialog(GetVariableSetActivity.this);
 
         @Override
         protected String doInBackground(String... params) {
@@ -293,6 +315,12 @@ public class GetVariableSetActivity extends AppCompatActivity {
             return  null;
         }
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Dialog.setMessage(" please wait while loading variable set members");
+            Dialog.show();
+        }
         protected void onPostExecute(String result){
             super.onPostExecute(result);
             Gson gson = new Gson();
@@ -305,6 +333,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
 
             TextView tvVariableMembers= (TextView)findViewById(R.id.tvVariableMembers);
             tvVariableMembers.setText(result);
+            Dialog.dismiss();
         }
 
     }
