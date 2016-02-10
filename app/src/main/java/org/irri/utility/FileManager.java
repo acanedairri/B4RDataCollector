@@ -28,13 +28,14 @@ public class FileManager {
 		String tmp= ApplicationPath.AppFolder;
 		File f = new File(tmp);
 
+
 		if(f.exists() && f.isDirectory()){
 			return;
 
 		}else{
 			File appDirectory = new File(tmp);
 			appDirectory.mkdirs();
-			
+
 			File folderStudy = new File(ApplicationPath.AppFolderStudy);
 			folderStudy.mkdirs();
 

@@ -60,6 +60,9 @@ public class StudyInfoFragment extends Fragment {
     private String studyMetadataValues="";
 
 
+    public StudyInfoFragment() {
+    }
+
     /**
      * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
      * above, but is designed to give continuous feedback to the user when scrolling.

@@ -81,10 +81,12 @@ public class TraitMeasuringActivity extends AppCompatActivity
 				listAdapter.setSelected(key1);
 			}
 
-		});		
-		
+		});
 
 
+		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
 	}
 
@@ -101,6 +103,12 @@ public class TraitMeasuringActivity extends AppCompatActivity
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		int id = item.getItemId();
+
+		if(id==android.R.id.home){
+
+			this.finish();
+			return true;
+		}
 
 		//noinspection SimplifiableIfStatement
 		if(id == R.id.action_add_trait){

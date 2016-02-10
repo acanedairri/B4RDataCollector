@@ -2,6 +2,8 @@ package org.irri.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,13 +33,13 @@ public class LoginActivity extends ActionBarActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="raU6hHydeEX9vd3azuT6VWTyjfvfpo7gmtaMyvqO";
+    private String token="Z1YtGS8jPC8bCuS4gD48Pg7gnAaYxDklYkrTNo9J";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setupAppFolder();
+        //setupAppFolder();
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -110,11 +112,28 @@ public class LoginActivity extends ActionBarActivity {
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);
+            username.setText("");
+            password.setText("");
         }else{
             //Toast.makeText(this, "Invalid User", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);
+
+
+          /*AlertDialog alertDialog = new AlertDialog.Builder(
+                    LoginActivity.this).create();
+            alertDialog.setTitle("Error Message");
+            alertDialog.setMessage("Invalid User");
+            alertDialog.setIcon(R.drawable.info);
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Write your code here to execute after dialog closed
+                    //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                }
+            });
+            alertDialog.show();
+*/
         }
 
         dbTool.closeDB(database);

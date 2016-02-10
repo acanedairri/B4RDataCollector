@@ -15,8 +15,12 @@ public class AccountManager {
         this.database = database;
     }
 
-    public void insert(ContentValues values) {
-        database.insert(TableData.TABLE_USER, null, values);
+    public void insert(ContentValues values,SQLiteDatabase db) {
+        try {
+            db.insert(TableData.TABLE_USER, null, values);
+        }catch(Exception e){
+
+        }
     }
 
     public Cursor getAccountList() {

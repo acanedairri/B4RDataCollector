@@ -17,14 +17,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
+import org.irri.entity.StudyListData;
 import org.irri.entity.VariableSet;
 import org.irri.expandablelist.ListObject;
 import org.irri.expandablelist.SimplerExpandableListAdapter;
@@ -33,6 +38,7 @@ import org.irri.expandablelist.TraitMeasuringModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class VariableSetActivity extends AppCompatActivity
 {
@@ -47,6 +53,11 @@ public class VariableSetActivity extends AppCompatActivity
 	private ImageView btnClearSearch;
 	private EditText etFilter;
 
+	Spinner spinnerVariableSet;
+	ArrayAdapter<CharSequence> adapterVariableSet;
+	String[] spinnerArray;
+	HashMap<Integer,Integer> spinnerMap;
+	String variableSetName;
 	
 	public void onCreate(Bundle paramBundle)
 	{
@@ -56,7 +67,7 @@ public class VariableSetActivity extends AppCompatActivity
 		Bundle bundle = getIntent().getExtras();
 		studyName=bundle.getString("STUDYNAME");
 		btnClearSearch =(ImageView) findViewById(R.id.btnClearSearch);
-
+		populateVariableSet();
 
 
 		refreshList(null);
@@ -112,7 +123,68 @@ public class VariableSetActivity extends AppCompatActivity
 		btnClearSearch.requestFocus();
 		hideSoftKeyboard();
 		etFilter.clearFocus();
+
+		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 	 
+	}
+
+	private void populateVariableSet() {
+		int i = 0;
+
+		List<String> variableSetNameList= new ArrayList<String>();
+
+		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
+		dbTool.openStudyDatabase(studyName);
+		SQLiteDatabase database = dbTool.getDatabase();
+		StudyManager studyMgr = new StudyManager();
+		Cursor variableSetList=studyMgr.getVariableSetList(database);
+
+		if(variableSetList != null && variableSetList.getCount() > 0){
+
+			if (variableSetList.moveToFirst()) {
+				do {
+
+					String name=variableSetList.getString(variableSetList.getColumnIndex("variable_set_name"));
+
+					variableSetNameList.add(name);
+				} while (variableSetList.moveToNext());
+			}
+		}
+
+		spinnerArray = new String[variableSetNameList.size()];
+		spinnerMap = new HashMap<Integer, Integer>();
+		for (String rec : variableSetNameList) {
+			spinnerArray[i] = rec;
+			i++;
+
+		}
+
+		spinnerVariableSet = (Spinner) findViewById(R.id.spinnerVariableSet);
+		adapterVariableSet = new ArrayAdapter<CharSequence>(VariableSetActivity.this, android.R.layout.simple_spinner_item, spinnerArray);
+		// ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
+		adapterVariableSet.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinnerVariableSet.setAdapter(adapterVariableSet);
+		spinnerVariableSet.setSelection(0);
+
+		spinnerVariableSet.setOnItemSelectedListener(
+				new AdapterView.OnItemSelectedListener() {
+					public void onItemSelected(
+							AdapterView<?> parent, View view, int position, long id) {
+						try {
+							variableSetName = spinnerVariableSet.getSelectedItem().toString();
+							refreshList(null);
+						} catch (Exception e) {
+						}
+					}
+
+					public void onNothingSelected(AdapterView<?> parent) {
+
+					}
+				});
+
+
 	}
 
 	@Override
@@ -129,12 +201,33 @@ public class VariableSetActivity extends AppCompatActivity
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
+		if(id==android.R.id.home){
+
+			this.finish();
 			return true;
 		}
 
+		//noinspection SimplifiableIfStatement
+		if (id == R.id.action_settings) {
+			return true;
+		}else if(id == R.id.action_remove_variable_set){
+			viewLogoutConfirmDialog();
+
+		}
+
+
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void removeVariableSet() {
+
+		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
+		dbTool.openStudyDatabase(studyName);
+		SQLiteDatabase database = dbTool.getDatabase();
+		StudyManager mgr = new StudyManager();
+		mgr.removeVariableSet(database,variableSetName);
+		populateVariableSet();
+		refreshList(null);
 	}
 
 	@Override
@@ -167,9 +260,9 @@ public class VariableSetActivity extends AppCompatActivity
 		StudyManager mgr = new StudyManager();
 		Cursor variableSet;
 		if(filter==null) {
-			variableSet = mgr.getVariableSet(database);
+			variableSet = mgr.getVariableSet(database,variableSetName);
 		}else{
-			variableSet = mgr.getVariableSet(database,filter);
+			variableSet = mgr.getVariableSet(database,filter,variableSetName);
 		}
 
 
@@ -290,4 +383,28 @@ public class VariableSetActivity extends AppCompatActivity
 		inputMethodManager.showSoftInput(view, 0);
 	}
 
+
+	private void viewLogoutConfirmDialog(){
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+				VariableSetActivity.this);
+		alertDialog.setTitle("Confirm Deletion");
+		alertDialog.setMessage("Are you sure you want to delete this variable set?");
+		alertDialog.setIcon(R.drawable.info);
+		alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				// Write your code here to execute after dialog closed
+				//Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+				removeVariableSet();
+			}
+		});
+		alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+
+			}
+		});
+
+		// Showing Alert Message
+		alertDialog.show();
+
+	}
 }

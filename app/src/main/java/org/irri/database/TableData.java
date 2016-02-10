@@ -6,21 +6,21 @@ package org.irri.database;
 public class TableData {
 
     public static String TABLE_USER= "user";
-    public static String CREATE_USER_TABLE="CREATE TABLE `user` (\n" +
-            "        `_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
-            "        `user_id`\tINTEGER,\n" +
-            "        `username`\tTEXT,\n" +
-            "        `password`\tTEXT,\n" +
-            "        `user_type`\tTEXT,\n" +
-            "        `status`\tTEXT,\n" +
-            "        `display_name`\tTEXT,\n" +
-            "        `program_abbrev`\tTEXT,\n" +
-            "        `program_display_name`\tTEXT,\n" +
-            "        `valid_start_date`\tINTEGER,\n" +
-            "        `valid_end_date`\tINTEGER,\n" +
-            "        `creation_timestamp`\tINTEGER,\n" +
-            "        `access_token`\tTEXT,\n" +
-            "        `access_token_expire`\tTEXT\n" +
+    public static String CREATE_USER_TABLE="CREATE TABLE `user` (" +
+            "        `_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "        `user_id` INTEGER," +
+            "        `username` TEXT," +
+            "        `password` TEXT," +
+            "        `user_type` TEXT," +
+            "        `status` TEXT," +
+            "        `display_name` TEXT," +
+            "        `program_abbrev` TEXT," +
+            "        `program_display_name` TEXT," +
+            "        `valid_start_date` TEXT," +
+            "        `valid_end_date` TEXT," +
+            "        `creation_timestamp` TEXT," +
+            "        `access_token` TEXT," +
+            "        `access_token_expire` TEXT" +
             "        );";
 
      public static String TABLE_STUDY="study";
@@ -42,14 +42,16 @@ public class TableData {
                 "`notes` TEXT," +
                 "`key` TEXT," +
                 "`number` INTEGER," +
-                "`last_sync` TEXT" +
-                "`uncommited` INTEGER" +
+                "`last_commit` TEXT," +
+                "`uncommited` INTEGER," +
                 "`is_uploaded` TEXT" +
                 ");";
 
     public static String CREATE_STUDY_LIST="CREATE TABLE `study_list` (" +
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             "`studyid` INTEGER," +
+            "`last_commit` TEXT," +
+            "`uncommited` INTEGER," +
             "`name` TEXT" +
             ");";
 
@@ -97,8 +99,9 @@ public class TableData {
             "`abbrev` TEXT," +
             "`value` TEXT," +
             "`userid` TEXT," +
-            "`last_commited` TEXT," +
+            "`date_commited` TEXT," +
             "`last_modified` TEXT," +
+            "`committed` TEXT," +
             "`timestamp` TEXT"+
             ");";
 
@@ -107,11 +110,13 @@ public class TableData {
             "`datafield1` TEXT," +
             "`datafield2` TEXT," +
             "`datafield3` TEXT," +
-            "`datafield4` TEXT" +
+            "`datafield4` TEXT," +
+            "`last_recno` INTEGER" +
             ");";
 
     public static String CREATE_VARIABLE_SET_TABLE="CREATE TABLE `variable_set` (" +
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`variable_set_name` TEXT," +
             "`variable_id` INTEGER," +
             "`abbrev` TEXT," +
             "`label` TEXT," +

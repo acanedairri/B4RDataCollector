@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.intermec.aidc.AidcManager;
 import com.intermec.aidc.BarcodeReadEvent;
@@ -44,6 +45,7 @@ import org.irri.database.StudyManager;
 import org.irri.entity.PlotData;
 import org.irri.entity.ScaleValue;
 import org.irri.entity.TraitMeasuring;
+import org.irri.utility.DateUtil;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -96,6 +98,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     DatabaseMasterTool dbTool;
     SQLiteDatabase database;
     StudyManager studyMgr;
+    List<String> scaleValues;
+    String currentTraitValue;
 
     Spinner spinnerTrait;
     ArrayAdapter<CharSequence>  adapterTrait;
@@ -137,6 +141,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
 
     TableRow tblRowDate;
+    private boolean withScaleValue=false;
 
 
     public DataEntryActivity(){
@@ -296,7 +301,6 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         database = dbTool.getDatabase();
         studyMgr = new StudyManager();
         totalPlotRecord=studyMgr.getAllPlotRecords(database).getCount();
-        System.out.println("a");
     }
 
 /*    private void updateSettingDataField(String field,String value) {
@@ -457,8 +461,6 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         }
         setPlotRecordDisplay(plotIndex);
 
-
-
     }
 
     public void actionBtnTraitPrev(View v) {
@@ -477,10 +479,14 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
     public void actionBtnTraitNext(View v) {
+//        actionBtnSave(v);
         savePlotObservation();
         if(traitMeasuring.size() > 0) {
             if (traitIndex == traitMeasuring.size() - 1) {
-                traitIndex = traitMeasuring.size() - 1;
+                traitIndex = 0;
+                spinnerTrait.setSelection(traitIndex);
+                actionBtnPlotNext(v);
+                setTraitValue();
             } else {
                 traitIndex++;
             }
@@ -489,24 +495,53 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             variable_id=spinnerMap.get(traitIndex);
             setTraitValue();
             setHelperBtn();
-
         }
 
     }
 
     public void actionBtnSave(View v) {
-        savePlotObservation();
-        if(traitIndex==traitMeasuring.size()-1){
-            traitIndex=0;
-            spinnerTrait.setSelection(traitIndex);
-            actionBtnPlotNext(v);
-            setTraitValue();
+        boolean toSave=true;
 
-        }else{
-            actionBtnTraitNext(v);
+        if(!isValidValue() && withScaleValue){
+
+                Toast.makeText(getApplicationContext(),
+                        "Invalid value entered", Toast.LENGTH_LONG)
+                        .show();
+            etValue.setText("");
+            toSave=false;
+        }
+
+        if(toSave) {
+            if (etValue.getText().toString().length() > 0) {
+
+                savePlotObservation();
+                if (traitIndex == traitMeasuring.size() - 1) {
+                    traitIndex = 0;
+                    spinnerTrait.setSelection(traitIndex);
+                    actionBtnPlotNext(v);
+                    setTraitValue();
+
+                } else {
+                    actionBtnTraitNext(v);
+                }
+            }
         }
     }
 
+    private boolean isValidValue(){
+
+        if(withScaleValue){
+            String val=etValue.getText().toString();
+
+            for(ScaleValue rec:scaleValueList){
+                if(val.equals(rec.getValue())){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
     public void actionBtnClear(View v) {
         etValue.setText("");
     }
@@ -540,8 +575,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             etValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         }
 
-        if(!traitMeasuring.get(traitIndex).getScaleValue().equals("null")){
+        if(!traitMeasuring.get(traitIndex).getScaleValue().equals("null") && !traitMeasuring.get(traitIndex).getScaleValue().equals("")){
             lvScale.setVisibility(View.VISIBLE);
+            withScaleValue=true;
             scaleValueList.clear();
             String[] scale=traitMeasuring.get(traitIndex).getScaleValue().split(";");
             for(int i=0;i <scale.length ; i++){
@@ -550,12 +586,14 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 String[] val=scale[i].split("=");
                 sv.setValue(val[0].trim());
                 scaleValueList.add(sv);
+
             }
 
             scaleAdapter = new ScaleListAdapter(getApplicationContext(),R.layout.activity_scale_row,scaleValueList);
             lvScale.setAdapter(scaleAdapter);
 
         }else{
+            withScaleValue=false;
             lvScale.setVisibility(View.GONE);
             scaleValueList.clear();
             scaleAdapter = new ScaleListAdapter(getApplicationContext(),R.layout.activity_scale_row,scaleValueList);
@@ -589,6 +627,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             tvTraitLabel.setText("");
         }
         etValue.setText(value);
+        currentTraitValue=value;
 
 
     }
@@ -597,22 +636,26 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private void savePlotObservation(){
 
         try {
+            if(etValue.getText().toString().length() > 0) {
+                DateUtil cdate=new DateUtil();
 
-            Date date= new Date();
-            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            long time = date.getTime();
-            //Passed the milliseconds to constructor of Timestamp class
-            Timestamp ts = new Timestamp(time);
+                ContentValues content = new ContentValues();
+                content.put("plot_key", plotKey);
+                content.put("abbrev", abbrev);
+                content.put("plotno", plotNo);
+                content.put("variable_id", variable_id);
+                content.put("value", etValue.getText().toString());
+                content.put("timestamp", cdate.getDate());
+                content.put("committed","N");
+                if (currentTraitValue.equals("") || currentTraitValue.equals(null)) {
+                    studyMgr.insertPlotRecord(database, content);
+                } else {
+                    if(!etValue.getText().toString().equals(currentTraitValue)) {
+                        studyMgr.updatePlotRecord(database, etValue.getText().toString(), plotNo, variable_id, cdate.getDate());
+                    }
+                }
+            }
 
-            ContentValues content = new ContentValues();
-            content.put("plot_key", plotKey);
-            content.put("abbrev", abbrev);
-            content.put("plotno", plotNo);
-            content.put("variable_id", variable_id);
-            content.put("value", etValue.getText().toString());
-            content.put("timestamp", fmt.format(ts));
-            String s=fmt.format(ts);
-            studyMgr.insertPlotRecord(database, content);
         }catch (Exception e){
 
         }

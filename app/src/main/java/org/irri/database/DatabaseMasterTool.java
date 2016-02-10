@@ -21,6 +21,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
 
     private  Context context;
     private SQLiteDatabase database;
+    private SQLiteDatabase databaseStudy;
     private static final String DBNAME="master";
 
 
@@ -32,9 +33,11 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     }
 
 
+
     public DatabaseMasterTool(Context context, String databaseName )
     {
         super(new DatabaseContext(context), databaseName, null, 1);
+
     }
 
 
@@ -92,12 +95,12 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     }
 
     public SQLiteDatabase createStudyDatabase(Context context,String studyname) {
-        SQLiteDatabase database;
+        SQLiteDatabase database = null;
         boolean dbExist = checkDataBase(studyname);
-        String myPath = ApplicationPath.AppFolderStudy + studyname;
+        String myPath = ApplicationPath.AppFolderStudy+studyname;
         if (dbExist) {
-            context.deleteDatabase(ApplicationPath.AppFolderStudy + studyname);
-            database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
+            //context.deleteDatabase(ApplicationPath.AppFolderStudy +"/"+studyname);
+            //database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
         }else {
             database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
         }
@@ -114,15 +117,19 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     }
 
     public void createStudyDatabaseTable(SQLiteDatabase db){
-        db.execSQL(TableData.CREATE_STUDY_TABLE);
-        db.execSQL(TableData.CREATE_STUDY_METADATA_TABLE);
-        db.execSQL(TableData.CREATE_VARIABLE_SET_TABLE);
-        db.execSQL(TableData.CREATE_VARIABLE_MEASURING_TABLE);
-        db.execSQL(TableData.CREATE_PLOT_TABLE);
-        db.execSQL(TableData.CREATE_PLOT_DATA);
-        db.execSQL(TableData.CREATE_SETTINGS);
-        db.execSQL(TableData.CREATE_STUDY_COMMIT_HISTORY);
-        populateSettingValues(db);
+        try {
+            db.execSQL(TableData.CREATE_VARIABLE_SET_TABLE);
+            db.execSQL(TableData.CREATE_SETTINGS);
+            db.execSQL(TableData.CREATE_STUDY_TABLE);
+            db.execSQL(TableData.CREATE_STUDY_METADATA_TABLE);
+            db.execSQL(TableData.CREATE_VARIABLE_MEASURING_TABLE);
+            db.execSQL(TableData.CREATE_PLOT_TABLE);
+            db.execSQL(TableData.CREATE_PLOT_DATA);
+            db.execSQL(TableData.CREATE_STUDY_COMMIT_HISTORY);
+            populateSettingValues(db);
+        }catch (Exception e){
+
+        }
     }
 
     private void populateSettingValues(SQLiteDatabase db) {

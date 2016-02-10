@@ -45,6 +45,7 @@ import org.irri.entity.User;
 import org.irri.entity.VariableSet;
 import org.irri.expandablelist.ListObject;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -110,13 +111,17 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 studyList.clear();
-                studyList= getMyStudyList(etSearchStudy.getText().toString());
-                adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
+                studyList = getMyStudyList(etSearchStudy.getText().toString());
+                adapter = new MyStudyListAdapter(getApplicationContext(), R.layout.activity_studies_list_row, studyList);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
 
             }
         });
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -140,10 +145,14 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                     String name=cursor.getString(cursor.getColumnIndex("name"));
                     String title=cursor.getString(cursor.getColumnIndex("title"));
                     int id = cursor.getInt(cursor.getColumnIndex("id"));
+                    String lastCommit= cursor.getString(cursor.getColumnIndex("last_commit"));
+                    int uncommited=cursor.getInt(cursor.getColumnIndex("uncommited"));
                     StudyListData rec = new StudyListData();
                     rec.setId(id);
                     rec.setName(name);
                     rec.setTitle(title);
+                    rec.setDateLastCommited(lastCommit);
+                    rec.setUncommited(uncommited);
                     toreturn.add(rec);
                 } while (cursor.moveToNext());
             }
@@ -166,6 +175,11 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if(id==android.R.id.home){
+           viewLogoutConfirmDialog();
+            return true;
+        }
 
         switch (item.getItemId()){
             case R.id.action_loadstudy:
@@ -210,6 +224,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         public List<StudyListData> studyModelEntity;
         private int resource;
         private LayoutInflater inflater;
+        String studyName;
 
 
         public MyStudyListAdapter(Context context, int resource,  List<StudyListData> objects) {
@@ -229,6 +244,9 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
             TextView tvStudyName;
             TextView tvStudyId;
+            TextView tvLastSync;
+            TextView tvUncommitRecordLabel;
+            TextView tvUncommittedRec;
 
             tvStudyName = (TextView) convertView.findViewById(R.id.tvStudyName);
             tvStudyId = (TextView) convertView.findViewById(R.id.tvStudyId);
@@ -236,7 +254,32 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             tvStudyName.setText(studyModelEntity.get(position).getName());
             tvStudyId.setText(String.valueOf(studyModelEntity.get(position).getId()));
 
+            tvLastSync=(TextView)  convertView.findViewById(R.id.tvLastSync);
+            tvLastSync.setText("Last Commited: "+studyModelEntity.get(position).getDateLastCommited());
+
+            int totalUncommitedRecord=getTotalUncommitedRecord(studyModelEntity.get(position).getName());
+
+            if(totalUncommitedRecord > 0){
+                tvUncommitRecordLabel=(TextView)  convertView.findViewById(R.id.tvUncommitRecordLabel);
+                tvUncommittedRec=(TextView)  convertView.findViewById(R.id.tvUncommittedRec);
+                tvUncommitRecordLabel.setVisibility(View.VISIBLE);
+                tvUncommittedRec.setVisibility(View.VISIBLE);
+                tvUncommittedRec.setText(String.valueOf(totalUncommitedRecord));
+                tvUncommitRecordLabel.setText("New Records: ");
+
+            }
+
             return convertView;
+        }
+
+        private int getTotalUncommitedRecord(String studyName) {
+            DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
+            dbToolStudy.openStudyDatabase(studyName);
+            SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+            StudyManager mgrStudy = new StudyManager();
+            int toreturn=mgrStudy.getPlotRecordUnCommited(studyDatabase);
+            dbToolStudy.closeDB(studyDatabase);
+            return toreturn;
         }
     }
 
@@ -329,6 +372,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                     }
                 });
 
+
                 // Showing Alert Message
                 alertDialog.show();
             }
@@ -377,4 +421,51 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         etSearchStudy.requestFocus();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+       // super.onBackPressed();
+        viewLogoutConfirmDialog();
+
+    }
+
+    private void viewLogoutConfirmDialog(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                StudiesActivity.this);
+        alertDialog.setTitle("Confirm Logout");
+        alertDialog.setMessage("Are you sure you want to Logout?");
+        alertDialog.setIcon(R.drawable.info);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Write your code here to execute after dialog closed
+                //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            } });
+
+        // Showing Alert Message
+        alertDialog.show();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        studyList.clear();
+        studyList= getMyStudyList(null);
+        adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
+        adapter.notifyDataSetChanged();
+        lvStudyList.setAdapter(adapter);
+
+    }
 }

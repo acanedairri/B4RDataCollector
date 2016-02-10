@@ -30,18 +30,20 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get"
+        android:text="Get Variables"
         android:id="@+id/btnAdd"
+        android:onClick="actionBtnAdd"
         android:layout_below="@+id/spinnerVariableSet"
-        android:layout_alignParentEnd="true"
-        android:onClick="actionBtnAdd" />
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/lvVariableSetMember"
         android:layout_below="@+id/btnAdd"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/btnSaveVariable" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -56,12 +58,12 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="Add To Study Variables"
         android:id="@+id/btnSaveVariable"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:visibility="invisible"
-        android:onClick="actionBtnSaveVariable" />
+        android:onClick="actionBtnSaveVariable"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/textView15" />
 
     <TextView
         android:layout_width="wrap_content"

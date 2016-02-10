@@ -7,6 +7,8 @@ public class StudyListData {
 
     String name;
     String title;
+    String dateLastCommited;
+    int uncommited;
     int id;
 
     public String getName() {
@@ -31,5 +33,21 @@ public class StudyListData {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDateLastCommited() {
+        return dateLastCommited;
+    }
+
+    public void setDateLastCommited(String dateLastCommited) {
+        this.dateLastCommited = dateLastCommited;
+    }
+
+    public int getUncommited() {
+        return uncommited;
+    }
+
+    public void setUncommited(int uncommited) {
+        this.uncommited = uncommited;
     }
 }

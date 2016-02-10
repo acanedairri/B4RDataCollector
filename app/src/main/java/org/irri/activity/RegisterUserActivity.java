@@ -1,6 +1,8 @@
 package org.irri.activity;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -47,6 +49,8 @@ public class RegisterUserActivity extends AppCompatActivity {
     EditText txtUsername;
     EditText txtPassword;
     EditText txtConfirmPassword;
+    int userid;
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,10 @@ public class RegisterUserActivity extends AppCompatActivity {
         txtConfirmPassword = (EditText) findViewById(R.id.txtConfirmPassword);
         new JSONTask().execute(urlString);
 
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
     }
 
     public void actionCancel(View view) {
@@ -70,35 +78,59 @@ public class RegisterUserActivity extends AppCompatActivity {
 
     public void actionSave(View view){
 
-        try {
+        if(txtPassword.getText().toString().equals(txtConfirmPassword.getText().toString())) {
 
-            DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-            dbTool.openDBMaster();
-            SQLiteDatabase database = dbTool.getDatabase();
-            AccountManager mgr = new AccountManager(database);
+            try {
 
-            ContentValues values = new ContentValues();
-            values.put("display_name", txtUser.getText().toString());
-            values.put("program_abbrev", txtProgram.getText().toString());
-            values.put("username", txtUsername.getText().toString());
-            values.put("password", txtPassword.getText().toString());
-            values.put("access_token", accessToken);
+                DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+                SQLiteDatabase database = dbTool.openDBMaster();
+                AccountManager mgr = new AccountManager(database);
 
-            mgr.insert(values);
+                String username=txtUsername.getText().toString();
+                String password=txtPassword.getText().toString();
 
-            Cursor cursor = mgr.getAccountList();
+                ContentValues values = new ContentValues();
+                values.put("display_name", txtUser.getText().toString());
+                values.put("program_abbrev", txtProgram.getText().toString());
+                values.put("username", username);
+                values.put("password", password);
+                values.put("access_token", accessToken);
+                values.put("display_name",name);
+                values.put("user_id",userid);
+
+                mgr.insert(values,database);
+
+                Cursor cursor = mgr.getAccountList();
 
 
-            while (cursor.isAfterLast() == false) {
-                String val = cursor.getString(cursor.getColumnIndex("display_name")) + " " + cursor.getString(cursor.getColumnIndex("program_abbrev"));
-                Toast.makeText(this, val, Toast.LENGTH_LONG).show();
-                cursor.moveToNext();
+                while (cursor.isAfterLast() == false) {
+                    String val = cursor.getString(cursor.getColumnIndex("display_name")) + " " + cursor.getString(cursor.getColumnIndex("program_abbrev"));
+                    Toast.makeText(this, "New account for "+val + " registered", Toast.LENGTH_LONG).show();
+                    cursor.moveToNext();
+                }
+
+                finish();
+            } catch (Exception e) {
+                Toast.makeText(this, "Error getting user information", Toast.LENGTH_LONG).show();
             }
+        }else{
+            AlertDialog alertDialog = new AlertDialog.Builder(
+                    RegisterUserActivity.this).create();
+            alertDialog.setTitle("Error Message");
+            alertDialog.setMessage("Password does not match the confirm password");
+            alertDialog.setIcon(R.drawable.info);
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Write your code here to execute after dialog closed
+                    //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-        }catch (Exception e){
-            Toast.makeText(this, "Error getting user information", Toast.LENGTH_LONG).show();
+
+            // Showing Alert Message
+            alertDialog.show();
+            txtConfirmPassword.setText("");
         }
-
 
     }
 
@@ -120,6 +152,12 @@ public class RegisterUserActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if(id==android.R.id.home){
+
+            this.finish();
+            return true;
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -176,6 +214,8 @@ public class RegisterUserActivity extends AppCompatActivity {
 
             txtUser.setText(user.getData().getDisplay_name());
             txtProgram.setText(user.getData().getTeams().get(0).getTeam().getName());
+            userid=user.getData().getId();
+            name=user.getData().getDisplay_name();
         }
 
     }

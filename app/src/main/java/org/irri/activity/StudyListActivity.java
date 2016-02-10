@@ -1,12 +1,16 @@
 package org.irri.activity;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -41,6 +46,7 @@ import org.irri.entity.StudyListModel;
 import org.irri.entity.StudyMetadata;
 import org.irri.entity.StudyMetadataList;
 import org.irri.entity.VariableSet;
+import org.irri.utility.ConnectionState;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -107,15 +113,18 @@ public class StudyListActivity extends AppCompatActivity {
 
                 studyListModel.clear();
                 studyListModel = getMyStudyList(etSearchStudy.getText().toString());
-                adapter = new StudyListAdapter(getApplicationContext(),R.layout.activity_study_list_row,studyListModel);
+                adapter = new StudyListAdapter(getApplicationContext(), R.layout.activity_study_list_row, studyListModel);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
 
             }
         });
 
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
     }
 
@@ -258,6 +267,7 @@ public class StudyListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_study_list, menu);
         return true;
     }
@@ -268,6 +278,13 @@ public class StudyListActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+
+        if(id==android.R.id.home){
+
+            this.finish();
+            return true;
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_help) {
@@ -324,6 +341,7 @@ public class StudyListActivity extends AppCompatActivity {
         String studyId;
         private ProgressDialog Dialog = new ProgressDialog(StudyListActivity.this);
 
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -334,8 +352,17 @@ public class StudyListActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectionState conState = new ConnectionState(cm);
+            boolean hasCon = conState.haveNetworkConnection();
+
+            if (!hasCon) {
+                return null;
+            }
+
+
             HttpURLConnection con = null;
-            HttpURLConnection con2=null;
+            HttpURLConnection con2 = null;
             BufferedReader reader = null;
             BufferedReader readerData = null;
             String toreturn = null;
@@ -345,7 +372,7 @@ public class StudyListActivity extends AppCompatActivity {
 
                 //get study metadata
                 URL url = new URL(params[0]);
-                con=(HttpURLConnection) url.openConnection();
+                con = (HttpURLConnection) url.openConnection();
                 con.connect();
 
                 InputStream stream = con.getInputStream();
@@ -363,7 +390,7 @@ public class StudyListActivity extends AppCompatActivity {
 
                 //get observation
                 URL urlData = new URL(params[1]);
-                con2=(HttpURLConnection) urlData.openConnection();
+                con2 = (HttpURLConnection) urlData.openConnection();
                 con2.connect();
 
                 InputStream streamData = con2.getInputStream();
@@ -377,122 +404,128 @@ public class StudyListActivity extends AppCompatActivity {
                 }
 
 
-                toreturn=buffer.toString()+bufferData.toString();
+                toreturn = buffer.toString() + bufferData.toString();
 
                 return toreturn;
 
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+                return null;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                return null;
             } catch (ProtocolException e) {
                 e.printStackTrace();
+                return null;
             } catch (IOException e) {
                 e.printStackTrace();
+                return null;
             }
 
 
-
-
-            return  null;
         }
 
-        protected void onPostExecute(String result){
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
 /*            Intent data = new Intent();
             data.putExtra("data", result);
             setResult(RESULT_OK, data);*/
-            populateData(result);
-            setResult(RESULT_OK, null);
-            finish();
-            Dialog.dismiss();
+            if (result != null) {
+                populateData(result);
+                setResult(RESULT_OK, null);
+                Dialog.dismiss();
+                finish();
+
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        StudyListActivity.this).create();
+                alertDialog.setTitle("Error Message");
+                alertDialog.setMessage("Error retrieving plot data");
+                alertDialog.setIcon(R.drawable.info);
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Dialog.dismiss();
+                alertDialog.show();
+            }
         }
 
         private void populateData(String result) {
 
             //todo save data to database
+            try {
 
-            String[] res= result.split("#");
+                String[] res = result.split("#");
 
-            Gson gson = new Gson();
-            StudyMetadata studyMetadata = gson.fromJson(res[0], StudyMetadata.class);
-
-            // insert study record to master table
-            DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
-            SQLiteDatabase database =  dbTool.openDBMaster();
-            StudyManager mgr = new StudyManager();
-            ContentValues studyInfo= new ContentValues();
-            studyInfo.put("id", studyMetadata.getData().getId());
-            studyInfo.put("name", studyMetadata.getData().getName().toString());
-            studyInfo.put("title", studyMetadata.getData().getTitle().toString());
-            studyInfo.put("program", studyMetadata.getData().getProgram().toString());
-            studyInfo.put("phase", studyMetadata.getData().getPhase().toString());
-            studyInfo.put("season", studyMetadata.getData().getSeason().toString());
-            mgr.insertStudyBasicInfoRecord(database,studyInfo);
-            dbTool.closeDB(database);
-
-            // create new study database
-            DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyMetadata.getData().getName().toString());
-            SQLiteDatabase databaseStudy=dbToolStudy.createStudyDatabase(getApplicationContext(), studyMetadata.getData().getName().toString());
-            dbToolStudy.openStudyDatabase(studyMetadata.getData().getName().toString());
-            SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
-            dbToolStudy.createStudyDatabaseTable(studyDatabase);
-            StudyManager mgrStudy = new StudyManager();
-
-            // save study information
-
-            ContentValues context= new ContentValues();
-            context.put("id", studyMetadata.getData().getId());
-            context.put("name", studyMetadata.getData().getName().toString());
-            context.put("title", studyMetadata.getData().getTitle().toString());
-            context.put("program", studyMetadata.getData().getProgram().toString());
-            context.put("phase", studyMetadata.getData().getPhase().toString());
-            context.put("season", studyMetadata.getData().getSeason().toString());
-            context.put("place", studyMetadata.getData().getPlace().toString());
-            context.put("year", String.valueOf(studyMetadata.getData().getYear()));
-            mgrStudy.insertStudyBasicInfoRecord(studyDatabase,context);
+                Gson gson = new Gson();
+                StudyMetadata studyMetadata = gson.fromJson(res[0], StudyMetadata.class);
 
 
-            // save study metadata information
+                // create new study database
+                DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(), studyMetadata.getData().getName().toString());
+                SQLiteDatabase databaseStudy = dbToolStudy.createStudyDatabase(getApplicationContext(), studyMetadata.getData().getName().toString());
+                dbToolStudy.openStudyDatabase(studyMetadata.getData().getName().toString());
+                dbToolStudy.createStudyDatabaseTable(databaseStudy);
+                SQLiteDatabase studyDatabase = dbToolStudy.getDatabase();
+                StudyManager mgrStudy = new StudyManager();
 
-            List<StudyMetadata.DataEntity.MetadataEntity> objects=studyMetadata.getData().getMetadata();
+                // save study information
 
-            for(StudyMetadata.DataEntity.MetadataEntity rec:objects){
-                ContentValues contextMeta= new ContentValues();
-                contextMeta.put("variable", rec.getVariable_id().getValue());
-                contextMeta.put("value", rec.getValue());
-                mgrStudy.insertStudyMetaData(studyDatabase,contextMeta);
-            }
+                ContentValues context = new ContentValues();
+                context.put("id", studyMetadata.getData().getId());
+                context.put("name", studyMetadata.getData().getName().toString());
+                context.put("title", studyMetadata.getData().getTitle().toString());
+                context.put("program", studyMetadata.getData().getProgram().toString());
+                context.put("phase", studyMetadata.getData().getPhase().toString());
+                context.put("season", studyMetadata.getData().getSeason().toString());
+                context.put("place", studyMetadata.getData().getPlace().toString());
+                context.put("year", String.valueOf(studyMetadata.getData().getYear()));
+                mgrStudy.insertStudyBasicInfoRecord(studyDatabase, context);
 
-            // create plot table
-            Gson gsonData= new Gson();
-            ObservationData observationData = gsonData.fromJson(res[1], ObservationData.class);
 
-            int recno=1;
-            // save plot data
+                // save study metadata information
 
-            List<ObservationData.DataEntity.ItemsEntity> objectsData = observationData.getData().getItems();
+                List<StudyMetadata.DataEntity.MetadataEntity> objects = studyMetadata.getData().getMetadata();
 
-            for(ObservationData.DataEntity.ItemsEntity rec:objectsData){
+                for (StudyMetadata.DataEntity.MetadataEntity rec : objects) {
+                    ContentValues contextMeta = new ContentValues();
+                    contextMeta.put("variable", rec.getVariable_id().getValue());
+                    contextMeta.put("value", rec.getValue());
+                    mgrStudy.insertStudyMetaData(studyDatabase, contextMeta);
+                }
 
-                ContentValues cv= new ContentValues();
-                cv.put("recno",recno);
-                cv.put("plot_key",rec.getPLOT_KEY());
-                cv.put("rep",Integer.valueOf(rec.getREP()));
-                cv.put("plotno",Integer.valueOf(rec.getPLOTNO()));
-                cv.put("entno", Integer.valueOf(rec.getENTNO()));
-                cv.put("entcode",rec.getENTCODE());
-                cv.put("designation",rec.getDESIGNATION());
-                cv.put("parentage",rec.getPARENTAGE());
-                cv.put("generation", rec.getGENERATION());
-                cv.put("qr_code",String.valueOf(rec.getQR_CODE()));
-                cv.put("fldrow_cont",rec.getFLDROW_CONT());
-                cv.put("fldcol_cont",rec.getFLDCOL_CONT());
-                mgrStudy.insertPlot(studyDatabase,cv);
-                recno++;
+                // create plot table
+                Gson gsonData = new Gson();
+                ObservationData observationData = gsonData.fromJson(res[1], ObservationData.class);
 
-            }
+                int recno = 1;
+                // save plot data
+
+                List<ObservationData.DataEntity.ItemsEntity> objectsData = observationData.getData().getItems();
+
+                for (ObservationData.DataEntity.ItemsEntity rec : objectsData) {
+
+                    ContentValues cv = new ContentValues();
+                    cv.put("recno", recno);
+                    cv.put("plot_key", rec.getPLOT_KEY());
+                    cv.put("rep", Integer.valueOf(rec.getREP()));
+                    cv.put("plotno", Integer.valueOf(rec.getPLOTNO()));
+                    cv.put("entno", Integer.valueOf(rec.getENTNO()));
+                    cv.put("entcode", rec.getENTCODE());
+                    cv.put("designation", rec.getDESIGNATION());
+                    cv.put("parentage", rec.getPARENTAGE());
+                    cv.put("generation", rec.getGENERATION());
+                    cv.put("qr_code", String.valueOf(rec.getQR_CODE()));
+                    cv.put("fldrow_cont", rec.getFLDROW_CONT());
+                    cv.put("fldcol_cont", rec.getFLDCOL_CONT());
+                    mgrStudy.insertPlot(studyDatabase, cv);
+                    recno++;
+
+                }
 
 /*
 
@@ -518,23 +551,39 @@ public class StudyListActivity extends AppCompatActivity {
             }*/
 
 
-            dbToolStudy.closeDB(studyDatabase);
+                dbToolStudy.closeDB(databaseStudy);
+
+                // insert study record to master table
+                DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
+                SQLiteDatabase database = dbTool.openDBMaster();
+                StudyManager mgr = new StudyManager();
+                ContentValues studyInfo = new ContentValues();
+                studyInfo.put("id", studyMetadata.getData().getId());
+                studyInfo.put("name", studyMetadata.getData().getName().toString());
+                studyInfo.put("title", studyMetadata.getData().getTitle().toString());
+                studyInfo.put("program", studyMetadata.getData().getProgram().toString());
+                studyInfo.put("phase", studyMetadata.getData().getPhase().toString());
+                studyInfo.put("season", studyMetadata.getData().getSeason().toString());
+                mgr.insertStudyBasicInfoRecord(database, studyInfo);
+                dbTool.closeDB(database);
+
+            } catch (Exception e) {
+                System.out.println("Error");
+            }
         }
-    }
 
 
-
-    protected String addQuoteToSting(String s){
-        String[] line=s.split(",");
-        StringBuffer sb= new StringBuffer();
-        for(int i=0;i < line.length;i++){
-            sb.append("'"+line[i]+"'"+",");
+        protected String addQuoteToSting(String s) {
+            String[] line = s.split(",");
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < line.length; i++) {
+                sb.append("'" + line[i] + "'" + ",");
+            }
+            String toreturn = sb.toString().substring(0, sb.length() - 1);
+            return toreturn;
         }
-        String toreturn=sb.toString().substring(0,sb.length()-1);
-        return toreturn;
+
     }
-
-
 
 
 
@@ -558,7 +607,7 @@ public class StudyListActivity extends AppCompatActivity {
 
             try {
                 URL url = new URL(params[0]);
-                con=(HttpURLConnection) url.openConnection();
+                con = (HttpURLConnection) url.openConnection();
                 con.connect();
 
                 InputStream stream = con.getInputStream();
@@ -582,42 +631,43 @@ public class StudyListActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            return  null;
+            return null;
         }
 
-        protected void onPostExecute(String result){
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
             Intent intent = new Intent(getApplicationContext(), StudyInfoTabActivity.class);
 
             Gson gson = new Gson();
             StudyMetadata studyMetadata = gson.fromJson(result, StudyMetadata.class);
 
-            intent.putExtra("NAME",studyMetadata.getData().getName());
-            intent.putExtra("NAME",studyMetadata.getData().getName());
-            intent.putExtra("TITLE",studyMetadata.getData().getTitle());
-            intent.putExtra("PROGRAM",studyMetadata.getData().getProgram());
-            intent.putExtra("PLACE",studyMetadata.getData().getPlace());
+            intent.putExtra("NAME", studyMetadata.getData().getName());
+            intent.putExtra("NAME", studyMetadata.getData().getName());
+            intent.putExtra("TITLE", studyMetadata.getData().getTitle());
+            intent.putExtra("PROGRAM", studyMetadata.getData().getProgram());
+            intent.putExtra("PLACE", studyMetadata.getData().getPlace());
             intent.putExtra("PHASE", studyMetadata.getData().getPhase());
             intent.putExtra("YEAR", String.valueOf(studyMetadata.getData().getYear()));
             intent.putExtra("SEASON", studyMetadata.getData().getSeason());
 
             // get studymetadata;
-            String line="";
-            List<StudyMetadata.DataEntity.MetadataEntity> objects=studyMetadata.getData().getMetadata();
-            for(StudyMetadata.DataEntity.MetadataEntity rec:objects){
-                StudyMetadataList sm= new StudyMetadataList();
+            String line = "";
+            List<StudyMetadata.DataEntity.MetadataEntity> objects = studyMetadata.getData().getMetadata();
+            for (StudyMetadata.DataEntity.MetadataEntity rec : objects) {
+                StudyMetadataList sm = new StudyMetadataList();
                 sm.setVariable(rec.getVariable_id().getValue());
-                line=line+rec.getVariable_id().getValue()+":"+rec.getValue()+",";
+                line = line + rec.getVariable_id().getValue() + ":" + rec.getValue() + ",";
 
             }
 
- //           System.out.println(line);
+            //           System.out.println(line);
             intent.putExtra("OTHER_METADATA", line);
 
             startActivity(intent);
             Dialog.dismiss();
         }
     }
+
 
 }
 

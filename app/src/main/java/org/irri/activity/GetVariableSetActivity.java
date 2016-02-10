@@ -1,8 +1,10 @@
 package org.irri.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -59,6 +61,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
     HashMap<Integer,Integer> spinnerMap;
     ListView lv;
     int variableSetId;
+    String variableSetName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +72,10 @@ public class GetVariableSetActivity extends AppCompatActivity {
         accessToken=bundle.getString("ACCESSTOKEN");
 
         populateVariableSet();
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -93,6 +100,12 @@ public class GetVariableSetActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if(id==android.R.id.home){
+
+            this.finish();
+            return true;
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -141,6 +154,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
             cv.put("display_name",r.getDisplay_name());
             cv.put("scale_value",r.getScale_value());
             cv.put("is_selected","false");
+            cv.put("variable_set_name",variableSetName);
             studyMgr.insertVariableSet(database,cv);
         }
         dbTool.closeDB(database);
@@ -210,58 +224,85 @@ public class GetVariableSetActivity extends AppCompatActivity {
 
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+
+                return null;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+
+                return null;
             } catch (ProtocolException e) {
                 e.printStackTrace();
+                return null;
+
             } catch (IOException e) {
                 e.printStackTrace();
+                return null;
             }
 
-            return  null;
+
         }
 
         protected void onPostExecute(String result){
             super.onPostExecute(result);
-            Gson gson = new Gson();
-            VariableSet variableSet = gson.fromJson(result,VariableSet.class);
-            int i=0;
-            spinnerArray=new String[variableSet.getData().getItems().size()];
-            spinnerMap = new HashMap<Integer, Integer>();
-            for(VariableSet.DataEntity.ItemsEntity rec:variableSet.getData().getItems()){
-                spinnerMap.put(i, rec.getId());
-                spinnerArray[i] = rec.getAbbrev();
-                i++;
+            if(result!=null) {
+                Gson gson = new Gson();
+                VariableSet variableSet = gson.fromJson(result, VariableSet.class);
+                int i = 0;
+                spinnerArray = new String[variableSet.getData().getItems().size()];
+                spinnerMap = new HashMap<Integer, Integer>();
+                for (VariableSet.DataEntity.ItemsEntity rec : variableSet.getData().getItems()) {
+                    spinnerMap.put(i, rec.getId());
+                    spinnerArray[i] = rec.getAbbrev();
+                    i++;
 
-            }
+                }
 
-            spinnerVariableSet = (Spinner) findViewById(R.id.spinnerVariableSet);
-            adapterVariableSet = new ArrayAdapter<CharSequence>(GetVariableSetActivity.this,android.R.layout.simple_spinner_item, spinnerArray);
-            // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
-            adapterVariableSet.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerVariableSet.setAdapter(adapterVariableSet);
-            spinnerVariableSet.setSelection(0);
+                spinnerVariableSet = (Spinner) findViewById(R.id.spinnerVariableSet);
+                adapterVariableSet = new ArrayAdapter<CharSequence>(GetVariableSetActivity.this, android.R.layout.simple_spinner_item, spinnerArray);
+                // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
+                adapterVariableSet.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerVariableSet.setAdapter(adapterVariableSet);
+                spinnerVariableSet.setSelection(0);
 
-            spinnerVariableSet.setOnItemSelectedListener(
-                    new AdapterView.OnItemSelectedListener() {
-                        public void onItemSelected(
-                                AdapterView<?> parent, View view, int position, long id) {
-                            try {
-                                variableSetId = spinnerMap.get(position);
-                                TextView tvVariableSetid = (TextView) findViewById(R.id.tvVariableSetId);
-                                tvVariableSetid.setText(String.valueOf(variableSetId));
-                                ;
-                            } catch (Exception e) {
+                spinnerVariableSet.setOnItemSelectedListener(
+                        new AdapterView.OnItemSelectedListener() {
+                            public void onItemSelected(
+                                    AdapterView<?> parent, View view, int position, long id) {
+                                try {
+                                    variableSetId = spinnerMap.get(position);
+                                    variableSetName=spinnerVariableSet.getSelectedItem().toString();
+                                    TextView tvVariableSetid = (TextView) findViewById(R.id.tvVariableSetId);
+                                    tvVariableSetid.setText(String.valueOf(variableSetId));
+                                    ;
+                                } catch (Exception e) {
+
+                                }
+                            }
+
+
+                            public void onNothingSelected(AdapterView<?> parent) {
 
                             }
-                        }
+                        });
+                Button btnAdd =(Button) findViewById(R.id.btnAdd);
+                btnAdd.setVisibility(View.VISIBLE);
+                Dialog.dismiss();
+            }else{
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        GetVariableSetActivity.this).create();
+                alertDialog.setTitle("Error Message");
+                alertDialog.setMessage("Cannot connect to web service. Please check your internet connection");
+                alertDialog.setIcon(R.drawable.info);
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Dialog.dismiss();
+                alertDialog.show();
 
-
-                        public void onNothingSelected(AdapterView<?> parent) {
-
-                        }
-                    });
-            Dialog.dismiss();
+            }
         }
 
     }
