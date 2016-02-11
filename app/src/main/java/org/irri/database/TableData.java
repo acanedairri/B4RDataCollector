@@ -70,6 +70,7 @@ public class TableData {
             "`userid` INTEGER," +
             "`transaction_id` INTEGER," +
             "`date_commit` TEXT," +
+            "`remarks` TEXT," +
             "`checksum` TEXT" +
             ");";
 

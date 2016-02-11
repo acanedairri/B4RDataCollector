@@ -388,7 +388,7 @@ public class VariableSetActivity extends AppCompatActivity
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(
 				VariableSetActivity.this);
 		alertDialog.setTitle("Confirm Deletion");
-		alertDialog.setMessage("Are you sure you want to delete this variable set?");
+		alertDialog.setMessage("Are you sure you want to delete "+variableSetName +" variable set?");
 		alertDialog.setIcon(R.drawable.info);
 		alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {

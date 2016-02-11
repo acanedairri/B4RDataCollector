@@ -221,7 +221,7 @@ public class StudyManager {
         }
     }
 
-    public void updateStudyCommitTranscation(SQLiteDatabase database,String studyName) {
+    public void updateStudyCommitTranscation(SQLiteDatabase database,String studyName,int trans_id) {
         try {
             DateUtil cdate= new DateUtil();
             String sql="update study set last_commit='"+cdate.getDate()+"' where name='"+studyName+"'";
@@ -313,7 +313,7 @@ public class StudyManager {
 
     public void updatePlotRecord(SQLiteDatabase database,String newValue,String plotNo,int variable_id ,String dateUpdated) {
         try {
-            String sql="Update plot_data set value='"+newValue+"',last_modified='"+dateUpdated+"' where plotno='"+plotNo+"' and variable_id="+variable_id;
+            String sql="Update plot_data set value='"+newValue+"',last_modified='"+dateUpdated+"',committed='N' where plotno='"+plotNo+"' and variable_id="+variable_id;
             database.execSQL(sql);
         }catch (SQLiteException e) {
 
@@ -440,12 +440,39 @@ public class StudyManager {
  /*           String sql = "Delete from variable_set";
             database.rawQuery(sql, null);*/
 
-            database.delete(TableData.CREATE_VARIABLE_SET_TABLE, "variable_set_name" + "=?",
+            database.delete("variable_set", "variable_set_name" + "=?",
                     new String[] { variableSetName});
 
         } catch (SQLiteException e) {
             System.out.println(e);
 
         }
+    }
+
+    public boolean isExistRecord(SQLiteDatabase database, String plotNo, int variable_id) {
+        try {
+            String sql = "SELECT * from plot_data where plotno='"+plotNo+"' and variable_id="+variable_id;
+            Cursor cursor = database.rawQuery(sql, null);
+            if(cursor != null && cursor.getCount() > 0){
+                cursor.moveToFirst();
+                return true;
+            }
+
+        } catch (SQLiteException e) {
+
+        }
+
+
+        return false;
+    }
+
+    public void insertCommitHistory(SQLiteDatabase database,ContentValues cv) {
+
+        try {
+            database.insert("commit_history", null, cv);
+        } catch (SQLiteException e) {
+
+        }
+
     }
 }

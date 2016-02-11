@@ -518,7 +518,12 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 if (traitIndex == traitMeasuring.size() - 1) {
                     traitIndex = 0;
                     spinnerTrait.setSelection(traitIndex);
-                    actionBtnPlotNext(v);
+
+                    if(traitMeasuring.size()-1 > 0){
+                        showMsgToNextPlot(v);
+                    }else {
+                        actionBtnPlotNext(v);
+                    }
                     setTraitValue();
 
                 } else {
@@ -526,6 +531,27 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 }
             }
         }
+    }
+
+    private void showMsgToNextPlot(final View v) {
+
+        android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(
+                DataEntryActivity.this);
+        alertDialog.setTitle("Info");
+        alertDialog.setMessage("Moving to Next Plot?");
+        alertDialog.setIcon(R.drawable.info);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                actionBtnPlotNext(v);
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            } });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
     private boolean isValidValue(){
@@ -646,14 +672,18 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 content.put("variable_id", variable_id);
                 content.put("value", etValue.getText().toString());
                 content.put("timestamp", cdate.getDate());
-                content.put("committed","N");
-                if (currentTraitValue.equals("") || currentTraitValue.equals(null)) {
-                    studyMgr.insertPlotRecord(database, content);
-                } else {
+
+                boolean isExistRecord=studyMgr.isExistRecord(database,plotNo,variable_id);
+                if(isExistRecord){
                     if(!etValue.getText().toString().equals(currentTraitValue)) {
+                        content.put("committed","N");
                         studyMgr.updatePlotRecord(database, etValue.getText().toString(), plotNo, variable_id, cdate.getDate());
                     }
+                }else{
+                    content.put("committed","N");
+                    studyMgr.insertPlotRecord(database, content);
                 }
+
             }
 
         }catch (Exception e){

@@ -15,6 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -27,7 +30,9 @@ import org.irri.entity.PlotDataCommitModel;
 import org.irri.entity.StudyListData;
 import org.irri.entity.StudyMetadata;
 import org.irri.utility.ConnectionState;
+import org.irri.utility.DateUtil;
 import org.irri.utility.RestClient;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,6 +50,9 @@ public class StudyMainActivity extends AppCompatActivity {
 
     String studyName;
     String accessToken;
+    TextView tvNofication;
+    TableRow tblNotification;
+    int totalUncommitedRec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,10 @@ public class StudyMainActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
         accessToken = bundle.getString("ACCESSTOKEN");
+        totalUncommitedRec= bundle.getInt("NEWRECORD");
+
+       viewNotification();
+
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -65,6 +77,21 @@ public class StudyMainActivity extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+    }
+
+    private void viewNotification() {
+
+        tvNofication= (TextView) findViewById(R.id.tvNotification);
+        tblNotification =(TableRow) findViewById(R.id.tblNotification);
+
+        totalUncommitedRec=getTotalUncommitedRecord(studyName);
+
+        if(totalUncommitedRec > 0){
+            tblNotification.setVisibility(View.VISIBLE);
+            tvNofication.setText(" " +String.valueOf(totalUncommitedRec));
+        }else{
+            tblNotification.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -206,7 +233,7 @@ public class StudyMainActivity extends AppCompatActivity {
 
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         StudyMainActivity.this).create();
-                alertDialog.setTitle("Commit Message");
+                alertDialog.setTitle("Upload Message");
                 alertDialog.setMessage(commitMessage.getData().getMessage());
                 alertDialog.setIcon(R.drawable.info);
                 alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
@@ -223,8 +250,8 @@ public class StudyMainActivity extends AppCompatActivity {
             }else{
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         StudyMainActivity.this).create();
-                alertDialog.setTitle("Error Message");
-                //alertDialog.setMessage("Error retrieving plot data");
+                alertDialog.setTitle("Upload Error Message");
+                alertDialog.setMessage("Error uploading plot data. Please check your internet connection");
                 alertDialog.setMessage(result);
                 alertDialog.setIcon(R.drawable.info);
                 alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
@@ -240,6 +267,9 @@ public class StudyMainActivity extends AppCompatActivity {
 
         private void updateCommitHistory(CommitMessage result) {
             // create new study database
+            String transMsg=result.getData().getMessage().toString();
+            String[] s=transMsg.split(" ");
+
             DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
             dbToolStudy.openStudyDatabase(studyName);
             SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
@@ -253,11 +283,34 @@ public class StudyMainActivity extends AppCompatActivity {
             DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
             SQLiteDatabase database = dbTool.openDBMaster();
             StudyManager mgr = new StudyManager();
-            mgr.updateStudyCommitTranscation(database,studyName);
+            mgr.updateStudyCommitTranscation(database, studyName,s.length-1);
+
+            ContentValues cv = new ContentValues();
+            DateUtil cdate= new DateUtil();
+            cv.put("remarks",result.getData().getMessage());
+            cv.put("transaction_id",Integer.valueOf(s[s.length-1]));
+            cv.put("date_commit",cdate.getDate());
+            mgr.insertCommitHistory(database,cv);
+
             dbTool.closeDB(database);
 
 
             }
     }
 
+    private int getTotalUncommitedRecord(String studyName) {
+        DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
+        dbToolStudy.openStudyDatabase(studyName);
+        SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+        StudyManager mgrStudy = new StudyManager();
+        int toreturn=mgrStudy.getPlotRecordUnCommited(studyDatabase);
+        dbToolStudy.closeDB(studyDatabase);
+        return toreturn;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewNotification();
+    }
 }

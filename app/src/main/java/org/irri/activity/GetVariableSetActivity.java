@@ -290,7 +290,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
             }else{
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         GetVariableSetActivity.this).create();
-                alertDialog.setTitle("Error Message");
+                alertDialog.setTitle("Connection Error");
                 alertDialog.setMessage("Cannot connect to web service. Please check your internet connection");
                 alertDialog.setIcon(R.drawable.info);
                 alertDialog.setButton("OK", new DialogInterface.OnClickListener() {

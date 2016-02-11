@@ -76,6 +76,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     private TableRow tblRowSearch;
     private EditText etSearchStudy;
     int searchFlag=0;
+    private int totalUncommitedRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +217,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         Intent intent = new Intent(getApplicationContext(), StudyMainActivity.class);
         intent.putExtra("STUDYNAME", study.getName());
         intent.putExtra("ACCESSTOKEN", accessToken);
+        intent.putExtra("NEWRECORD",totalUncommitedRecord);
         startActivity(intent);
     }
 
@@ -257,7 +259,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             tvLastSync=(TextView)  convertView.findViewById(R.id.tvLastSync);
             tvLastSync.setText("Last Commited: "+studyModelEntity.get(position).getDateLastCommited());
 
-            int totalUncommitedRecord=getTotalUncommitedRecord(studyModelEntity.get(position).getName());
+             int totalUncommitedRecord=getTotalUncommitedRecord(studyModelEntity.get(position).getName());
 
             if(totalUncommitedRecord > 0){
                 tvUncommitRecordLabel=(TextView)  convertView.findViewById(R.id.tvUncommitRecordLabel);
@@ -290,7 +292,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Dialog.setMessage(" please wait while loading............");
+            Dialog.setMessage(" Please wait while loading the studies");
             Dialog.show();
         }
 
@@ -356,7 +358,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                         StudiesActivity.this).create();
 
                 // Setting Dialog Title
-                alertDialog.setTitle("Error Message");
+                alertDialog.setTitle("Connection Error");
 
                 // Setting Dialog Message
                 alertDialog.setMessage("Cannot connect to web service. Please check your internet connection");
@@ -466,6 +468,5 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
         adapter.notifyDataSetChanged();
         lvStudyList.setAdapter(adapter);
-
     }
 }

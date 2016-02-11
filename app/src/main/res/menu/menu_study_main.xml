@@ -16,14 +16,14 @@
         app:showAsAction="always"
         android:title="Help"/>
 
-    <item android:id="@+id/action_commit_study" android:title="Commit Study"
+    <item android:id="@+id/action_commit_study" android:title="Upload Study"
         android:orderInCategory="400" app:showAsAction="never" />
 
     <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
         android:orderInCategory="500" app:showAsAction="never" />
 
-    <item android:id="@+id/action_log_record" android:title="@string/action_log_recording"
-        android:orderInCategory="600" app:showAsAction="never" />
+<!--    <item android:id="@+id/action_log_record" android:title="@string/action_log_recording"
+        android:orderInCategory="600" app:showAsAction="never" />-->
 
 
 

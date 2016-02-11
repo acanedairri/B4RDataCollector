@@ -10,7 +10,7 @@
     <string name="action_data_entry">Data Entry</string>
     <string name="action_trait_measuring">Trait To Measure</string>
     <string name="action_log_recording">Log Record</string>
-    <string name="action_commit_history">Commit History</string>
+    <string name="action_commit_history">Upload History</string>
 
     <!-- TODO: Action Data Entry Study -->
     <string name="action_search_study">Search</string>
@@ -60,7 +60,7 @@
     <string name="title_activity_internal_storage">InternalStorageActivity</string>
     <string name="title_activity_study_main">StudyMainActivity</string>
     <string name="title_activity_plot_data_entry">Plot Data Entry</string>
-    <string name="title_activity_trait_measuring">Variable To Measure</string>
+    <string name="title_activity_trait_measuring">Variable(s) To Measure</string>
     <string name="title_activity_variable_set">Variables</string>
 
     <string name="hello_world">Hello world!</string>

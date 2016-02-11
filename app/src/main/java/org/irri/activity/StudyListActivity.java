@@ -440,7 +440,7 @@ public class StudyListActivity extends AppCompatActivity {
             } else {
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         StudyListActivity.this).create();
-                alertDialog.setTitle("Error Message");
+                alertDialog.setTitle("Web Service Connection Error");
                 alertDialog.setMessage("Error retrieving plot data");
                 alertDialog.setIcon(R.drawable.info);
                 alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
