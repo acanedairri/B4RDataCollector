@@ -42,6 +42,30 @@ public class StudyManager {
         return cursor;
     }
 
+    public Cursor getAllStudyCommitHistory(SQLiteDatabase database) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from commit_history order by transaction_id desc";
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
+    public Cursor getAllStudyCommitHistory(SQLiteDatabase database,String filter) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from commit_history";
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
     public Cursor getSettings(SQLiteDatabase database) {
         Cursor cursor = null;
         try {
@@ -150,7 +174,7 @@ public class StudyManager {
 
     public Cursor getVariableSet(SQLiteDatabase database,String  variableSetName) {
         try {
-            String sql = "SELECT * from variable_set where variable_set_name='"+variableSetName+"'";
+            String sql = "SELECT * from variable_set where variable_set_name='"+variableSetName+"' order by abbrev";
             Cursor cursor = database.rawQuery(sql, null);
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -164,7 +188,7 @@ public class StudyManager {
 
     public Cursor getVariableSet(SQLiteDatabase database,String filter,String variableSetName) {
         try {
-            String sql = "SELECT * from variable_set where variable_set_name='"+variableSetName+"' and  abbrev like '"+filter+"%'";
+            String sql = "SELECT * from variable_set where variable_set_name='"+variableSetName+"' and  abbrev like '"+filter+"%' order by abbrev";
             Cursor cursor = database.rawQuery(sql, null);
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -474,5 +498,15 @@ public class StudyManager {
 
         }
 
+    }
+
+    public void updateSettingsLastRow(SQLiteDatabase database, int rec) {
+        String sql="Update settings set last_recno="+rec;
+
+        try {
+            database.execSQL(sql);
+        } catch (SQLiteException e) {
+            System.out.println(e.toString());
+        }
     }
 }

@@ -38,12 +38,15 @@ public class TraitMeasuringActivity extends AppCompatActivity
 	private EditText txtTrait;
 	private ExpandableRadioListAdapter listAdapter;
 	private String studyName;
+	private String accessToken;
+
 	public void onCreate(Bundle paramBundle)
 	{
 		super.onCreate(paramBundle);
 		setContentView(R.layout.activity_trait_measuring);
 		Bundle bundle = getIntent().getExtras();
 		studyName=bundle.getString("STUDYNAME");
+		accessToken=bundle.getString("ACCESSTOKEN");
 	
 		refreshList();
 
@@ -115,6 +118,7 @@ public class TraitMeasuringActivity extends AppCompatActivity
 			Intent i = new Intent(TraitMeasuringActivity.this, VariableSetActivity.class);
 			i.putExtra("STUDYNAME", studyName);
 			i.putExtra("TRAIT_MEASURING_MODEL", traitMeasuringModel);
+			i.putExtra("ACCESSTOKEN",accessToken);
 			startActivityForResult(i, REQUEST_CODE );
 		}
 

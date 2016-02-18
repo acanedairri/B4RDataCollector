@@ -82,7 +82,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
     private void populateVariableSet() {
 
             // TODO: 2015-12-08
-        String urlStringStudy="http://api.breeding4rice.irri.org/dev/v1/variable-sets?accessToken="+accessToken;
+        String urlStringStudy="http://api.breeding4rice.irri.org/dev/v1/variable-sets?accessToken="+accessToken+"&limit=-1&sort=abbrev";
         new JSONTaskGetVariableSet().execute(urlStringStudy);
 
     }
@@ -290,7 +290,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
             }else{
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         GetVariableSetActivity.this).create();
-                alertDialog.setTitle("Connection Error");
+                alertDialog.setTitle("Error Message");
                 alertDialog.setMessage("Cannot connect to web service. Please check your internet connection");
                 alertDialog.setIcon(R.drawable.info);
                 alertDialog.setButton("OK", new DialogInterface.OnClickListener() {

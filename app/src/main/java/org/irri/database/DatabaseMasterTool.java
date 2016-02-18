@@ -80,7 +80,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     }
 
     public void openDb(String dbName){
-        String myPath = ApplicationPath.AppFolderStudy + dbName;
+        String myPath = ApplicationPath.APP_PATH_STUDY + dbName;
         database = SQLiteDatabase.openDatabase(myPath, null,
                 SQLiteDatabase.OPEN_READWRITE);
         setDatabase(database);
@@ -97,10 +97,10 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     public SQLiteDatabase createStudyDatabase(Context context,String studyname) {
         SQLiteDatabase database = null;
         boolean dbExist = checkDataBase(studyname);
-        String myPath = ApplicationPath.AppFolderStudy+studyname;
+        String myPath = ApplicationPath.APP_PATH_STUDY+studyname;
         if (dbExist) {
             //context.deleteDatabase(ApplicationPath.AppFolderStudy +"/"+studyname);
-            //database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
+            database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
         }else {
             database = context.openOrCreateDatabase(myPath, Context.MODE_WORLD_WRITEABLE, null);
         }
@@ -110,7 +110,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     public void openStudyDatabase(String databaseName) throws SQLException {
 
         // Open the database
-        String myPath = ApplicationPath.AppFolderStudy + databaseName;
+        String myPath = ApplicationPath.APP_PATH_STUDY+ databaseName;
         SQLiteDatabase database = SQLiteDatabase.openDatabase(myPath, null,
                 SQLiteDatabase.OPEN_READWRITE);
         setDatabase(database);
@@ -138,7 +138,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         contentSettings.put("datafield2","rep");
         contentSettings.put("datafield3","entno");
         contentSettings.put("datafield4","designation");
-        database.insert("settings", null, contentSettings);
+        db.insert("settings", null, contentSettings);
 
     }
 
@@ -174,7 +174,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         SQLiteDatabase checkDB = null;
 
         try {
-            String myPath =ApplicationPath.AppFolderStudy + databaseName;
+            String myPath =ApplicationPath.APP_PATH_STUDY + databaseName;
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
             // database does't exist yet.

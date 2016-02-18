@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Last Committed: 01/02/2015"
+            android:text="Last Uploading: 01/02/2015"
             android:id="@+id/tvLastSync"
             android:paddingLeft="20dp" />
 

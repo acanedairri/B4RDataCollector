@@ -25,7 +25,7 @@ public class FileManager {
 	public void createAppFolders(Context context) throws IOException  {
 		// TODO Auto-generated method stub
 
-		String tmp= ApplicationPath.AppFolder;
+		String tmp= ApplicationPath.APP_PATH;
 		File f = new File(tmp);
 
 
@@ -36,7 +36,10 @@ public class FileManager {
 			File appDirectory = new File(tmp);
 			appDirectory.mkdirs();
 
-			File folderStudy = new File(ApplicationPath.AppFolderStudy);
+			File folderStudy = new File(ApplicationPath.APP_PATH_STUDY);
+			folderStudy.mkdirs();
+
+			File folderLog = new File(ApplicationPath.APP_PATH_LOG);
 			folderStudy.mkdirs();
 
 		}

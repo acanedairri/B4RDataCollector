@@ -58,7 +58,8 @@ public class VariableSetActivity extends AppCompatActivity
 	String[] spinnerArray;
 	HashMap<Integer,Integer> spinnerMap;
 	String variableSetName;
-	
+	private String accessToken;
+
 	public void onCreate(Bundle paramBundle)
 	{
 		super.onCreate(paramBundle);
@@ -66,6 +67,7 @@ public class VariableSetActivity extends AppCompatActivity
 		traitMeasuringModel = (TraitMeasuringModel) getIntent().getSerializableExtra("TRAIT_MEASURING_MODEL");
 		Bundle bundle = getIntent().getExtras();
 		studyName=bundle.getString("STUDYNAME");
+		accessToken=bundle.getString("ACCESSTOKEN");
 		btnClearSearch =(ImageView) findViewById(R.id.btnClearSearch);
 		populateVariableSet();
 
@@ -213,10 +215,22 @@ public class VariableSetActivity extends AppCompatActivity
 		}else if(id == R.id.action_remove_variable_set){
 			viewLogoutConfirmDialog();
 
+		}else if(id==R.id.action_load_variable_set){
+			Intent intent = new Intent(VariableSetActivity.this, GetVariableSetActivity.class);
+			intent.putExtra("STUDYNAME",studyName);
+			intent.putExtra("ACCESSTOKEN", accessToken);
+			startActivity(intent);
 		}
 
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		populateVariableSet();
+		refreshList(null);
 	}
 
 	private void removeVariableSet() {

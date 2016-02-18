@@ -21,7 +21,7 @@
     <string name="action_load_study">Load Study</string>
 
     <!-- TODO: Action Menu Variable Set -->
-    <string name="action_load_variable_set">Get Variable Set</string>
+    <string name="action_load_variable_set">Get New Variable Set</string>
 
 
     <string name="barcode">Barcode</string>
@@ -44,7 +44,7 @@
     <string name="title_activity_variable">Variable</string>
     <string name="title_activity_test_database">TestDatabaseActivity</string>
     <string name="login">Login</string>
-    <string name="title_activity_register_user">Register User</string>
+    <string name="title_activity_register_user">Create Offline Account</string>
     <string name="title_activity_authenticate">Authenticate</string>
     <string name="title_activity_studies">Study List</string>
     <string name="title_activity_study">Study</string>

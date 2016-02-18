@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -23,8 +26,10 @@ import org.irri.database.AccountManager;
 import org.irri.database.DatabaseStudyHelper;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.entity.AccessToken;
+import org.irri.utility.ApplicationPath;
 import org.irri.utility.FileManager;
 
+import java.io.File;
 import java.io.IOException;
 
 public class LoginActivity extends ActionBarActivity {
@@ -33,17 +38,20 @@ public class LoginActivity extends ActionBarActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="Z1YtGS8jPC8bCuS4gD48Pg7gnAaYxDklYkrTNo9J";
+    private String token="NdkOqgqdmGSAQhX7scjHuD7K0f4a35JSGGvsIkiV";
+    private String versionName;
+    private int versionNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //setupAppFolder();
+        setupAppFolder();
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.b4rlogo);
+        createDirs();
 
     }
 
@@ -103,7 +111,7 @@ public class LoginActivity extends ActionBarActivity {
         SQLiteDatabase database = dbTool.openDBMaster();
         AccountManager mgr = new AccountManager(database);
 
-        Cursor cursor = mgr.getUserToken(database,username.getText().toString(),password.getText().toString());
+        Cursor cursor = mgr.getUserToken(database, username.getText().toString(), password.getText().toString());
 
 
         if(cursor != null && cursor.getCount() > 0){
@@ -162,6 +170,47 @@ public class LoginActivity extends ActionBarActivity {
               //  Toast.makeText(this, data.getIntExtra("Error getting access token", 0) + "", Toast.LENGTH_LONG).show();
             }
         }
+
+    }
+
+    private void createDirs() {
+        createDir(ApplicationPath.APP_PATH);
+        createDir(ApplicationPath.APP_PATH_STUDY);
+    }
+
+
+    private void createDir(String path) {
+        File dir = new File(path);
+        File blankFile = new File(path);
+
+        if (!dir.exists()) {
+            dir.mkdirs();
+
+/*            try {
+                blankFile.getParentFile().mkdirs();
+                blankFile.createNewFile();
+                scanFile(blankFile);
+            } catch (IOException e) {
+                //ErrorLog("DirectoryError.txt", "" + e.getMessage());
+            }*/
+        }
+    }
+
+    private void scanFile(File filePath) {
+        MediaScannerConnection.scanFile(this, new String[]{filePath.getAbsolutePath()}, null, null);
+    }
+
+    private void checkNewVersion() {
+        final PackageManager packageManager = this.getPackageManager();
+
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(this.getPackageName(), 0);
+            versionName = packageInfo.versionName;
+            versionNum = packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionName = null;
+        }
+
 
     }
 

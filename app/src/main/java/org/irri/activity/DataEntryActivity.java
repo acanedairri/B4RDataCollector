@@ -142,6 +142,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
     TableRow tblRowDate;
     private boolean withScaleValue=false;
+    private String accessToken;
 
 
     public DataEntryActivity(){
@@ -155,6 +156,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         setContentView(R.layout.activity_data_entry);
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
+        accessToken=bundle.getString("ACCESSTOKEN");
        // initdatabase
 
         initDatabase();
@@ -318,6 +320,12 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     dataField2=cursorSettings.getString(cursorSettings.getColumnIndex("datafield2"));
                     dataField3=cursorSettings.getString(cursorSettings.getColumnIndex("datafield3"));
                     dataField4=cursorSettings.getString(cursorSettings.getColumnIndex("datafield4"));
+                    int lplot=cursorSettings.getInt(cursorSettings.getColumnIndex("last_recno"));
+                    if(lplot > 0){
+                        plotIndex=lplot;
+                    }else{
+                        plotIndex=1;
+                    }
 
                 } while (cursorSettings.moveToNext());
             }
@@ -402,6 +410,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         if(id == R.id.action_trait_measuring) {
             Intent intent = new Intent(DataEntryActivity.this, TraitMeasuringActivity.class);
             intent.putExtra("STUDYNAME", studyName);
+            intent.putExtra("ACCESSTOKEN", accessToken);
             startActivityForResult(intent, REQUEST_CODE);
         }else if(id==R.id.action_plotorder){
             Intent intent = new Intent(DataEntryActivity.this, PlotOrderSettingActivity.class);
@@ -904,12 +913,15 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     protected void onResume() {
 
         super.onResume();
-       setPlotRecordDisplay(Integer.valueOf(plotNo));
+        setPlotRecordDisplay(Integer.valueOf(plotNo));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        studyMgr.updateSettingsLastRow(database,plotIndex);
+        savePlotObservation();
 
         try
         {

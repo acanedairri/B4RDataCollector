@@ -14,7 +14,7 @@
         android:orderInCategory="200"
         android:icon="@drawable/measure"
         app:showAsAction="always"
-        android:title="Trait Measuring"/>
+        android:title="Set Variable to Measuring"/>
 
     <item android:id="@+id/action_help"
         android:orderInCategory="300"

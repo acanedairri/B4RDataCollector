@@ -146,6 +146,10 @@
             android:name=".GetVariableSetActivity"
             android:label="@string/title_activity_get_variable_set" >
         </activity>
+        <activity
+            android:name=".UploadHistoryActivity"
+            android:label="Upload History" >
+        </activity>
     </application>
 
 </manifest>

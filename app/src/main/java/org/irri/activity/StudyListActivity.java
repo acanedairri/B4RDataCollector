@@ -221,7 +221,7 @@ public class StudyListActivity extends AppCompatActivity {
         if (item.getTitle() == "Get Study") {
             // TODO: 2015-12-08
             String urlStringStudy="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
-            String urlStringObsevationData="http://api.breeding4rice.irri.org/dev/v1/studies/"+item.getItemId()+"/data-collection?accessToken="+accessToken;
+            String urlStringObsevationData="http://api.breeding4rice.irri.org/dev/v1/studies/"+item.getItemId()+"/data-collection?accessToken="+accessToken+"&sort=plotno&limit=-1";
             new JSONTaskGetStudy().execute(urlStringStudy,urlStringObsevationData);
         }else if(item.getTitle() == "View Info") {
             // TODO: 2015-12-08  get study metadata and open to activity
@@ -340,6 +340,7 @@ public class StudyListActivity extends AppCompatActivity {
 
         String studyId;
         private ProgressDialog Dialog = new ProgressDialog(StudyListActivity.this);
+        String dataRows;
 
 
         @Override
@@ -403,8 +404,16 @@ public class StudyListActivity extends AppCompatActivity {
                     bufferData.append(lineData);
                 }
 
+                Gson gsonData = new Gson();
+                try {
+                    ObservationData observationData = gsonData.fromJson(bufferData.toString(), ObservationData.class);
+                }catch (Exception e){
+                    return null;
+                }
+
 
                 toreturn = buffer.toString() + bufferData.toString();
+                dataRows=bufferData.toString();
 
                 return toreturn;
 
@@ -500,7 +509,8 @@ public class StudyListActivity extends AppCompatActivity {
 
                 // create plot table
                 Gson gsonData = new Gson();
-                ObservationData observationData = gsonData.fromJson(res[1], ObservationData.class);
+
+                ObservationData observationData = gsonData.fromJson(dataRows, ObservationData.class);
 
                 int recno = 1;
                 // save plot data

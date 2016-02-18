@@ -117,12 +117,14 @@ public class StudyMainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_data_entry) {
             Intent intent = new Intent(StudyMainActivity.this, DataEntryActivity.class);
-            intent.putExtra("STUDYNAME",studyName);
+            intent.putExtra("STUDYNAME", studyName);
+            intent.putExtra("ACCESSTOKEN", accessToken);
             startActivity(intent);
             return true;
         }else if(id == R.id.action_trait_measuring){
             Intent intent = new Intent(StudyMainActivity.this, TraitMeasuringActivity.class);
             intent.putExtra("STUDYNAME",studyName);
+            intent.putExtra("ACCESSTOKEN", accessToken);
             startActivity(intent);
         }else if(id == R.id.action_load_variable_set) {
             Intent intent = new Intent(StudyMainActivity.this, GetVariableSetActivity.class);
@@ -136,7 +138,13 @@ public class StudyMainActivity extends AppCompatActivity {
             //String urlStringStudy="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
            // String url="http://api.breeding4rice.irri.org/dev/v1/studies/"+item.getItemId()+"/data-collection?accessToken="+accessToken;
             new JSONTaskCommitStudy().execute(postUrl,jsonString);
-        }
+        }else if(id == R.id.action_commit_history) {
+            Intent intent = new Intent(StudyMainActivity.this, UploadHistoryActivity.class);
+            intent.putExtra("STUDYNAME",studyName);
+            intent.putExtra("ACCESSTOKEN",accessToken);
+            startActivity(intent);
+    }
+
 
 
         return super.onOptionsItemSelected(item);
@@ -275,6 +283,12 @@ public class StudyMainActivity extends AppCompatActivity {
             SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
             StudyManager mgrStudy = new StudyManager();
             mgrStudy.updatePlotRecordCommited(studyDatabase);
+            ContentValues cv = new ContentValues();
+            DateUtil cdate= new DateUtil();
+            cv.put("remarks",result.getData().getMessage());
+            cv.put("transaction_id",Integer.valueOf(s[s.length-1]));
+            cv.put("date_commit",cdate.getDate());
+            mgrStudy.insertCommitHistory(studyDatabase, cv);
             dbToolStudy.closeDB(studyDatabase);
 
             // update master list study
@@ -283,14 +297,7 @@ public class StudyMainActivity extends AppCompatActivity {
             DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
             SQLiteDatabase database = dbTool.openDBMaster();
             StudyManager mgr = new StudyManager();
-            mgr.updateStudyCommitTranscation(database, studyName,s.length-1);
-
-            ContentValues cv = new ContentValues();
-            DateUtil cdate= new DateUtil();
-            cv.put("remarks",result.getData().getMessage());
-            cv.put("transaction_id",Integer.valueOf(s[s.length-1]));
-            cv.put("date_commit",cdate.getDate());
-            mgr.insertCommitHistory(database,cv);
+            mgr.updateStudyCommitTranscation(database, studyName, s.length - 1);
 
             dbTool.closeDB(database);
 
