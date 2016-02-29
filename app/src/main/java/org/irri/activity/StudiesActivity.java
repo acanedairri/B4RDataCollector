@@ -76,7 +76,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     private TableRow tblRowSearch;
     private EditText etSearchStudy;
     int searchFlag=0;
-    private int totalUncommitedRecord;
+   // private int totalUncommitedRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         setContentView(R.layout.activity_studies);
         Bundle bundle = getIntent().getExtras();
         accessToken=bundle.getString("ACCESS_TOKEN");
+
         studyList= getMyStudyList(null);
         lvStudyList= (ListView) findViewById(R.id.lvStudyList);
         adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
@@ -130,7 +131,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         List<StudyListData> toreturn= new ArrayList<StudyListData>();
 
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-        SQLiteDatabase database = dbTool.openDBMaster();
+        SQLiteDatabase database = dbTool.getMasterDatabase();
         StudyManager mgr = new StudyManager();
         Cursor cursor=null;
         if(filter==null){
@@ -144,6 +145,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             if (cursor.moveToFirst()) {
                 do {
                     String name=cursor.getString(cursor.getColumnIndex("name"));
+                    String studyname=cursor.getString(cursor.getColumnIndex("studyname"));
                     String title=cursor.getString(cursor.getColumnIndex("title"));
                     int id = cursor.getInt(cursor.getColumnIndex("id"));
                     String lastCommit= cursor.getString(cursor.getColumnIndex("last_commit"));
@@ -151,6 +153,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                     StudyListData rec = new StudyListData();
                     rec.setId(id);
                     rec.setName(name);
+                    rec.setStudyname(studyname);
                     rec.setTitle(title);
                     rec.setDateLastCommited(lastCommit);
                     rec.setUncommited(uncommited);
@@ -200,6 +203,9 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 }
                 break;
             case R.id.action_help:
+                Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
+                intent.putExtra("IMAGE", "help_studies");
+                startActivity(intent);
                 break;
         }
 
@@ -217,7 +223,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         Intent intent = new Intent(getApplicationContext(), StudyMainActivity.class);
         intent.putExtra("STUDYNAME", study.getName());
         intent.putExtra("ACCESSTOKEN", accessToken);
-        intent.putExtra("NEWRECORD",totalUncommitedRecord);
+        //intent.putExtra("NEWRECORD",totalUncommitedRecord);
         startActivity(intent);
     }
 
@@ -245,30 +251,41 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             }
 
             TextView tvStudyName;
+            TextView tvName;
             TextView tvStudyId;
             TextView tvLastSync;
             TextView tvUncommitRecordLabel;
             TextView tvUncommittedRec;
 
             tvStudyName = (TextView) convertView.findViewById(R.id.tvStudyName);
+            tvName = (TextView) convertView.findViewById(R.id.tvName);
             tvStudyId = (TextView) convertView.findViewById(R.id.tvStudyId);
 
             tvStudyName.setText(studyModelEntity.get(position).getName());
             tvStudyId.setText(String.valueOf(studyModelEntity.get(position).getId()));
 
+            tvName.setText(studyModelEntity.get(position).getStudyname());
+
             tvLastSync=(TextView)  convertView.findViewById(R.id.tvLastSync);
             tvLastSync.setText("Last Commited: "+studyModelEntity.get(position).getDateLastCommited());
 
-             int totalUncommitedRecord=getTotalUncommitedRecord(studyModelEntity.get(position).getName());
+            tvUncommitRecordLabel=(TextView)  convertView.findViewById(R.id.tvUncommitRecordLabel);
+            tvUncommittedRec=(TextView)  convertView.findViewById(R.id.tvUncommittedRec);
+
+            String studyTempName=studyModelEntity.get(position).getName();
+
+            int totalUncommitedRecord=getTotalUncommitedRecord(studyModelEntity.get(position).getName());
 
             if(totalUncommitedRecord > 0){
-                tvUncommitRecordLabel=(TextView)  convertView.findViewById(R.id.tvUncommitRecordLabel);
-                tvUncommittedRec=(TextView)  convertView.findViewById(R.id.tvUncommittedRec);
+
                 tvUncommitRecordLabel.setVisibility(View.VISIBLE);
                 tvUncommittedRec.setVisibility(View.VISIBLE);
                 tvUncommittedRec.setText(String.valueOf(totalUncommitedRecord));
                 tvUncommitRecordLabel.setText("New Records: ");
 
+            }else{
+                tvUncommitRecordLabel.setVisibility(View.GONE);
+                tvUncommittedRec.setVisibility(View.GONE);
             }
 
             return convertView;
@@ -276,8 +293,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
         private int getTotalUncommitedRecord(String studyName) {
             DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
-            dbToolStudy.openStudyDatabase(studyName);
-            SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+            SQLiteDatabase studyDatabase=dbToolStudy.getStudyDatabase(studyName);
             StudyManager mgrStudy = new StudyManager();
             int toreturn=mgrStudy.getPlotRecordUnCommited(studyDatabase);
             dbToolStudy.closeDB(studyDatabase);

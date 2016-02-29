@@ -123,8 +123,7 @@ public class UploadHistoryActivity extends AppCompatActivity implements AdapterV
         List<UploadHistoryModel> toreturn= new ArrayList<UploadHistoryModel>();
 
         DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
-        dbToolStudy.openStudyDatabase(studyName);
-        SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+        SQLiteDatabase studyDatabase=dbToolStudy.getStudyDatabase(studyName);
         StudyManager mgr = new StudyManager();
         Cursor cursor=null;
         if(filter==null){

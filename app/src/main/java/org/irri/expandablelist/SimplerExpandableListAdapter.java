@@ -126,8 +126,7 @@ public class SimplerExpandableListAdapter extends BaseExpandableListAdapter
         String is_selected=String.valueOf(listData.get( localViewHolder.position).isCheckBoxSelected);
 
         DatabaseMasterTool dbTool = new DatabaseMasterTool(mContext,studyName);
-        dbTool.openStudyDatabase(studyName);
-        SQLiteDatabase database = dbTool.getDatabase();
+        SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
         StudyManager mgr = new StudyManager();
         mgr.updateVariableSet(database,abbrev,is_selected);
         dbTool.closeDB(database);

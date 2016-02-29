@@ -8,5 +8,10 @@
         android:title="@string/action_add_trait"
         android:icon="@drawable/addtrait"
         app:showAsAction="always" />
+    <item android:id="@+id/action_help"
+        android:orderInCategory="200"
+        android:icon="@drawable/help"
+        app:showAsAction="always"
+        android:title="Help"/>
 
 </menu>

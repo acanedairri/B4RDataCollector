@@ -60,9 +60,69 @@
         </TableLayout>
 
         <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tblPlotRangeEntry">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="PlotNo"
+                        android:id="@+id/textView19"
+                        android:textIsSelectable="false"
+                        android:textSize="30sp"
+                        android:layout_weight="1" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/etPlotNoStart"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:inputType="number"
+                        android:textSize="40sp" />
+
+                    <TextView
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:id="@+id/textView20"
+                        android:textIsSelectable="false"
+                        android:textSize="30sp"
+                        android:layout_column="2"
+                        android:layout_weight="0.26"
+                        android:layout_gravity="center_vertical" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/etPlotNoEnd"
+                        android:layout_column="3"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:inputType="number"
+                        android:textSize="40sp" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/tblPlotSingleEntry">
 
             <TableRow
                 android:layout_width="match_parent"

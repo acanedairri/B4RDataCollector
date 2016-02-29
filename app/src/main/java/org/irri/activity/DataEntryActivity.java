@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +77,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private ImageView btnDate;
     private ImageView btnClear;
     private TableRow tblRowSearch;
+    private TableLayout tblPlotRangeEntry;
+    private TableLayout tblPlotSingleEntry;
 
     private int plotIndex=1;
     private int traitIndex=0;
@@ -143,7 +146,10 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     TableRow tblRowDate;
     private boolean withScaleValue=false;
     private String accessToken;
-
+    private int plotEntry=1;
+    private TableLayout tblLayoutMetaData;
+    private EditText etPlotNoStart;
+    private EditText etPlotNoEnd;
 
     public DataEntryActivity(){
 
@@ -191,8 +197,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         tblRowSearch.setVisibility(View.GONE);
 
         dbTool = new DatabaseMasterTool(this,studyName);
-        dbTool.openStudyDatabase(studyName);
-        database = dbTool.getDatabase();
+        database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
 
         tvFieldOrderLabel1 = (TextView) findViewById(R.id.tvFieldOrderLabel1);
@@ -295,12 +300,28 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        tblPlotSingleEntry= (TableLayout) findViewById(R.id.tblPlotSingleEntry);
+        tblPlotRangeEntry= (TableLayout) findViewById(R.id.tblPlotRangeEntry);
+        tblLayoutMetaData = (TableLayout) findViewById(R.id.tblLayoutMetadata);
+
+        if(plotEntry==1){
+            tblPlotSingleEntry.setVisibility(View.VISIBLE) ;
+            tblPlotRangeEntry.setVisibility(View.GONE);
+            tblLayoutMetaData.setVisibility(View.VISIBLE);
+        }else{
+            tblPlotSingleEntry.setVisibility(View.GONE) ;
+            tblPlotRangeEntry.setVisibility(View.VISIBLE);
+            tblLayoutMetaData.setVisibility(View.GONE);
+        }
+        
+        etPlotNoStart=(EditText)findViewById(R.id.etPlotNoStart);
+        etPlotNoEnd=(EditText)findViewById(R.id.etPlotNoEnd);
+
     }
 
     private void initDatabase() {
         dbTool = new DatabaseMasterTool(this,studyName);
-        dbTool.openStudyDatabase(studyName);
-        database = dbTool.getDatabase();
+        database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
         totalPlotRecord=studyMgr.getAllPlotRecords(database).getCount();
     }
@@ -428,7 +449,34 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 searchFlag=0;
             }
             etSearchPlot.requestFocus();
+        }else if (id == R.id.action_help) {
+
+            Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
+            intent.putExtra("IMAGE", "help_dataentry");
+            startActivity(intent);
+            return true;
+
+        }else if (id == R.id.action_single_entry) {
+
+                plotEntry=1;
+                tblPlotSingleEntry.setVisibility(View.VISIBLE) ;
+                tblPlotRangeEntry.setVisibility(View.GONE);
+                tblLayoutMetaData.setVisibility(View.VISIBLE);
+
+            return true;
+
+        }else if (id == R.id.action_range_entry) {
+
+                plotEntry=2;
+                etPlotNoStart.setText(String.valueOf(plotIndex));
+                tblPlotSingleEntry.setVisibility(View.GONE) ;
+                tblPlotRangeEntry.setVisibility(View.VISIBLE);
+                tblLayoutMetaData.setVisibility(View.GONE);
+
+            return true;
+
         }
+
 
 
         return super.onOptionsItemSelected(item);
@@ -520,23 +568,39 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             toSave=false;
         }
 
+        if(isValidDate()){
+
+            Toast.makeText(getApplicationContext(),
+                    "Invalid value entered for date", Toast.LENGTH_LONG)
+                    .show();
+            etValue.setText("");
+            toSave=false;
+        }
+
         if(toSave) {
+
             if (etValue.getText().toString().length() > 0) {
 
-                savePlotObservation();
-                if (traitIndex == traitMeasuring.size() - 1) {
-                    traitIndex = 0;
-                    spinnerTrait.setSelection(traitIndex);
+                if(plotEntry==1) {
 
-                    if(traitMeasuring.size()-1 > 0){
-                        showMsgToNextPlot(v);
-                    }else {
-                        actionBtnPlotNext(v);
+                    savePlotObservation();
+                    if (traitIndex == traitMeasuring.size() - 1) {
+                        traitIndex = 0;
+                        spinnerTrait.setSelection(traitIndex);
+
+                        if (traitMeasuring.size() - 1 > 0) {
+                            showMsgToNextPlot(v);
+                        } else {
+                            actionBtnPlotNext(v);
+                        }
+                        setTraitValue();
+
+                    } else {
+                        actionBtnTraitNext(v);
                     }
-                    setTraitValue();
+                }else{
+                    savePlotObservationRange();
 
-                } else {
-                    actionBtnTraitNext(v);
                 }
             }
         }
@@ -563,6 +627,29 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         alertDialog.show();
     }
 
+
+    private boolean isValidDate(){
+        if(traitMeasuring.get(traitIndex).getDataType().equals("date")){
+            try{
+                SimpleDateFormat formatter =new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+                String dateInString = etValue.getText().toString();
+
+                try {
+                    Date date = formatter.parse(dateInString);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return true;
+                }
+            }catch (Exception e){
+                return true;
+            }
+
+
+        }
+
+        return false;
+    }
+
     private boolean isValidValue(){
 
         if(withScaleValue){
@@ -574,6 +661,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 }
             }
         }
+
+
+
 
         return false;
     }
@@ -682,7 +772,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 content.put("value", etValue.getText().toString());
                 content.put("timestamp", cdate.getDate());
 
-                boolean isExistRecord=studyMgr.isExistRecord(database,plotNo,variable_id);
+                boolean isExistRecord=studyMgr.isExistRecord(database,Integer.valueOf(plotNo),variable_id);
                 if(isExistRecord){
                     if(!etValue.getText().toString().equals(currentTraitValue)) {
                         content.put("committed","N");
@@ -693,6 +783,60 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     studyMgr.insertPlotRecord(database, content);
                 }
 
+            }
+
+        }catch (Exception e){
+
+        }
+
+    }
+
+    private void savePlotObservationRange(){
+
+        try {
+
+            int plotStart=Integer.valueOf(etPlotNoStart.getText().toString());
+            int plotEnd=Integer.valueOf(etPlotNoEnd.getText().toString());
+            if(etValue.getText().toString().length() > 0) {
+                DateUtil cdate = new DateUtil();
+
+                for (int start = plotStart; start <= plotEnd; start++) {
+
+
+
+                    Cursor plotData=studyMgr.getPlotRecordByPlotNo(database, start);
+
+                    int plotNoTemp = 0;
+                    String plotKeyTemp = null;
+                    if (plotData != null && plotData.getCount() > 0) {
+
+                        if (plotData.moveToFirst()) {
+                            do {
+                               plotKeyTemp = plotData.getString(plotData.getColumnIndex("plot_key"));
+                               plotNoTemp=plotData.getInt(plotData.getColumnIndex("plotno"));
+                            } while (plotData.moveToNext());
+                        }
+                    }
+                    ContentValues content = new ContentValues();
+                    content.put("plot_key", plotKeyTemp);
+                    content.put("abbrev", abbrev);
+                    content.put("plotno", plotNoTemp);
+                    content.put("variable_id", variable_id);
+                    content.put("value", etValue.getText().toString());
+                    content.put("timestamp", cdate.getDate());
+
+                    boolean isExistRecord = studyMgr.isExistRecord(database, plotNoTemp, variable_id);
+                    if (isExistRecord) {
+                        if (!etValue.getText().toString().equals(currentTraitValue)) {
+                            content.put("committed", "N");
+                            studyMgr.updatePlotRecord(database, etValue.getText().toString(), plotNo, variable_id, cdate.getDate());
+                        }
+                    } else {
+                        content.put("committed", "N");
+                        studyMgr.insertPlotRecord(database, content);
+                    }
+
+                }
             }
 
         }catch (Exception e){
@@ -825,7 +969,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
-                Cursor plotCursor = studyMgr.getPlotRecordByPlotNo(database, plotNo);
+                Cursor plotCursor = studyMgr.getPlotRecordByPlotNo(database, Integer.valueOf(plotNo));
                 int recordNo = 1;
                 if (plotCursor != null && plotCursor.getCount() > 0) {
 

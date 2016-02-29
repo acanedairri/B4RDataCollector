@@ -205,8 +205,7 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
 
     public void initDatabase(){
         dbTool = new DatabaseMasterTool(this,studyName);
-        dbTool.openStudyDatabase(studyName);
-        database = dbTool.getDatabase();
+        database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
     }
 

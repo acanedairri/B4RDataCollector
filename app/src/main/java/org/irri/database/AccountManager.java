@@ -40,6 +40,13 @@ public class AccountManager {
     }
 
 
+    public Cursor getAllUserToken(SQLiteDatabase database){
+        String sql="Select * from user";
+        Cursor cursor = database.rawQuery(sql, null);
+        return cursor;
+    }
+
+
 
 
 }

@@ -81,7 +81,7 @@ public class StudyManager {
     public Cursor getStudyByName(SQLiteDatabase database,String studyName) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from study where lower(name) like '%"+studyName.toLowerCase()+"%'";
+            String sql = "SELECT * from study where lower(studyname) like '%"+studyName.toLowerCase()+"%' or lower(name) like '%"+studyName.toLowerCase()+"%' ";
             cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {
@@ -129,10 +129,10 @@ public class StudyManager {
         return cursor;
     }
 
-    public Cursor getPlotRecordByPlotNo(SQLiteDatabase database,String plotNo) {
+    public Cursor getPlotRecordByPlotNo(SQLiteDatabase database,int plotNo) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from plot where plotno='"+plotNo+"'";
+            String sql = "SELECT * from plot where plotno="+plotNo;
             cursor = database.rawQuery(sql, null);
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -473,9 +473,27 @@ public class StudyManager {
         }
     }
 
-    public boolean isExistRecord(SQLiteDatabase database, String plotNo, int variable_id) {
+    public boolean isExistRecord(SQLiteDatabase database, int plotNo, int variable_id) {
         try {
-            String sql = "SELECT * from plot_data where plotno='"+plotNo+"' and variable_id="+variable_id;
+            String sql = "SELECT * from plot_data where plotno="+plotNo+" and variable_id="+variable_id;
+            Cursor cursor = database.rawQuery(sql, null);
+            if(cursor != null && cursor.getCount() > 0){
+                cursor.moveToFirst();
+                return true;
+            }
+
+        } catch (SQLiteException e) {
+
+        }
+
+
+        return false;
+    }
+
+
+    public boolean isStudyExist(SQLiteDatabase database,int studyId) {
+        try {
+            String sql = "SELECT * from study where id="+studyId;
             Cursor cursor = database.rawQuery(sql, null);
             if(cursor != null && cursor.getCount() > 0){
                 cursor.moveToFirst();

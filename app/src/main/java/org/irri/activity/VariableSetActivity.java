@@ -64,7 +64,7 @@ public class VariableSetActivity extends AppCompatActivity
 	{
 		super.onCreate(paramBundle);
 		setContentView(R.layout.activity_variable_set);
-		traitMeasuringModel = (TraitMeasuringModel) getIntent().getSerializableExtra("TRAIT_MEASURING_MODEL");
+		//traitMeasuringModel = (TraitMeasuringModel) getIntent().getSerializableExtra("TRAIT_MEASURING_MODEL");
 		Bundle bundle = getIntent().getExtras();
 		studyName=bundle.getString("STUDYNAME");
 		accessToken=bundle.getString("ACCESSTOKEN");
@@ -138,8 +138,7 @@ public class VariableSetActivity extends AppCompatActivity
 		List<String> variableSetNameList= new ArrayList<String>();
 
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
-		dbTool.openStudyDatabase(studyName);
-		SQLiteDatabase database = dbTool.getDatabase();
+		SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
 		StudyManager studyMgr = new StudyManager();
 		Cursor variableSetList=studyMgr.getVariableSetList(database);
 
@@ -219,7 +218,15 @@ public class VariableSetActivity extends AppCompatActivity
 			Intent intent = new Intent(VariableSetActivity.this, GetVariableSetActivity.class);
 			intent.putExtra("STUDYNAME",studyName);
 			intent.putExtra("ACCESSTOKEN", accessToken);
+			intent.putExtra("FLAG",1);
 			startActivity(intent);
+		}else if (id == R.id.action_help) {
+
+			Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
+			intent.putExtra("IMAGE", "help_variableset");
+			startActivity(intent);
+			return true;
+
 		}
 
 
@@ -236,8 +243,7 @@ public class VariableSetActivity extends AppCompatActivity
 	private void removeVariableSet() {
 
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
-		dbTool.openStudyDatabase(studyName);
-		SQLiteDatabase database = dbTool.getDatabase();
+		SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
 		StudyManager mgr = new StudyManager();
 		mgr.removeVariableSet(database,variableSetName);
 		populateVariableSet();
@@ -269,8 +275,7 @@ public class VariableSetActivity extends AppCompatActivity
 	public void refreshList(String filter){
 
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
-		dbTool.openStudyDatabase(studyName);
-		SQLiteDatabase database = dbTool.getDatabase();
+		SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
 		StudyManager mgr = new StudyManager();
 		Cursor variableSet;
 		if(filter==null) {
@@ -402,7 +407,7 @@ public class VariableSetActivity extends AppCompatActivity
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(
 				VariableSetActivity.this);
 		alertDialog.setTitle("Confirm Deletion");
-		alertDialog.setMessage("Are you sure you want to delete "+variableSetName +" variable set?");
+		alertDialog.setMessage("Are you sure you want to delete "+variableSetName +" variable set0?");
 		alertDialog.setIcon(R.drawable.info);
 		alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {

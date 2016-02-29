@@ -52,7 +52,7 @@ public class StudyMainActivity extends AppCompatActivity {
     String accessToken;
     TextView tvNofication;
     TableRow tblNotification;
-    int totalUncommitedRec;
+    //int totalUncommitedRec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class StudyMainActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
         accessToken = bundle.getString("ACCESSTOKEN");
-        totalUncommitedRec= bundle.getInt("NEWRECORD");
+       // totalUncommitedRec= bundle.getInt("NEWRECORD");
 
        viewNotification();
 
@@ -84,7 +84,7 @@ public class StudyMainActivity extends AppCompatActivity {
         tvNofication= (TextView) findViewById(R.id.tvNotification);
         tblNotification =(TableRow) findViewById(R.id.tblNotification);
 
-        totalUncommitedRec=getTotalUncommitedRecord(studyName);
+       int totalUncommitedRec=getTotalUncommitedRecord(studyName);
 
         if(totalUncommitedRec > 0){
             tblNotification.setVisibility(View.VISIBLE);
@@ -130,6 +130,7 @@ public class StudyMainActivity extends AppCompatActivity {
             Intent intent = new Intent(StudyMainActivity.this, GetVariableSetActivity.class);
             intent.putExtra("STUDYNAME",studyName);
             intent.putExtra("ACCESSTOKEN", accessToken);
+            intent.putExtra("FLAG",0);
             startActivity(intent);
         }else if(id == R.id.action_commit_study) {
             String jsonString=getPlotDataToCommit();
@@ -140,10 +141,17 @@ public class StudyMainActivity extends AppCompatActivity {
             new JSONTaskCommitStudy().execute(postUrl,jsonString);
         }else if(id == R.id.action_commit_history) {
             Intent intent = new Intent(StudyMainActivity.this, UploadHistoryActivity.class);
-            intent.putExtra("STUDYNAME",studyName);
-            intent.putExtra("ACCESSTOKEN",accessToken);
+            intent.putExtra("STUDYNAME", studyName);
+            intent.putExtra("ACCESSTOKEN", accessToken);
             startActivity(intent);
-    }
+        }else if (id == R.id.action_help) {
+
+                Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
+                intent.putExtra("IMAGE", "help_studmain");
+                startActivity(intent);
+                return true;
+
+        }
 
 
 
@@ -153,8 +161,7 @@ public class StudyMainActivity extends AppCompatActivity {
     private String getPlotDataToCommit() {
 
         DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
-        dbToolStudy.openStudyDatabase(studyName);
-        SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+        SQLiteDatabase studyDatabase=dbToolStudy.getStudyDatabase(studyName);
         StudyManager mgrStudy = new StudyManager();
         Cursor plotData=mgrStudy.getPlotDataToCommit(studyDatabase);
 
@@ -279,8 +286,7 @@ public class StudyMainActivity extends AppCompatActivity {
             String[] s=transMsg.split(" ");
 
             DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
-            dbToolStudy.openStudyDatabase(studyName);
-            SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+            SQLiteDatabase studyDatabase=dbToolStudy.getStudyDatabase(studyName);
             StudyManager mgrStudy = new StudyManager();
             mgrStudy.updatePlotRecordCommited(studyDatabase);
             ContentValues cv = new ContentValues();
@@ -295,7 +301,7 @@ public class StudyMainActivity extends AppCompatActivity {
 
             // insert study record to master table
             DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
-            SQLiteDatabase database = dbTool.openDBMaster();
+            SQLiteDatabase database = dbTool.getMasterDatabase();
             StudyManager mgr = new StudyManager();
             mgr.updateStudyCommitTranscation(database, studyName, s.length - 1);
 
@@ -307,8 +313,7 @@ public class StudyMainActivity extends AppCompatActivity {
 
     private int getTotalUncommitedRecord(String studyName) {
         DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
-        dbToolStudy.openStudyDatabase(studyName);
-        SQLiteDatabase studyDatabase=dbToolStudy.getDatabase();
+        SQLiteDatabase studyDatabase=dbToolStudy.getStudyDatabase(studyName);
         StudyManager mgrStudy = new StudyManager();
         int toreturn=mgrStudy.getPlotRecordUnCommited(studyDatabase);
         dbToolStudy.closeDB(studyDatabase);

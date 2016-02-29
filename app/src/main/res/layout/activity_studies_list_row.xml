@@ -36,7 +36,20 @@
                     android:id="@+id/tvStudyId"
                     android:visibility="invisible" />
             </LinearLayout>
+
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/tvName"
+            android:textSize="18sp"
+            android:textStyle="italic" />
     </TableLayout>
 
     <LinearLayout
@@ -72,7 +85,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5"
                 android:id="@+id/tvUncommittedRec"
                 android:visibility="gone"
                 android:textColor="#ff0b0c"

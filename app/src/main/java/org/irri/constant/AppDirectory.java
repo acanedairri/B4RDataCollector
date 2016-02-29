@@ -9,7 +9,7 @@ import java.io.File;
  */
 public class AppDirectory {
 
-    public static String AppPath= Environment.getExternalStorageDirectory()+"/B4R";
+    public static String AppPath= Environment.getExternalStorageDirectory()+"/B4RDataCollector";
     //static String AppPath=Environment.getExternalStorageDirectory().getAbsolutePath()+"/external_sd/B4R";
     public  static String DATABASE_FOLDER   =   AppPath+"/database";
     public  static String DEFAULT_FOLDER    =   AppPath+"/default";

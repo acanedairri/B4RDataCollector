@@ -120,6 +120,13 @@ public class TraitMeasuringActivity extends AppCompatActivity
 			i.putExtra("TRAIT_MEASURING_MODEL", traitMeasuringModel);
 			i.putExtra("ACCESSTOKEN",accessToken);
 			startActivityForResult(i, REQUEST_CODE );
+		}else if (id == R.id.action_help) {
+
+			Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
+			intent.putExtra("IMAGE", "help_traitmeasuring");
+			startActivity(intent);
+			return true;
+
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -146,8 +153,7 @@ public class TraitMeasuringActivity extends AppCompatActivity
 		//FieldTraitManager fieldManager = new FieldTraitManager(this);
 
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
-		dbTool.openStudyDatabase(studyName);
-		SQLiteDatabase database = dbTool.getDatabase();
+		SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
 		StudyManager mgr = new StudyManager();
 		Cursor variableSet;
 
@@ -240,8 +246,7 @@ public class TraitMeasuringActivity extends AppCompatActivity
 
 	private void unselectTrait(String abbrev,String is_selected){
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
-		dbTool.openStudyDatabase(studyName);
-		SQLiteDatabase database = dbTool.getDatabase();
+		SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
 		StudyManager mgr = new StudyManager();
 		mgr.updateVariableSet(database,abbrev,is_selected);
 		dbTool.closeDB(database);

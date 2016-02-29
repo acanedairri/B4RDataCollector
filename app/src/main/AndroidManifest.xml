@@ -92,8 +92,8 @@
         </activity>
         <activity
             android:name=".DataEntryActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_data_entry"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity
@@ -106,8 +106,8 @@
         </activity>
         <activity
             android:name=".StudyListActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:label="Study List" >
+            android:label="Study List"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity
             android:name=".ImageLoaderActivity"
@@ -149,6 +149,10 @@
         <activity
             android:name=".UploadHistoryActivity"
             android:label="Upload History" >
+        </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/title_activity_help" >
         </activity>
     </application>
 

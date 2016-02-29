@@ -62,6 +62,8 @@ public class GetVariableSetActivity extends AppCompatActivity {
     ListView lv;
     int variableSetId;
     String variableSetName;
+    int flag=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +72,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
         accessToken=bundle.getString("ACCESSTOKEN");
-
+        flag=bundle.getInt("FLAG");
         populateVariableSet();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -137,8 +139,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
         String variableMembers= tv.getText().toString();
 
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
-        dbTool.openStudyDatabase(studyName);
-        SQLiteDatabase database = dbTool.getDatabase();
+        SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
         StudyManager studyMgr = new StudyManager();
 
         Gson gson = new Gson();
@@ -158,6 +159,33 @@ public class GetVariableSetActivity extends AppCompatActivity {
             studyMgr.insertVariableSet(database,cv);
         }
         dbTool.closeDB(database);
+        Toast.makeText(getApplicationContext(), "Finished adding the variables", Toast.LENGTH_SHORT).show();
+
+        if(flag==0) {
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                    GetVariableSetActivity.this);
+        /*alertDialog.setTitle("Set Variable To Measure");*/
+            alertDialog.setMessage("Set variable to measure?");
+            alertDialog.setIcon(R.drawable.info);
+            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent i = new Intent(GetVariableSetActivity.this, VariableSetActivity.class);
+                    i.putExtra("STUDYNAME", studyName);
+                    i.putExtra("TRAIT_MEASURING_MODEL", "");
+                    i.putExtra("ACCESSTOKEN", accessToken);
+                    startActivity(i);
+                }
+            });
+            alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            // Showing Alert Message
+            alertDialog.show();
+        }
     }
 
     public class JSONTaskGetVariableSet extends AsyncTask<String,String,String> {
@@ -314,6 +342,9 @@ public class GetVariableSetActivity extends AppCompatActivity {
         int variableSetId;
         private ProgressDialog Dialog = new ProgressDialog(GetVariableSetActivity.this);
 
+
+
+
         @Override
         protected String doInBackground(String... params) {
 
@@ -375,6 +406,7 @@ public class GetVariableSetActivity extends AppCompatActivity {
             TextView tvVariableMembers= (TextView)findViewById(R.id.tvVariableMembers);
             tvVariableMembers.setText(result);
             Dialog.dismiss();
+
         }
 
     }
@@ -409,5 +441,8 @@ public class GetVariableSetActivity extends AppCompatActivity {
 
             return convertView;
         }
+
+
+
     }
 }

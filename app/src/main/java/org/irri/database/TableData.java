@@ -35,6 +35,7 @@ public class TableData {
                 "`phase` TEXT," +
                 "`year` TEXT," +
                 "`season` TEXT," +
+                "`studyname` TEXT," +
                 "`name` TEXT," +
                 "`title` TEXT," +
                 "`creation_timestamp` TEXT" +

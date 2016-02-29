@@ -87,4 +87,5 @@
     </string-array>
     <string name="title_activity_plot_order_setting">Set Plot Display</string>
     <string name="title_activity_get_variable_set">Get Variable Set</string>
+    <string name="title_activity_help">Help</string>
 </resources>

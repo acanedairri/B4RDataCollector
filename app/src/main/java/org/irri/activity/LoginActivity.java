@@ -3,6 +3,7 @@ package org.irri.activity;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -26,6 +27,7 @@ import org.irri.database.AccountManager;
 import org.irri.database.DatabaseStudyHelper;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.entity.AccessToken;
+import org.irri.entity.StudyListData;
 import org.irri.utility.ApplicationPath;
 import org.irri.utility.FileManager;
 
@@ -38,7 +40,7 @@ public class LoginActivity extends ActionBarActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="NdkOqgqdmGSAQhX7scjHuD7K0f4a35JSGGvsIkiV";
+    private String token="wIfunLj5cUxDOF5Votz5wAR4mL3qGG4RZDLJhWql";
     private String versionName;
     private int versionNum;
 
@@ -52,6 +54,7 @@ public class LoginActivity extends ActionBarActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.b4rlogo);
         createDirs();
+        createMasterDatabase();
 
     }
 
@@ -108,10 +111,23 @@ public class LoginActivity extends ActionBarActivity {
         password = (EditText) findViewById(R.id.txtPassword);
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
 
-        SQLiteDatabase database = dbTool.openDBMaster();
+        SQLiteDatabase database = dbTool.getMasterDatabase();
         AccountManager mgr = new AccountManager(database);
 
         Cursor cursor = mgr.getUserToken(database, username.getText().toString(), password.getText().toString());
+
+/*
+        if(cursor != null && cursor.getCount() > 0){
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String name=cursor.getString(cursor.getColumnIndex("username"));
+                    String password=cursor.getString(cursor.getColumnIndex("password"));
+
+                } while (cursor.moveToNext());
+            }
+        }
+*/
 
 
         if(cursor != null && cursor.getCount() > 0){
@@ -124,12 +140,12 @@ public class LoginActivity extends ActionBarActivity {
             password.setText("");
         }else{
             //Toast.makeText(this, "Invalid User", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
+/*            Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
-            startActivity(intent);
+            startActivity(intent);*/
 
 
-          /*AlertDialog alertDialog = new AlertDialog.Builder(
+         AlertDialog alertDialog = new AlertDialog.Builder(
                     LoginActivity.this).create();
             alertDialog.setTitle("Error Message");
             alertDialog.setMessage("Invalid User");
@@ -141,7 +157,7 @@ public class LoginActivity extends ActionBarActivity {
                 }
             });
             alertDialog.show();
-*/
+
         }
 
         dbTool.closeDB(database);
@@ -212,6 +228,18 @@ public class LoginActivity extends ActionBarActivity {
         }
 
 
+    }
+
+    public void createMasterDatabase(){
+
+        try {
+
+            DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+            dbTool.createMasterDatabase(this,"master");
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Error getting user information", Toast.LENGTH_LONG).show();
+        }
     }
 
 

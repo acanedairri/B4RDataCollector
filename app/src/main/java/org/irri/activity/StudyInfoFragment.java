@@ -80,8 +80,7 @@ public class StudyInfoFragment extends Fragment {
 
         this.studyName = studyName;
         DatabaseMasterTool dbTool = new DatabaseMasterTool(context,studyName);
-        dbTool.openStudyDatabase(studyName);
-        SQLiteDatabase database = dbTool.getDatabase();
+        SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
         StudyManager mgr = new StudyManager();
 
         Cursor cursor = mgr.getStudyBasicInfo(database);

@@ -132,7 +132,7 @@ public class StudyListActivity extends AppCompatActivity {
 
         List<StudyListModel> toreturn=new ArrayList<StudyListModel>();
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-        SQLiteDatabase database=dbTool.openDBMaster();
+        SQLiteDatabase database=dbTool.getMasterDatabase();
         StudyManager mgr= new StudyManager();
 
         mgr.deleteStudyList(database);
@@ -171,7 +171,7 @@ public class StudyListActivity extends AppCompatActivity {
     private List<StudyListModel> getMyStudyList(String filter) {
         List<StudyListModel> toreturn=new ArrayList<StudyListModel>();
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-        SQLiteDatabase database=dbTool.openDBMaster();
+        SQLiteDatabase database=dbTool.getMasterDatabase();
         StudyManager mgr= new StudyManager();
         Cursor studyList;
         if(filter.length() > 0) {
@@ -211,7 +211,7 @@ public class StudyListActivity extends AppCompatActivity {
         StudyListModel obj = (StudyListModel) lv.getItemAtPosition(acmi.position);
         menu.setHeaderTitle(obj.getName());
         menu.add(0, obj.getId(), 0, "Get Study");
-        menu.add(1,obj.getId(), 0, "View Info");
+        menu.add(1, obj.getId(), 0, "View Info");
 
     }
 
@@ -220,9 +220,17 @@ public class StudyListActivity extends AppCompatActivity {
 
         if (item.getTitle() == "Get Study") {
             // TODO: 2015-12-08
-            String urlStringStudy="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
-            String urlStringObsevationData="http://api.breeding4rice.irri.org/dev/v1/studies/"+item.getItemId()+"/data-collection?accessToken="+accessToken+"&sort=plotno&limit=-1";
-            new JSONTaskGetStudy().execute(urlStringStudy,urlStringObsevationData);
+
+            boolean isStudyExist=isStudyExistCheck(item.getItemId());
+            if(!isStudyExist) {
+                String urlStringStudy = "http://api.breeding4rice.irri.org/v1/studies/" + item.getItemId() + "/metadata?accessToken=" + accessToken;
+                String urlStringObsevationData = "http://api.breeding4rice.irri.org/dev/v1/studies/" + item.getItemId() + "/data-collection?accessToken=" + accessToken + "&sort=plotno&limit=-1";
+                new JSONTaskGetStudy().execute(urlStringStudy, urlStringObsevationData);
+            }else{
+
+                Toast.makeText(getApplicationContext(), "The study is already exists", Toast.LENGTH_SHORT).show();
+
+            }
         }else if(item.getTitle() == "View Info") {
             // TODO: 2015-12-08  get study metadata and open to activity
             String urlString="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
@@ -234,6 +242,15 @@ public class StudyListActivity extends AppCompatActivity {
         }
         return true;
 
+    }
+
+    private boolean isStudyExistCheck(int studyId) {
+
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database=dbTool.getMasterDatabase();
+        StudyManager mgr= new StudyManager();
+        boolean toreturn=mgr.isStudyExist(database,studyId);
+        return toreturn;
     }
 
     // Create a message handling object as an anonymous class.
@@ -288,6 +305,10 @@ public class StudyListActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_help) {
+
+            Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
+            intent.putExtra("IMAGE", "help_studylist");
+            startActivity(intent);
             return true;
         }
 
@@ -469,6 +490,7 @@ public class StudyListActivity extends AppCompatActivity {
             try {
 
                 String[] res = result.split("#");
+                String studyName = null;
 
                 Gson gson = new Gson();
                 StudyMetadata studyMetadata = gson.fromJson(res[0], StudyMetadata.class);
@@ -477,9 +499,7 @@ public class StudyListActivity extends AppCompatActivity {
                 // create new study database
                 DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(), studyMetadata.getData().getName().toString());
                 SQLiteDatabase databaseStudy = dbToolStudy.createStudyDatabase(getApplicationContext(), studyMetadata.getData().getName().toString());
-                dbToolStudy.openStudyDatabase(studyMetadata.getData().getName().toString());
-                dbToolStudy.createStudyDatabaseTable(databaseStudy);
-                SQLiteDatabase studyDatabase = dbToolStudy.getDatabase();
+                SQLiteDatabase studyDatabase = dbToolStudy.getStudyDatabase(studyMetadata.getData().getName().toString());
                 StudyManager mgrStudy = new StudyManager();
 
                 // save study information
@@ -504,6 +524,10 @@ public class StudyListActivity extends AppCompatActivity {
                     ContentValues contextMeta = new ContentValues();
                     contextMeta.put("variable", rec.getVariable_id().getValue());
                     contextMeta.put("value", rec.getValue());
+
+                    if(rec.getVariable_id().getValue().equals("STUDY")){
+                        studyName=  rec.getValue();
+                    }
                     mgrStudy.insertStudyMetaData(studyDatabase, contextMeta);
                 }
 
@@ -565,11 +589,12 @@ public class StudyListActivity extends AppCompatActivity {
 
                 // insert study record to master table
                 DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
-                SQLiteDatabase database = dbTool.openDBMaster();
+                SQLiteDatabase database = dbTool.getMasterDatabase();
                 StudyManager mgr = new StudyManager();
                 ContentValues studyInfo = new ContentValues();
                 studyInfo.put("id", studyMetadata.getData().getId());
                 studyInfo.put("name", studyMetadata.getData().getName().toString());
+                studyInfo.put("studyname", studyName);
                 studyInfo.put("title", studyMetadata.getData().getTitle().toString());
                 studyInfo.put("program", studyMetadata.getData().getProgram().toString());
                 studyInfo.put("phase", studyMetadata.getData().getPhase().toString());

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     EditText txtUsername;
     EditText txtPassword;
     EditText txtConfirmPassword;
+    Button btnSave;
     int userid;
     String name;
 
@@ -64,6 +66,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         txtUsername= (EditText) findViewById(R.id.txtUsername);
         txtPassword = (EditText) findViewById(R.id.txtPassword);
         txtConfirmPassword = (EditText) findViewById(R.id.txtConfirmPassword);
+        btnSave =(Button) findViewById(R.id.btnSave);
         new JSONTask().execute(urlString);
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -83,7 +86,7 @@ public class RegisterUserActivity extends AppCompatActivity {
             try {
 
                 DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-                SQLiteDatabase database = dbTool.openDBMaster();
+                SQLiteDatabase database = dbTool.getMasterDatabase();
                 AccountManager mgr = new AccountManager(database);
 
                 String username=txtUsername.getText().toString();
@@ -213,9 +216,28 @@ public class RegisterUserActivity extends AppCompatActivity {
             txtProgram = (TextView) findViewById(R.id.txtProgram);
 
             txtUser.setText(user.getData().getDisplay_name());
-            txtProgram.setText(user.getData().getTeams().get(0).getTeam().getName());
-            userid=user.getData().getId();
-            name=user.getData().getDisplay_name();
+            try {
+                String program = user.getData().getTeams().get(0).getTeam().getName();
+                txtProgram.setText(user.getData().getTeams().get(0).getTeam().getName());
+                userid=user.getData().getId();
+                name=user.getData().getDisplay_name();
+            }catch (Exception e){
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        RegisterUserActivity.this).create();
+                alertDialog.setTitle("Error Message");
+                alertDialog.setMessage("You don't belong to any program. Not allowed to create offline account");
+                alertDialog.setIcon(R.drawable.info);
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                alertDialog.show();
+                btnSave.setEnabled(false);
+
+            }
+
         }
 
     }

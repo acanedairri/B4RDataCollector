@@ -27,6 +27,15 @@
         app:showAsAction="withText"
         android:title="Set Plot Display"/>
 
+    <item android:id="@+id/action_single_entry"
+        android:orderInCategory="500"
+        app:showAsAction="withText"
+        android:title="Set Single Entry"/>
+    <item android:id="@+id/action_range_entry"
+        android:orderInCategory="600"
+        app:showAsAction="withText"
+        android:title="Set Range Entry"/>
+
   <!--  <item android:id="@+id/action_trait_measuring" android:title="@string/action_trait_measuring"
         android:orderInCategory="100" app:showAsAction="never" />-->
 </menu>

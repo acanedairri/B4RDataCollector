@@ -26,23 +26,27 @@ public class FileManager {
 		// TODO Auto-generated method stub
 
 		String tmp= ApplicationPath.APP_PATH;
+		String masterDir=ApplicationPath.APP_PATH_MASTER;
 		File f = new File(tmp);
 
 
-		if(f.exists() && f.isDirectory()){
-			return;
-
-		}else{
+		if(!f.exists()){
 			File appDirectory = new File(tmp);
 			appDirectory.mkdirs();
+
+			File appDirectoryMaster = new File(masterDir);
+			appDirectoryMaster.mkdirs();
+
+
 
 			File folderStudy = new File(ApplicationPath.APP_PATH_STUDY);
 			folderStudy.mkdirs();
 
 			File folderLog = new File(ApplicationPath.APP_PATH_LOG);
-			folderStudy.mkdirs();
+			folderLog.mkdirs();
 
 		}
+
 	}
 	
 

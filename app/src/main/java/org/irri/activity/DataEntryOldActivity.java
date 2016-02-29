@@ -46,6 +46,7 @@ import org.irri.entity.PlotData;
 import org.irri.entity.ScaleValue;
 import org.irri.entity.TraitMeasuring;
 
+import java.net.Inet4Address;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -168,8 +169,7 @@ public class DataEntryOldActivity extends AppCompatActivity implements BarcodeRe
         tblRowSearch.setVisibility(View.GONE);
 
         dbTool = new DatabaseMasterTool(this,studyName);
-        dbTool.openStudyDatabase(studyName);
-        database = dbTool.getDatabase();
+        database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
 
         // plot field1 spinner
@@ -328,8 +328,8 @@ public class DataEntryOldActivity extends AppCompatActivity implements BarcodeRe
 
     private void initDatabase() {
         dbTool = new DatabaseMasterTool(this,studyName);
-        dbTool.openStudyDatabase(studyName);
-        database = dbTool.getDatabase();
+
+        database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
         totalPlotRecord=studyMgr.getAllPlotRecords(database).getCount();
         System.out.println("a");
@@ -737,7 +737,7 @@ public class DataEntryOldActivity extends AppCompatActivity implements BarcodeRe
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
-                Cursor plotCursor = studyMgr.getPlotRecordByPlotNo(database, plotNo);
+                Cursor plotCursor = studyMgr.getPlotRecordByPlotNo(database, Integer.valueOf(plotNo));
                 int recordNo = 1;
                 if (plotCursor != null && plotCursor.getCount() > 0) {
 

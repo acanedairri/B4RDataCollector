@@ -26,9 +26,9 @@
         android:orderInCategory="600" app:showAsAction="never" />-->
 
 
-
+<!--
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="700" app:showAsAction="never" />
+        android:orderInCategory="700" app:showAsAction="never" />-->
 
 
 
