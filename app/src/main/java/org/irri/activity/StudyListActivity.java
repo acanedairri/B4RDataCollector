@@ -84,6 +84,7 @@ public class StudyListActivity extends AppCompatActivity {
         studyObj=bundle.getString("STUDY");
         lvStudyList= (ListView) findViewById(R.id.lvStudyList);
 
+
         Gson gson = new Gson();
         Study study = gson.fromJson(studyObj, Study.class);
         studyListModel=populateStudyList(study.getData().getItems());
@@ -547,6 +548,7 @@ public class StudyListActivity extends AppCompatActivity {
                     cv.put("recno", recno);
                     cv.put("plot_key", rec.getPLOT_KEY());
                     cv.put("rep", Integer.valueOf(rec.getREP()));
+                    cv.put("plot_code", Integer.valueOf(rec.getPLOT_CODE()));
                     cv.put("plotno", Integer.valueOf(rec.getPLOTNO()));
                     cv.put("entno", Integer.valueOf(rec.getENTNO()));
                     cv.put("entcode", rec.getENTCODE());
@@ -599,6 +601,7 @@ public class StudyListActivity extends AppCompatActivity {
                 studyInfo.put("program", studyMetadata.getData().getProgram().toString());
                 studyInfo.put("phase", studyMetadata.getData().getPhase().toString());
                 studyInfo.put("season", studyMetadata.getData().getSeason().toString());
+                studyInfo.put("userid", LoginActivity.getUser_id());
                 mgr.insertStudyBasicInfoRecord(database, studyInfo);
                 dbTool.closeDB(database);
 

@@ -82,6 +82,7 @@ public class TableData {
             "`rep` INTEGER,"+
             "`code` TEXT,"+
             "`plotno` INTEGER,"+
+            "`plot_code` TEXT,"+
             "`entno` INTEGER,"+
             "`entcode` TEXT,"+
             "`designation` TEXT,"+

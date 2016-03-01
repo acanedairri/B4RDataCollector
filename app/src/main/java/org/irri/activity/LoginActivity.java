@@ -40,9 +40,14 @@ public class LoginActivity extends ActionBarActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="wIfunLj5cUxDOF5Votz5wAR4mL3qGG4RZDLJhWql";
+    private String token="yqG0K9xJNfGqnHMXrfRsP8V5zNoQ02leGFXke9UJ";
     private String versionName;
     private int versionNum;
+    private static int user_id;
+
+    public static int getUser_id() {
+        return user_id;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,14 +115,13 @@ public class LoginActivity extends ActionBarActivity {
         username = (EditText) findViewById(R.id.txtUsername);
         password = (EditText) findViewById(R.id.txtPassword);
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-
         SQLiteDatabase database = dbTool.getMasterDatabase();
         AccountManager mgr = new AccountManager(database);
 
         Cursor cursor = mgr.getUserToken(database, username.getText().toString(), password.getText().toString());
 
-/*
-        if(cursor != null && cursor.getCount() > 0){
+
+/*        if(cursor != null && cursor.getCount() > 0){
 
             if (cursor.moveToFirst()) {
                 do {
@@ -126,13 +130,14 @@ public class LoginActivity extends ActionBarActivity {
 
                 } while (cursor.moveToNext());
             }
-        }
-*/
+        }*/
+
 
 
         if(cursor != null && cursor.getCount() > 0){
             cursor.moveToFirst();
             token = cursor.getString(cursor.getColumnIndex("access_token"));
+            user_id=cursor.getInt(cursor.getColumnIndex("user_id"));
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);

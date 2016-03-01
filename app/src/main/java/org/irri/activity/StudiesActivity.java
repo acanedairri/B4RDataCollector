@@ -128,41 +128,44 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     }
 
     private List<StudyListData> getMyStudyList(String filter) {
-        List<StudyListData> toreturn= new ArrayList<StudyListData>();
-
-        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-        SQLiteDatabase database = dbTool.getMasterDatabase();
-        StudyManager mgr = new StudyManager();
-        Cursor cursor=null;
-        if(filter==null){
-            cursor = mgr.getAllStudyRecords(database);
-        }else{
-            cursor = mgr.getStudyByName(database,filter);
-        }
-
-        if(cursor != null && cursor.getCount() > 0){
-
-            if (cursor.moveToFirst()) {
-                do {
-                    String name=cursor.getString(cursor.getColumnIndex("name"));
-                    String studyname=cursor.getString(cursor.getColumnIndex("studyname"));
-                    String title=cursor.getString(cursor.getColumnIndex("title"));
-                    int id = cursor.getInt(cursor.getColumnIndex("id"));
-                    String lastCommit= cursor.getString(cursor.getColumnIndex("last_commit"));
-                    int uncommited=cursor.getInt(cursor.getColumnIndex("uncommited"));
-                    StudyListData rec = new StudyListData();
-                    rec.setId(id);
-                    rec.setName(name);
-                    rec.setStudyname(studyname);
-                    rec.setTitle(title);
-                    rec.setDateLastCommited(lastCommit);
-                    rec.setUncommited(uncommited);
-                    toreturn.add(rec);
-                } while (cursor.moveToNext());
+         List<StudyListData> toreturn = new ArrayList<StudyListData>();
+        try {
+            DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+            SQLiteDatabase database = dbTool.getMasterDatabase();
+            StudyManager mgr = new StudyManager();
+            Cursor cursor = null;
+            if (filter == null) {
+                cursor = mgr.getAllStudyRecords(database, LoginActivity.getUser_id());
+            } else {
+                cursor = mgr.getStudyByName(database, filter, LoginActivity.getUser_id());
             }
-        }
 
-        dbTool.close();
+            if (cursor != null && cursor.getCount() > 0) {
+
+                if (cursor.moveToFirst()) {
+                    do {
+                        String name = cursor.getString(cursor.getColumnIndex("name"));
+                        String studyname = cursor.getString(cursor.getColumnIndex("studyname"));
+                        String title = cursor.getString(cursor.getColumnIndex("title"));
+                        int id = cursor.getInt(cursor.getColumnIndex("id"));
+                        String lastCommit = cursor.getString(cursor.getColumnIndex("last_commit"));
+                        int uncommited = cursor.getInt(cursor.getColumnIndex("uncommited"));
+                        StudyListData rec = new StudyListData();
+                        rec.setId(id);
+                        rec.setName(name);
+                        rec.setStudyname(studyname);
+                        rec.setTitle(title);
+                        rec.setDateLastCommited(lastCommit);
+                        rec.setUncommited(uncommited);
+                        toreturn.add(rec);
+                    } while (cursor.moveToNext());
+                }
+            }
+
+            dbTool.close();
+        }catch (Exception e){
+
+        }
         return toreturn;
     }
 

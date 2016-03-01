@@ -30,10 +30,10 @@ public class StudyManager {
     }
 
 
-    public Cursor getAllStudyRecords(SQLiteDatabase database) {
+    public Cursor getAllStudyRecords(SQLiteDatabase database,int user_id) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from study";
+            String sql = "SELECT * from study where userid="+user_id;
             cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {
@@ -78,10 +78,10 @@ public class StudyManager {
         return cursor;
     }
 
-    public Cursor getStudyByName(SQLiteDatabase database,String studyName) {
+    public Cursor getStudyByName(SQLiteDatabase database,String studyName,int user_id) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from study where lower(studyname) like '%"+studyName.toLowerCase()+"%' or lower(name) like '%"+studyName.toLowerCase()+"%' ";
+            String sql = "SELECT * from study where lower(studyname) like '%"+studyName.toLowerCase()+"%' or lower(name) like '%"+studyName.toLowerCase()+"%' and userid="+user_id;
             cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {

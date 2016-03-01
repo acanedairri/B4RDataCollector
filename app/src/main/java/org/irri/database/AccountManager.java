@@ -34,7 +34,7 @@ public class AccountManager {
     }
 
     public Cursor getUserToken(SQLiteDatabase database,String username, String password){
-        String sql="Select * from "+TableData.TABLE_USER + " where username='"+username+"' and password='"+password+"'";
+        String sql="Select * from user where username='"+username+"' and password='"+password+"'";
         Cursor cursor = database.rawQuery(sql, null);
         return cursor;
     }
