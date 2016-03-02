@@ -10,14 +10,18 @@
     <item android:id="@+id/action_load_variable_set" android:title="Variable Set" android:icon="@drawable/variable"
         android:orderInCategory="200" app:showAsAction="always" />
 
+
+    <item android:id="@+id/action_commit_study" android:title="Sync Study"
+        android:icon="@drawable/sync"
+        android:orderInCategory="300" app:showAsAction="always" />
+
     <item android:id="@+id/action_help"
-        android:orderInCategory="300"
+        android:orderInCategory="400"
         android:icon="@drawable/help"
         app:showAsAction="always"
         android:title="Help"/>
 
-    <item android:id="@+id/action_commit_study" android:title="Upload Study"
-        android:orderInCategory="400" app:showAsAction="never" />
+
 
     <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
         android:orderInCategory="500" app:showAsAction="never" />

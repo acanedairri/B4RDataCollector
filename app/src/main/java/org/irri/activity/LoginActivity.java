@@ -40,14 +40,21 @@ public class LoginActivity extends ActionBarActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="yqG0K9xJNfGqnHMXrfRsP8V5zNoQ02leGFXke9UJ";
+    private String token="q2bN1ly3QJrIXqCsCkDfUarRZaoqFqN7ITZjIZ1I";
     private String versionName;
     private int versionNum;
     private static int user_id;
+    private static String program;
 
     public static int getUser_id() {
         return user_id;
     }
+
+    public static String getProgram() {
+        return program;
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +145,8 @@ public class LoginActivity extends ActionBarActivity {
             cursor.moveToFirst();
             token = cursor.getString(cursor.getColumnIndex("access_token"));
             user_id=cursor.getInt(cursor.getColumnIndex("user_id"));
+            program=cursor.getString(cursor.getColumnIndex("program"));
+            System.out.println(program);
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);

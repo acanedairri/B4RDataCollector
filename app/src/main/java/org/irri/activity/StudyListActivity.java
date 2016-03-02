@@ -40,6 +40,8 @@ import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
 import org.irri.entity.MockData;
 import org.irri.entity.ObservationData;
+import org.irri.entity.PlotData;
+import org.irri.entity.PlotDataCommitModel;
 import org.irri.entity.Study;
 import org.irri.entity.StudyListData;
 import org.irri.entity.StudyListModel;
@@ -47,6 +49,7 @@ import org.irri.entity.StudyMetadata;
 import org.irri.entity.StudyMetadataList;
 import org.irri.entity.VariableSet;
 import org.irri.utility.ConnectionState;
+import org.irri.utility.DateUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,6 +62,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class StudyListActivity extends AppCompatActivity {
 
@@ -492,6 +496,7 @@ public class StudyListActivity extends AppCompatActivity {
 
                 String[] res = result.split("#");
                 String studyName = null;
+                DateUtil cdate=new DateUtil();
 
                 Gson gson = new Gson();
                 StudyMetadata studyMetadata = gson.fromJson(res[0], StudyMetadata.class);
@@ -548,8 +553,9 @@ public class StudyListActivity extends AppCompatActivity {
                     cv.put("recno", recno);
                     cv.put("plot_key", rec.getPLOT_KEY());
                     cv.put("rep", Integer.valueOf(rec.getREP()));
-                    cv.put("plot_code", Integer.valueOf(rec.getPLOT_CODE()));
+                    cv.put("plot_code", rec.getPLOT_CODE());
                     cv.put("plotno", Integer.valueOf(rec.getPLOTNO()));
+                    cv.put("gid", Integer.valueOf(rec.getGID()));
                     cv.put("entno", Integer.valueOf(rec.getENTNO()));
                     cv.put("entcode", rec.getENTCODE());
                     cv.put("designation", rec.getDESIGNATION());
@@ -559,6 +565,21 @@ public class StudyListActivity extends AppCompatActivity {
                     cv.put("fldrow_cont", rec.getFLDROW_CONT());
                     cv.put("fldcol_cont", rec.getFLDCOL_CONT());
                     mgrStudy.insertPlot(studyDatabase, cv);
+
+                        for(ObservationData.DataEntity.ItemsEntity.ObservationsEntity obj:rec.getObservations()){
+
+                            ContentValues content = new ContentValues();
+                            content.put("plot_key", rec.getPLOT_KEY());
+                            content.put("abbrev", obj.getAbbrev());
+                            content.put("plotno", rec.getPLOTNO());
+                            content.put("variable_id", obj.getVariable().getId());
+                            content.put("value", obj.getValue());
+                            content.put("timestamp", cdate.getDate());
+                            content.put("committed","Y");
+                            mgrStudy.insertPlotRecord(studyDatabase, content);
+                        }
+
+
                     recno++;
 
                 }

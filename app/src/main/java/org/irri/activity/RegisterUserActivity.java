@@ -53,6 +53,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     Button btnSave;
     int userid;
     String name;
+    String program;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +96,7 @@ public class RegisterUserActivity extends AppCompatActivity {
                 ContentValues values = new ContentValues();
                 values.put("display_name", txtUser.getText().toString());
                 values.put("program_abbrev", txtProgram.getText().toString());
+                values.put("program",program);
                 values.put("username", username);
                 values.put("password", password);
                 values.put("access_token", accessToken);
@@ -217,10 +219,11 @@ public class RegisterUserActivity extends AppCompatActivity {
 
             txtUser.setText(user.getData().getDisplay_name());
             try {
-                String program = user.getData().getTeams().get(0).getTeam().getName();
+                //String program = user.getData().getTeams().get(0).getTeam().getName();
                 txtProgram.setText(user.getData().getTeams().get(0).getTeam().getName());
                 userid=user.getData().getId();
                 name=user.getData().getDisplay_name();
+                program=user.getData().getTeams().get(0).getTeam().getProgram().getAbbrev();
             }catch (Exception e){
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         RegisterUserActivity.this).create();

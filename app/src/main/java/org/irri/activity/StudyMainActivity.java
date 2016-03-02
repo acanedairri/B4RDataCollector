@@ -221,9 +221,11 @@ public class StudyMainActivity extends AppCompatActivity {
                } catch (Exception e) {
                    e.printStackTrace();
                }
-
+               if(client.getResponseCode()==401){
+                   return null;
+               }
                String response = client.getResponse();
-              // Toast.makeText(StudyMainActivity.this, response, Toast.LENGTH_LONG).show();
+
                return response;
            }catch (Exception e){
                return null;

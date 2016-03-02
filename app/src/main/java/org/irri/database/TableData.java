@@ -15,6 +15,7 @@ public class TableData {
             "        `status` TEXT," +
             "        `display_name` TEXT," +
             "        `program_abbrev` TEXT," +
+            "        `program` TEXT," +
             "        `program_display_name` TEXT," +
             "        `valid_start_date` TEXT," +
             "        `valid_end_date` TEXT," +
@@ -79,13 +80,13 @@ public class TableData {
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             "`recno` INTEGER,"+
             "`plot_key` TEXT,"+
-            "`rep` INTEGER,"+
-            "`code` TEXT,"+
             "`plotno` INTEGER,"+
             "`plot_code` TEXT,"+
+            "`rep` INTEGER,"+
             "`entno` INTEGER,"+
-            "`entcode` TEXT,"+
+            "`gid` INTEGER,"+
             "`designation` TEXT,"+
+            "`entcode` TEXT,"+
             "`parentage` TEXT,"+
             "`generation` TEXT,"+
             "`qr_code` TEXT,"+

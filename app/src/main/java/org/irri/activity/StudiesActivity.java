@@ -135,9 +135,9 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             StudyManager mgr = new StudyManager();
             Cursor cursor = null;
             if (filter == null) {
-                cursor = mgr.getAllStudyRecords(database, LoginActivity.getUser_id());
+                cursor = mgr.getAllStudyRecords(database, LoginActivity.getProgram());
             } else {
-                cursor = mgr.getStudyByName(database, filter, LoginActivity.getUser_id());
+                cursor = mgr.getStudyByName(database, filter, LoginActivity.getProgram());
             }
 
             if (cursor != null && cursor.getCount() > 0) {

@@ -20,7 +20,7 @@
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="50dp"
         android:background="#fbfbfb"
         android:id="@+id/tblNotification"
         android:foreground="#050505"
@@ -31,7 +31,8 @@
             android:layout_height="wrap_content"
             android:text="Reminder : "
             android:id="@+id/textView17"
-            android:textColor="#ff2130" />
+            android:textColor="#ff2130"
+            android:paddingLeft="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,7 +45,7 @@
         <TextView
             android:layout_width="176dp"
             android:layout_height="wrap_content"
-            android:text="New Record(s) for Upload"
+            android:text="New Record(s) to Sync"
             android:id="@+id/textView18"
             android:paddingLeft="5dp" />
     </TableRow>

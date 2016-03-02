@@ -71,13 +71,13 @@
     <string-array name="spinner_plot_field">
         <item></item>
         <item>plot_key</item>
-        <item>rep</item>
-        <item>code</item>
-        <item>qr_code</item>
         <item>plotno</item>
+        <item>plot_code</item>
+        <item>rep</item>
         <item>entno</item>
-        <item>entcode</item>
+        <item>gid</item>
         <item>designation</item>
+        <item>entcode</item>
         <item>parentage</item>
         <item>generation</item>
         <item>qr_code</item>

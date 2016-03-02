@@ -58,6 +58,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 
 import com.intermec.aidc.*;
@@ -556,53 +557,78 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
     }
 
+
+    private boolean ifValidSaving(){
+
+        System.out.println(variable_id);
+        try {
+            String t = spinnerTrait.getItemAtPosition(traitIndex).toString();
+            if(etValue.getText().toString().length() > 0 ){
+                return true;
+            }
+
+        }catch (Exception e){
+            return false;
+        }
+
+       return false;
+    }
+
     public void actionBtnSave(View v) {
         boolean toSave=true;
 
-        if(!isValidValue() && withScaleValue){
+        if(ifValidSaving()) {
+
+            if (!isValidValue() && withScaleValue) {
 
                 Toast.makeText(getApplicationContext(),
                         "Invalid value entered", Toast.LENGTH_LONG)
                         .show();
-            etValue.setText("");
-            toSave=false;
-        }
+                etValue.setText("");
+                toSave = false;
+            }
 
-        if(isValidDate()){
+            if (isValidDate()) {
 
-            Toast.makeText(getApplicationContext(),
-                    "Invalid value entered for date", Toast.LENGTH_LONG)
-                    .show();
-            etValue.setText("");
-            toSave=false;
-        }
+                Toast.makeText(getApplicationContext(),
+                        "Invalid value entered for date", Toast.LENGTH_LONG)
+                        .show();
+                etValue.setText("");
+                toSave = false;
+            }
 
-        if(toSave) {
+            if (toSave) {
 
-            if (etValue.getText().toString().length() > 0) {
+                if (etValue.getText().toString().length() > 0) {
 
-                if(plotEntry==1) {
+                    if (plotEntry == 1) {
 
-                    savePlotObservation();
-                    if (traitIndex == traitMeasuring.size() - 1) {
-                        traitIndex = 0;
-                        spinnerTrait.setSelection(traitIndex);
+                        savePlotObservation();
+                        if (traitIndex == traitMeasuring.size() - 1) {
+                            traitIndex = 0;
+                            spinnerTrait.setSelection(traitIndex);
 
-                        if (traitMeasuring.size() - 1 > 0) {
-                            showMsgToNextPlot(v);
+                            if (traitMeasuring.size() - 1 > 0) {
+                                showMsgToNextPlot(v);
+                            } else {
+                                actionBtnPlotNext(v);
+                            }
+                            setTraitValue();
+
                         } else {
-                            actionBtnPlotNext(v);
+                            actionBtnTraitNext(v);
                         }
-                        setTraitValue();
-
                     } else {
-                        actionBtnTraitNext(v);
-                    }
-                }else{
-                    savePlotObservationRange();
+                        savePlotObservationRange();
 
+                    }
                 }
             }
+
+        }else{
+            Toast.makeText(getApplicationContext(),
+                    "Incomplete data, record cannot be save", Toast.LENGTH_LONG);
+            etValue.setText("");
         }
     }
 
@@ -1100,15 +1126,16 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             if (plotCursor.moveToFirst()) {
                 do {
                     data+="Plot key : "+plotCursor.getString(plotCursor.getColumnIndex("plot_key"))+"\n";
-                    data+="Rep : "+plotCursor.getString(plotCursor.getColumnIndex("rep"))+"\n";
-                    data+="Code : "+plotCursor.getString(plotCursor.getColumnIndex("code"))+"\n";
-                    data+="QR Code : "+plotCursor.getString(plotCursor.getColumnIndex("qr_code"))+"\n";
-                    data+="Plot No : "+plotCursor.getString(plotCursor.getColumnIndex("plotno"))+"\n";
-                    data+="Entry No : "+plotCursor.getString(plotCursor.getColumnIndex("entno"))+"\n";
+                    data+="Plot No : "+plotCursor.getInt(plotCursor.getColumnIndex("plotno"))+"\n";
+                    data+="Plot Code : "+plotCursor.getString(plotCursor.getColumnIndex("plot_code"))+"\n";
+                    data+="Rep : "+plotCursor.getInt(plotCursor.getColumnIndex("rep"))+"\n";
+                    data+="GID : "+plotCursor.getInt(plotCursor.getColumnIndex("gid"))+"\n";
+                    data+="Entry No : "+plotCursor.getInt(plotCursor.getColumnIndex("entno"))+"\n";
                     data+="Entry Code : "+plotCursor.getString(plotCursor.getColumnIndex("entcode"))+"\n";
                     data+="Designation : "+plotCursor.getString(plotCursor.getColumnIndex("designation"))+"\n";
                     data+="Parentage : "+plotCursor.getString(plotCursor.getColumnIndex("parentage"))+"\n";
                     data+="Generation : "+plotCursor.getString(plotCursor.getColumnIndex("generation"))+"\n";
+                    data+="QR Code : "+plotCursor.getString(plotCursor.getColumnIndex("qr_code"))+"\n";
                     data+="Field Row : "+plotCursor.getString(plotCursor.getColumnIndex("fldrow_cont"))+"\n";
                     data+="Field Column : "+plotCursor.getString(plotCursor.getColumnIndex("fldcol_cont"))+"\n";
 

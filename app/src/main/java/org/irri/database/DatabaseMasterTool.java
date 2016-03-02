@@ -151,7 +151,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
 
     private void populateSettingValues(SQLiteDatabase db) {
         ContentValues contentSettings = new ContentValues();
-        contentSettings.put("datafield1","plotno");
+        contentSettings.put("datafield1","plot_code");
         contentSettings.put("datafield2","rep");
         contentSettings.put("datafield3","entno");
         contentSettings.put("datafield4","designation");
