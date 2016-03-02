@@ -145,7 +145,7 @@ public class StudyListActivity extends AppCompatActivity {
         for(Study.DataEntity.ItemsEntity rec:items){
             ContentValues contextValue = new ContentValues();
             contextValue.put("studyid",rec.getId());
-            contextValue.put("name",rec.getName());
+            contextValue.put("name",rec.getStudy());
             mgr.insertStudyList(database,contextValue);
         }
 
@@ -191,7 +191,7 @@ public class StudyListActivity extends AppCompatActivity {
             if (studyList.moveToFirst()) {
                 do {
                     int id=studyList.getInt(studyList.getColumnIndex("studyid"));
-                    String name=studyList.getString(studyList.getColumnIndex("name"));
+                    String name=studyList.getString(studyList.getColumnIndex("study"));
 
                     StudyListModel rec = new StudyListModel();
                     rec.setId(id);

@@ -309,7 +309,7 @@ public class StudyMainActivity extends AppCompatActivity {
 
             dbTool.closeDB(database);
 
-
+            viewNotification();
             }
     }
 
