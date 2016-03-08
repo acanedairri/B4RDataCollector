@@ -145,7 +145,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 if (cursor.moveToFirst()) {
                     do {
                         String name = cursor.getString(cursor.getColumnIndex("name"));
-                        String studyname = cursor.getString(cursor.getColumnIndex("studyname"));
+                        String study = cursor.getString(cursor.getColumnIndex("study"));
                         String title = cursor.getString(cursor.getColumnIndex("title"));
                         int id = cursor.getInt(cursor.getColumnIndex("id"));
                         String lastCommit = cursor.getString(cursor.getColumnIndex("last_commit"));
@@ -153,7 +153,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                         StudyListData rec = new StudyListData();
                         rec.setId(id);
                         rec.setName(name);
-                        rec.setStudyname(studyname);
+                        rec.setStudy(study);
                         rec.setTitle(title);
                         rec.setDateLastCommited(lastCommit);
                         rec.setUncommited(uncommited);
@@ -267,7 +267,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             tvStudyName.setText(studyModelEntity.get(position).getName());
             tvStudyId.setText(String.valueOf(studyModelEntity.get(position).getId()));
 
-            tvName.setText(studyModelEntity.get(position).getStudyname());
+            tvName.setText(studyModelEntity.get(position).getStudy());
 
             tvLastSync=(TextView)  convertView.findViewById(R.id.tvLastSync);
             tvLastSync.setText("Last Commited: "+studyModelEntity.get(position).getDateLastCommited());

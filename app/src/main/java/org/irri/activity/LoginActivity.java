@@ -40,7 +40,7 @@ public class LoginActivity extends ActionBarActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="q2bN1ly3QJrIXqCsCkDfUarRZaoqFqN7ITZjIZ1I";
+    private String token="7tx9vOoGuoVhfeCXszrlIdpXrzLO83X9hpw0bp7B";
     private String versionName;
     private int versionNum;
     private static int user_id;
@@ -206,6 +206,7 @@ public class LoginActivity extends ActionBarActivity {
     private void createDirs() {
         createDir(ApplicationPath.APP_PATH);
         createDir(ApplicationPath.APP_PATH_STUDY);
+        createDir(ApplicationPath.APP_PATH_IMAGES);
     }
 
 

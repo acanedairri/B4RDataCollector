@@ -10,7 +10,7 @@
     <string name="action_data_entry">Data Entry</string>
     <string name="action_trait_measuring">Trait To Measure</string>
     <string name="action_log_recording">Log Record</string>
-    <string name="action_commit_history">Upload History</string>
+    <string name="action_commit_history">Upload Transaction</string>
 
     <!-- TODO: Action Data Entry Study -->
     <string name="action_search_study">Search</string>
@@ -88,4 +88,5 @@
     <string name="title_activity_plot_order_setting">Set Plot Display</string>
     <string name="title_activity_get_variable_set">Get Variable Set</string>
     <string name="title_activity_help">Help</string>
+    <string name="title_activity_photo_capture">PhotoCaptureActivity</string>
 </resources>

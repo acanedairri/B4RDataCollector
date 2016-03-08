@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ import cz.msebera.android.httpclient.client.ClientProtocolException;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.client.methods.HttpPut;
 import cz.msebera.android.httpclient.client.methods.HttpUriRequest;
 import cz.msebera.android.httpclient.entity.ByteArrayEntity;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -74,7 +76,8 @@ public class RestClient {
     public enum RequestMethod
     {
         GET,
-        POST
+        POST,
+        PUT
     }
 
     public void Execute(RequestMethod method) throws Exception
@@ -84,6 +87,27 @@ public class RestClient {
             case POST:
             {
                HttpPost request = new HttpPost(url);
+                StringEntity entity = new StringEntity(params.get(0).getValue(),HTTP.UTF_8);
+
+                if(!params.isEmpty()) {
+                    entity.setContentType("application/json");
+                    request.setEntity(entity);
+
+
+                }
+                //add headers
+                for(NameValuePair h : headers)
+                {
+                    request.addHeader(h.getName(), h.getValue());
+                    //request.setHeader(h.getName(), h.getValue());
+                }
+
+                executeRequest(request, url);
+                break;
+            }
+            case PUT:
+            {
+                HttpPut request = new HttpPut(url);
                 StringEntity entity = new StringEntity(params.get(0).getValue(),HTTP.UTF_8);
 
                 if(!params.isEmpty()) {

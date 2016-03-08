@@ -90,6 +90,19 @@ public class StudyManager {
         return cursor;
     }
 
+
+    public Cursor getStudy(SQLiteDatabase database,String studyName) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from study where name='"+studyName+"'" ;
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
     public Cursor getPlotRecords(SQLiteDatabase database,int recno) {
         Cursor cursor = null;
         try {
@@ -248,7 +261,18 @@ public class StudyManager {
     public void updateStudyCommitTranscation(SQLiteDatabase database,String studyName,int trans_id) {
         try {
             DateUtil cdate= new DateUtil();
-            String sql="update study set last_commit='"+cdate.getDate()+"' where name='"+studyName+"'";
+            String sql="update study set is_posted='Y', last_commit='"+cdate.getDate()+"', transaction_id="+trans_id+" where name='"+studyName+"'";
+            database.execSQL(sql);
+        } catch (SQLiteException e) {
+            System.out.println(e);
+        }
+    }
+
+
+    public void isPosted(SQLiteDatabase database,String studyName){
+        try {
+
+            String sql="select is";
             database.execSQL(sql);
         } catch (SQLiteException e) {
             System.out.println(e);
@@ -335,9 +359,9 @@ public class StudyManager {
         }
     }
 
-    public void updatePlotRecord(SQLiteDatabase database,String newValue,String plotNo,int variable_id ,String dateUpdated) {
+    public void updatePlotRecord(SQLiteDatabase database,String newValue,int plotNo,int variable_id ,String dateUpdated) {
         try {
-            String sql="Update plot_data set value='"+newValue+"',last_modified='"+dateUpdated+"',committed='N' where plotno='"+plotNo+"' and variable_id="+variable_id;
+            String sql="Update plot_data set value='"+newValue+"',last_modified='"+dateUpdated+"',committed='N' where plotno="+plotNo+" and variable_id="+variable_id;
             database.execSQL(sql);
         }catch (SQLiteException e) {
 

@@ -16,11 +16,7 @@
         app:showAsAction="always"
         android:title="Set Variable to Measuring"/>
 
-    <item android:id="@+id/action_help"
-        android:orderInCategory="300"
-        android:icon="@drawable/help"
-        app:showAsAction="always"
-        android:title="Help"/>
+
 
     <item android:id="@+id/action_plotorder"
         android:orderInCategory="400"
@@ -31,10 +27,29 @@
         android:orderInCategory="500"
         app:showAsAction="withText"
         android:title="Set Single Entry"/>
+
     <item android:id="@+id/action_range_entry"
         android:orderInCategory="600"
         app:showAsAction="withText"
         android:title="Set Range Entry"/>
+
+    <item android:id="@+id/action_take_photo"
+        android:orderInCategory="700"
+        android:icon="@drawable/camera3"
+        app:showAsAction="always"
+        android:title="Take Photo"/>
+
+    <item android:id="@+id/action_view_photo"
+        android:orderInCategory="800"
+        android:icon="@drawable/camera3"
+        app:showAsAction="withText"
+        android:title="View Photos"/>
+
+    <item android:id="@+id/action_help"
+        android:orderInCategory="300"
+        android:icon="@drawable/help"
+        app:showAsAction="withText"
+        android:title="Help"/>
 
   <!--  <item android:id="@+id/action_trait_measuring" android:title="@string/action_trait_measuring"
         android:orderInCategory="100" app:showAsAction="never" />-->

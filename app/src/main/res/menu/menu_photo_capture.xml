@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.irri.activity.PhotoCaptureActivity">
+    <item android:id="@+id/action_photo" android:title="Take Photo"   android:icon="@drawable/camera3"
+        android:orderInCategory="100" app:showAsAction="always" />
+    <item android:id="@+id/action_close" android:title="Close" android:icon="@drawable/close24"
+        android:orderInCategory="200" app:showAsAction="always" />
+</menu>

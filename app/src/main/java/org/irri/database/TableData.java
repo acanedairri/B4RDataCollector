@@ -30,13 +30,13 @@ public class TableData {
                 "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                 "`id` INTEGER," +
                 "`userid` INTEGER," +
-                "`transaction_id` TEXT," +
+                "`transaction_id` INTEGER," +
                 "`program` TEXT," +
                 "`place` TEXT," +
                 "`phase` TEXT," +
                 "`year` TEXT," +
                 "`season` TEXT," +
-                "`studyname` TEXT," +
+                "`study` TEXT," +
                 "`name` TEXT," +
                 "`title` TEXT," +
                 "`creation_timestamp` TEXT" +
@@ -46,7 +46,8 @@ public class TableData {
                 "`number` INTEGER," +
                 "`last_commit` TEXT," +
                 "`uncommited` INTEGER," +
-                "`is_uploaded` TEXT" +
+                "`is_uploaded` TEXT," +
+                "`is_posted` TEXT" +
                 ");";
 
     public static String CREATE_STUDY_LIST="CREATE TABLE `study_list` (" +

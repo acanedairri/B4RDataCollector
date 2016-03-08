@@ -29,6 +29,7 @@ import org.irri.entity.ObservationData;
 import org.irri.entity.PlotDataCommitModel;
 import org.irri.entity.StudyListData;
 import org.irri.entity.StudyMetadata;
+import org.irri.utility.ApplicationPath;
 import org.irri.utility.ConnectionState;
 import org.irri.utility.DateUtil;
 import org.irri.utility.RestClient;
@@ -38,6 +39,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -46,12 +48,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.methods.HttpPut;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
+
 public class StudyMainActivity extends AppCompatActivity {
 
     String studyName;
     String accessToken;
     TextView tvNofication;
     TableRow tblNotification;
+    private static String is_posted;
+    private static int transaction_id;
     //int totalUncommitedRec;
 
     @Override
@@ -64,6 +76,7 @@ public class StudyMainActivity extends AppCompatActivity {
        // totalUncommitedRec= bundle.getInt("NEWRECORD");
 
        viewNotification();
+        isPosted();
 
 
         if (savedInstanceState == null) {
@@ -134,8 +147,12 @@ public class StudyMainActivity extends AppCompatActivity {
             startActivity(intent);
         }else if(id == R.id.action_commit_study) {
             String jsonString=getPlotDataToCommit();
-
-            String postUrl="http://api.breeding4rice.irri.org/dev/v1/datasets?accessToken="+accessToken;
+            String postUrl;
+            if(is_posted.equals("N")) {
+                 postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets?accessToken=" + accessToken;
+            }else{
+                postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
+            }
             //String urlStringStudy="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
            // String url="http://api.breeding4rice.irri.org/dev/v1/studies/"+item.getItemId()+"/data-collection?accessToken="+accessToken;
             new JSONTaskCommitStudy().execute(postUrl,jsonString);
@@ -151,6 +168,12 @@ public class StudyMainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
+        }else if (id == R.id.action_view_photo) {
+
+            Intent i = new Intent(StudyMainActivity.this, ImageListViewActivity.class);
+            i.putExtra("FOLDER_PATH", ApplicationPath.APP_PATH_IMAGES);
+            i.putExtra("STUDYNAME",studyName );
+            startActivity(i);
         }
 
 
@@ -209,22 +232,31 @@ public class StudyMainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-
+            String response=null;
            try{
                RestClient client = new RestClient(params[0]);
-               client.AddHeader("Content-type","application/json");
+               client.AddHeader("Content-type", "application/json");
                client.AddParam("data",params[1]);
+
+
                //client.AddHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
 
                try {
-                   client.Execute(RestClient.RequestMethod.POST);
+                   if(is_posted.equals("N")) {
+                       client.Execute(RestClient.RequestMethod.POST);
+                       response = client.getResponse();
+                   }else{
+                      client.Execute(RestClient.RequestMethod.PUT);
+                       response = client.getResponse();
+
+                   }
                } catch (Exception e) {
                    e.printStackTrace();
                }
                if(client.getResponseCode()==401){
                    return null;
                }
-               String response = client.getResponse();
+              /* String response = client.getResponse();*/
 
                return response;
            }catch (Exception e){
@@ -245,9 +277,7 @@ public class StudyMainActivity extends AppCompatActivity {
 
                 Gson gson = new Gson();
                 CommitMessage commitMessage = gson.fromJson(result, CommitMessage.class);
-
                 updateCommitHistory(commitMessage);
-
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         StudyMainActivity.this).create();
                 alertDialog.setTitle("Upload Message");
@@ -261,6 +291,8 @@ public class StudyMainActivity extends AppCompatActivity {
                 });
                 Dialog.dismiss();
                 alertDialog.show();
+
+
                 //setResult(RESULT_OK, null);
                // finish();
 
@@ -283,34 +315,157 @@ public class StudyMainActivity extends AppCompatActivity {
         }
 
         private void updateCommitHistory(CommitMessage result) {
-            // create new study database
-            String transMsg=result.getData().getMessage().toString();
-            String[] s=transMsg.split(" ");
 
-            DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
-            SQLiteDatabase studyDatabase=dbToolStudy.getStudyDatabase(studyName);
-            StudyManager mgrStudy = new StudyManager();
-            mgrStudy.updatePlotRecordCommited(studyDatabase);
-            ContentValues cv = new ContentValues();
-            DateUtil cdate= new DateUtil();
-            cv.put("remarks",result.getData().getMessage());
-            cv.put("transaction_id",Integer.valueOf(s[s.length-1]));
-            cv.put("date_commit",cdate.getDate());
-            mgrStudy.insertCommitHistory(studyDatabase, cv);
-            dbToolStudy.closeDB(studyDatabase);
+            try {
+                // create new study database
+                String transMsg = result.getData().getMessage().toString();
+                String[] s = transMsg.split(" ");
 
-            // update master list study
+                DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(), studyName);
+                SQLiteDatabase studyDatabase = dbToolStudy.getStudyDatabase(studyName);
+                StudyManager mgrStudy = new StudyManager();
+                mgrStudy.updatePlotRecordCommited(studyDatabase);
+                if (is_posted.equals("N")) {
+                    ContentValues cv = new ContentValues();
+                    DateUtil cdate = new DateUtil();
+                    cv.put("remarks", result.getData().getMessage());
+                    int transaction_id = Integer.valueOf(s[s.length - 1]);
+                    cv.put("transaction_id", transaction_id);
+                    cv.put("date_commit", cdate.getDate());
+                    mgrStudy.insertCommitHistory(studyDatabase, cv);
+                    dbToolStudy.closeDB(studyDatabase);
 
-            // insert study record to master table
-            DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
-            SQLiteDatabase database = dbTool.getMasterDatabase();
-            StudyManager mgr = new StudyManager();
-            mgr.updateStudyCommitTranscation(database, studyName, s.length - 1);
+                    // update master list study
 
-            dbTool.closeDB(database);
+                    // insert study record to master table
+                    DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
+                    SQLiteDatabase database = dbTool.getMasterDatabase();
+                    StudyManager mgr = new StudyManager();
+                    mgr.updateStudyCommitTranscation(database, studyName, transaction_id);
+                    isPosted();
+                    dbTool.closeDB(database);
+                }
+                viewNotification();
+                }catch(Exception e){
 
-            viewNotification();
+                }
+
+        }
+    }
+
+
+
+
+
+    public class JSONTaskUpdateStudy extends AsyncTask<String,String,String> {
+
+        String studyId;
+        private ProgressDialog Dialog = new ProgressDialog(StudyMainActivity.this);
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Dialog.setMessage(" please wait while processing............");
+            Dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String response=null;
+            try{
+                RestClient client = new RestClient(params[0]);
+                client.AddHeader("Content-type", "application/json");
+                client.AddParam("data",params[1]);
+
+
+                //client.AddHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
+
+                try {
+                    if(is_posted.equals("N")) {
+                        client.Execute(RestClient.RequestMethod.POST);
+                        response = client.getResponse();
+                    }else{
+                        client.Execute(RestClient.RequestMethod.PUT);
+                        response = client.getResponse();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(client.getResponseCode()==401){
+                    return null;
+                }
+              /* String response = client.getResponse();*/
+
+                return response;
+            }catch (Exception e){
+                return null;
             }
+
+
+
+
+
+        }
+
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            try {
+                // create new study database
+                DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(), studyName);
+                SQLiteDatabase databaseStudy = dbToolStudy.createStudyDatabase(getApplicationContext(),studyName);
+                SQLiteDatabase studyDatabase = dbToolStudy.getStudyDatabase(studyName);
+                StudyManager mgrStudy = new StudyManager();
+                Gson gsonData = new Gson();
+                ObservationData observationData = gsonData.fromJson(result, ObservationData.class);
+                DateUtil cdate=new DateUtil();
+                int recno = 1;
+                // save plot data
+
+                List<ObservationData.DataEntity.ItemsEntity> objectsData = observationData.getData().getItems();
+
+                for (ObservationData.DataEntity.ItemsEntity rec : objectsData) {
+
+                    for (ObservationData.DataEntity.ItemsEntity.ObservationsEntity obj : rec.getObservations()) {
+
+                        ContentValues content = new ContentValues();
+                        content.put("plot_key", rec.getPLOT_KEY());
+                        content.put("abbrev", obj.getAbbrev());
+                        content.put("plotno", rec.getPLOTNO());
+                        content.put("variable_id", obj.getVariable().getId());
+                        content.put("value", obj.getValue());
+                        content.put("timestamp", cdate.getDate());
+                        content.put("committed", "Y");
+                        mgrStudy.insertPlotRecord(studyDatabase, content);
+
+
+
+                        boolean isExistRecord=mgrStudy.isExistRecord(studyDatabase,rec.getPLOTNO(),obj.getVariable().getId());
+                        if(isExistRecord){
+
+                                content.put("committed","N");
+                                mgrStudy.updatePlotRecord(studyDatabase, obj.getValue(), rec.getPLOTNO(), obj.getVariable().getId(), cdate.getDate());
+
+                        }else{
+                            content.put("committed","Y");
+                            mgrStudy.insertPlotRecord(studyDatabase, content);
+                        }
+
+
+                    }
+
+                    recno++;
+
+                }
+                dbToolStudy.closeDB(databaseStudy);
+            }catch(Exception  e){
+
+            }
+
+            }
+
+
     }
 
     private int getTotalUncommitedRecord(String studyName) {
@@ -326,5 +481,27 @@ public class StudyMainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         viewNotification();
+    }
+
+
+    private void isPosted(){
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
+        SQLiteDatabase database = dbTool.getMasterDatabase();
+        StudyManager mgr = new StudyManager();
+        Cursor cursor =mgr.getStudy(database, studyName);
+
+        if(cursor != null && cursor.getCount() > 0){
+
+            if (cursor.moveToFirst()) {
+                do {
+                    is_posted=cursor.getString(cursor.getColumnIndex("is_posted"));
+                    transaction_id=cursor.getInt(cursor.getColumnIndex("transaction_id"));
+                } while (cursor.moveToNext());
+            }
+        }
+
+        dbTool.closeDB(database);
+
+
     }
 }

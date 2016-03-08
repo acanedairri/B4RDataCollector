@@ -135,41 +135,47 @@ public class StudyListActivity extends AppCompatActivity {
 
     private List<StudyListModel> populateStudyList(List<Study.DataEntity.ItemsEntity>  items) {
 
-        List<StudyListModel> toreturn=new ArrayList<StudyListModel>();
-        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-        SQLiteDatabase database=dbTool.getMasterDatabase();
-        StudyManager mgr= new StudyManager();
+        try {
 
-        mgr.deleteStudyList(database);
-        //insert new studylist
-        for(Study.DataEntity.ItemsEntity rec:items){
-            ContentValues contextValue = new ContentValues();
-            contextValue.put("studyid",rec.getId());
-            contextValue.put("name",rec.getStudy());
-            mgr.insertStudyList(database,contextValue);
-        }
+            List<StudyListModel> toreturn = new ArrayList<StudyListModel>();
+            DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+            SQLiteDatabase database = dbTool.getMasterDatabase();
+            StudyManager mgr = new StudyManager();
 
-        Cursor studyList= mgr.getAllStudyList(database);
-
-        if(studyList != null && studyList.getCount() > 0){
-
-            if (studyList.moveToFirst()) {
-                do {
-                    int id=studyList.getInt(studyList.getColumnIndex("studyid"));
-                    String name=studyList.getString(studyList.getColumnIndex("name"));
-
-                    StudyListModel rec = new StudyListModel();
-                    rec.setId(id);
-                    rec.setName(name);
-
-                    toreturn.add(rec);
-                } while (studyList.moveToNext());
+            mgr.deleteStudyList(database);
+            //insert new studylist
+            for (Study.DataEntity.ItemsEntity rec : items) {
+                ContentValues contextValue = new ContentValues();
+                contextValue.put("studyid", rec.getId());
+                contextValue.put("name", rec.getStudy());
+                mgr.insertStudyList(database, contextValue);
             }
+
+            Cursor studyList = mgr.getAllStudyList(database);
+
+            if (studyList != null && studyList.getCount() > 0) {
+
+                if (studyList.moveToFirst()) {
+                    do {
+                        int id = studyList.getInt(studyList.getColumnIndex("studyid"));
+                        String name = studyList.getString(studyList.getColumnIndex("name"));
+
+                        StudyListModel rec = new StudyListModel();
+                        rec.setId(id);
+                        rec.setName(name);
+
+                        toreturn.add(rec);
+                    } while (studyList.moveToNext());
+                }
+            }
+
+            dbTool.closeDB(database);
+            return toreturn;
+
+        }catch (Exception e){
+
         }
-
-        dbTool.closeDB(database);
-
-        return toreturn;
+       return null;
 
     }
 
@@ -178,7 +184,7 @@ public class StudyListActivity extends AppCompatActivity {
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
         SQLiteDatabase database=dbTool.getMasterDatabase();
         StudyManager mgr= new StudyManager();
-        Cursor studyList;
+        Cursor studyList= null;
         if(filter.length() > 0) {
             studyList = mgr.getStudyListByName(database,filter);
         }else{
@@ -191,7 +197,7 @@ public class StudyListActivity extends AppCompatActivity {
             if (studyList.moveToFirst()) {
                 do {
                     int id=studyList.getInt(studyList.getColumnIndex("studyid"));
-                    String name=studyList.getString(studyList.getColumnIndex("study"));
+                    String name=studyList.getString(studyList.getColumnIndex("name"));
 
                     StudyListModel rec = new StudyListModel();
                     rec.setId(id);
@@ -519,8 +525,8 @@ public class StudyListActivity extends AppCompatActivity {
                 context.put("season", studyMetadata.getData().getSeason().toString());
                 context.put("place", studyMetadata.getData().getPlace().toString());
                 context.put("year", String.valueOf(studyMetadata.getData().getYear()));
-                mgrStudy.insertStudyBasicInfoRecord(studyDatabase, context);
-
+                context.put("is_posted","N");
+                context.put("transaction_id",0);
 
                 // save study metadata information
 
@@ -533,10 +539,11 @@ public class StudyListActivity extends AppCompatActivity {
 
                     if(rec.getVariable_id().getValue().equals("STUDY")){
                         studyName=  rec.getValue();
+                        context.put("study", studyName);
                     }
                     mgrStudy.insertStudyMetaData(studyDatabase, contextMeta);
                 }
-
+                mgrStudy.insertStudyBasicInfoRecord(studyDatabase, context);
                 // create plot table
                 Gson gsonData = new Gson();
 
@@ -617,12 +624,14 @@ public class StudyListActivity extends AppCompatActivity {
                 ContentValues studyInfo = new ContentValues();
                 studyInfo.put("id", studyMetadata.getData().getId());
                 studyInfo.put("name", studyMetadata.getData().getName().toString());
-                studyInfo.put("studyname", studyName);
+                studyInfo.put("study", studyName);
                 studyInfo.put("title", studyMetadata.getData().getTitle().toString());
                 studyInfo.put("program", studyMetadata.getData().getProgram().toString());
                 studyInfo.put("phase", studyMetadata.getData().getPhase().toString());
                 studyInfo.put("season", studyMetadata.getData().getSeason().toString());
                 studyInfo.put("userid", LoginActivity.getUser_id());
+                studyInfo.put("is_posted","N");
+                studyInfo.put("transaction_id",0);
                 mgr.insertStudyBasicInfoRecord(database, studyInfo);
                 dbTool.closeDB(database);
 

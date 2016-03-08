@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
@@ -15,7 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,19 +46,19 @@ import org.irri.database.StudyManager;
 import org.irri.entity.PlotData;
 import org.irri.entity.ScaleValue;
 import org.irri.entity.TraitMeasuring;
+import org.irri.utility.ApplicationPath;
 import org.irri.utility.DateUtil;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 
 import com.intermec.aidc.*;
@@ -69,6 +69,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private String studyName;
     private int REQUEST_CODE = 0X1;
     private int REQUEST_CODE2 = 0X2;
+    private static final int PHOTO_CAPTURE=4;
 
     private ImageView btnPlotPrev;
     private ImageView btnPlotNext;
@@ -80,6 +81,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private TableRow tblRowSearch;
     private TableLayout tblPlotRangeEntry;
     private TableLayout tblPlotSingleEntry;
+    private SharedPreferences ep;
 
     private int plotIndex=1;
     private int traitIndex=0;
@@ -104,6 +106,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     StudyManager studyMgr;
     List<String> scaleValues;
     String currentTraitValue;
+    String currentTraitLabel;
 
     Spinner spinnerTrait;
     ArrayAdapter<CharSequence>  adapterTrait;
@@ -476,8 +479,23 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
             return true;
 
-        }
+        }else if (id == R.id.action_take_photo) {
 
+            Calendar now = GregorianCalendar.getInstance();
+            String plotReferenceCode="abc";
+            Intent iPhoto = new Intent(DataEntryActivity.this,PhotoCaptureActivity.class);
+            iPhoto.putExtra("DBNAME", studyName);
+            String photoName=studyName+"_"+plotNo+"_"+"-var-"+currentTraitLabel;
+            iPhoto.putExtra("PHOTO_NAME",photoName );
+            startActivityForResult(iPhoto, PHOTO_CAPTURE);
+
+        }else if (id == R.id.action_view_photo) {
+
+            Intent i = new Intent(DataEntryActivity.this, ImageListViewActivity.class);
+            i.putExtra("FOLDER_PATH", ApplicationPath.APP_PATH_IMAGES);
+            i.putExtra("STUDYNAME",studyName );
+            startActivity(i);
+        }
 
 
         return super.onOptionsItemSelected(item);
@@ -774,6 +792,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         if(traitMeasuring.size() > 0 ) {
             tvTraitLabel.setText(traitMeasuring.get(traitIndex).getDisplay_name());
+            currentTraitLabel= traitMeasuring.get(traitIndex).getAbbrev();
+
         }else{
             tvTraitLabel.setText("");
         }
@@ -802,7 +822,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 if(isExistRecord){
                     if(!etValue.getText().toString().equals(currentTraitValue)) {
                         content.put("committed","N");
-                        studyMgr.updatePlotRecord(database, etValue.getText().toString(), plotNo, variable_id, cdate.getDate());
+                        studyMgr.updatePlotRecord(database, etValue.getText().toString(), Integer.valueOf(plotNo), variable_id, cdate.getDate());
                     }
                 }else{
                     content.put("committed","N");
@@ -855,7 +875,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     if (isExistRecord) {
                         if (!etValue.getText().toString().equals(currentTraitValue)) {
                             content.put("committed", "N");
-                            studyMgr.updatePlotRecord(database, etValue.getText().toString(), plotNo, variable_id, cdate.getDate());
+                            studyMgr.updatePlotRecord(database, etValue.getText().toString(), Integer.valueOf(plotNo), variable_id, cdate.getDate());
                         }
                     } else {
                         content.put("committed", "N");
@@ -1249,5 +1269,6 @@ return data;
             etValue.setText("");
         }
     }
+
 
 }

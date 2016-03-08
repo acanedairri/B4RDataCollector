@@ -16,11 +16,12 @@ public class ApplicationPath {
 
     public  static String STUDY_FOLDER="study";*/
 
-    public static final String APP_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/B4RDataCollector";
-    public static final String APP_PATH_MASTER =Environment.getExternalStorageDirectory().getAbsolutePath()+ "/B4Rtemp";
+    public static final String APP_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/B4RDataCollectorTesting1";
+    public static final String APP_PATH_MASTER =Environment.getExternalStorageDirectory().getAbsolutePath()+ "/B4RtempTesting1";
 
     public static String APP_PATH_STUDY=APP_PATH+"/study/";
     public static String APP_PATH_LOG=APP_PATH+"/log/";
+    public static String APP_PATH_IMAGES=APP_PATH+"/images/";
 
     public  static String STUDY_FOLDER="study";
 

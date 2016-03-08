@@ -5,19 +5,20 @@ package org.irri.entity;
  */
 public class StudyListData {
 
-    String studyname;
+    String study;
     String name;
     String title;
     String dateLastCommited;
     int uncommited;
     int id;
 
-    public String getStudyname() {
-        return studyname;
+
+    public String getStudy() {
+        return study;
     }
 
-    public void setStudyname(String studyname) {
-        this.studyname = studyname;
+    public void setStudy(String study) {
+        this.study = study;
     }
 
     public String getName() {

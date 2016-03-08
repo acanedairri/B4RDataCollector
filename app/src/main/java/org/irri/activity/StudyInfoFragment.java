@@ -51,6 +51,7 @@ public class StudyInfoFragment extends Fragment {
     Context context;
     private int id;
     private String program;
+    private String study;
     private String name;
     private String title;
     private String place;
@@ -92,6 +93,7 @@ public class StudyInfoFragment extends Fragment {
                     name=cursor.getString(cursor.getColumnIndex("name"));
                     title=cursor.getString(cursor.getColumnIndex("title"));
                     place=cursor.getString(cursor.getColumnIndex("place"));
+                    study=cursor.getString(cursor.getColumnIndex("study"));
                     phase=cursor.getString(cursor.getColumnIndex("phase"));
                     season=cursor.getString(cursor.getColumnIndex("season"));
                     year=cursor.getString(cursor.getColumnIndex("year"));
@@ -217,6 +219,7 @@ public class StudyInfoFragment extends Fragment {
 
                 EditText etProgram;
                 EditText etName;
+                EditText etStudy;
                 EditText etTitle;
                 EditText etPlace;
                 EditText etPhase;
@@ -235,6 +238,8 @@ public class StudyInfoFragment extends Fragment {
                 // Retrieve a TextView from the inflated View, and update it's text
                 etName = (EditText) view.findViewById(R.id.etName);
                 etName.setText(name);
+                etStudy = (EditText) view.findViewById(R.id.etStudy);
+                etStudy.setText(study);
                 etTitle = (EditText) view.findViewById(R.id.etTitle);
                 etTitle.setText(title);
                 etProgram = (EditText) view.findViewById(R.id.etProgram);
@@ -254,11 +259,15 @@ public class StudyInfoFragment extends Fragment {
                 String[] s = studyMetadataObj.split(",");
 
                 for(String r: s){
-                    String [] data=r.split(":");
-                    StudyMetadataList mdata= new StudyMetadataList();
-                    mdata.setVariable(data[0]);
-                    mdata.setValue(data[1]);
-                    smList.add(mdata);
+                    try {
+                        String[] data = r.split(":");
+                        StudyMetadataList mdata = new StudyMetadataList();
+                        mdata.setVariable(data[0]);
+                        mdata.setValue(data[1]);
+                        smList.add(mdata);
+                    }catch (Exception e){
+
+                    }
                 }
 
                 view = getActivity().getLayoutInflater().inflate(R.layout.activity_study_metadata,
