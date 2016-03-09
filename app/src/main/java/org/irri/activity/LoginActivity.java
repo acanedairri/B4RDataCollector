@@ -40,7 +40,7 @@ public class LoginActivity extends ActionBarActivity {
     private Gson gson;
     private EditText username;
     private EditText password;
-    private String token="7tx9vOoGuoVhfeCXszrlIdpXrzLO83X9hpw0bp7B";
+    private String token="lo2q118mv9PGhX3MZfZZnWELTaJzrSQdXzWQOGAH";
     private String versionName;
     private int versionNum;
     private static int user_id;

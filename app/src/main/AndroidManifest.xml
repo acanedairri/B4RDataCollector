@@ -85,6 +85,7 @@
         </activity>
         <activity
             android:name=".StudiesActivity"
+            android:screenOrientation="portrait"
             android:label="Studies" >
         </activity>
         <activity

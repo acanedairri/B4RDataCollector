@@ -1,16 +1,17 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="org.irri.activity.StudyListActivity">
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="horizontal"
         android:id="@+id/tblRowSearch"
         android:visibility="visible"
-        android:paddingStart="0dp">
+        android:paddingStart="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,8 +47,49 @@
     </TableRow>
 
     <ListView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lvStudyList" />
-</LinearLayout>
+        android:id="@+id/lvStudyList"
+        android:layout_gravity="right"
+        android:layout_above="@+id/tblDeleteStudy" />
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tblDeleteStudy"
+        android:layout_weight="1"
+        android:layout_gravity="right"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/button3"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/tblDeleteStudy"
+            android:onClick="actionCancel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView22"
+            android:text="      " />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:id="@+id/button4"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/tblDeleteStudy"
+            android:layout_marginStart="23dp"
+            android:onClick="actionDropStudy" />
+
+    </TableRow>
+
+</RelativeLayout>
 

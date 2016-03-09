@@ -26,7 +26,7 @@
     <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
         android:orderInCategory="500" app:showAsAction="never" />
 
-    <item android:id="@+id/action_view_photo" android:title="View Captured Photos"
+    <item android:id="@+id/action_view_photo" android:title="View Photos"
         android:orderInCategory="500" app:showAsAction="never" />
 
 <!--    <item android:id="@+id/action_log_record" android:title="@string/action_log_recording"

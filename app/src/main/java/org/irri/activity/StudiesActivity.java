@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TableRow;
@@ -40,6 +42,7 @@ import org.irri.entity.MockData;
 import org.irri.entity.PlotData;
 import org.irri.entity.Study;
 import org.irri.entity.StudyListData;
+import org.irri.entity.StudyListModel;
 import org.irri.entity.StudyMetadata;
 import org.irri.entity.User;
 import org.irri.entity.VariableSet;
@@ -58,6 +61,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class StudiesActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -73,9 +77,12 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     private int REQUEST_CODE = 0X1;
     List<StudyListData> studyList;
     MyStudyListAdapter adapter;
+    private TableRow tblDeleteStudy;
     private TableRow tblRowSearch;
     private EditText etSearchStudy;
     int searchFlag=0;
+    int deleteFlag=0;
+    List<StudyListModel> studyToDelete = new ArrayList<StudyListModel>();
    // private int totalUncommitedRecord;
 
     @Override
@@ -93,6 +100,9 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
         tblRowSearch = (TableRow) findViewById(R.id.tblRowSearch);
         tblRowSearch.setVisibility(View.GONE);
+
+        tblDeleteStudy = (TableRow) findViewById(R.id.tblDeleteStudy);
+        tblDeleteStudy.setVisibility(View.GONE);
 
         etSearchStudy=(EditText) findViewById(R.id.etSearchStudy);
 
@@ -210,6 +220,11 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 intent.putExtra("IMAGE", "help_studies");
                 startActivity(intent);
                 break;
+            case R.id.action_delete_study:
+                deleteFlag=1;
+                studyToDelete.clear();
+                tblDeleteStudy.setVisibility(View.VISIBLE);
+                break;
         }
 
         //noinspection SimplifiableIfStatement
@@ -243,54 +258,99 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             studyModelEntity=objects;
             this.resource=resource;
             inflater=(LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            studyToDelete.clear();
 
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            if(convertView==null){
-                convertView = inflater.inflate(resource,null);
+            try {
+
+                if (convertView == null) {
+                    convertView = inflater.inflate(resource, null);
+                }
+
+                final TextView tvStudyName;
+                final TextView tvName;
+                final TextView tvStudyId;
+                TextView tvLastSync;
+                TextView tvUncommitRecordLabel;
+                TextView tvUncommittedRec;
+                final CheckBox checkBox;
+
+                tvStudyName = (TextView) convertView.findViewById(R.id.tvStudyName);
+                tvName = (TextView) convertView.findViewById(R.id.tvName);
+                tvStudyId = (TextView) convertView.findViewById(R.id.tvStudyId);
+
+                tvStudyName.setText(studyModelEntity.get(position).getName());
+                tvStudyId.setText(String.valueOf(studyModelEntity.get(position).getId()));
+
+                tvName.setText(studyModelEntity.get(position).getStudy());
+
+                tvLastSync = (TextView) convertView.findViewById(R.id.tvLastSync);
+                tvLastSync.setText("Last Commited: " + studyModelEntity.get(position).getDateLastCommited());
+
+                tvUncommitRecordLabel = (TextView) convertView.findViewById(R.id.tvUncommitRecordLabel);
+                tvUncommittedRec = (TextView) convertView.findViewById(R.id.tvUncommittedRec);
+                checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
+                if (deleteFlag == 1) {
+                    checkBox.setVisibility(View.VISIBLE);
+                } else {
+                    checkBox.setVisibility(View.GONE);
+                }
+
+
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton paramAnonymousCompoundButton, boolean paramAnonymousBoolean) {
+                        try {
+                            if (paramAnonymousBoolean) {
+                                StudyListModel s = new StudyListModel();
+                                s.setId(Integer.valueOf(tvStudyId.getText().toString()));
+                                s.setName(tvStudyName.getText().toString());
+                                s.setIs_selected(paramAnonymousBoolean);
+                                studyToDelete.add(s);
+                            } else {
+                                int i = 0;
+                                for (StudyListModel r : studyToDelete) {
+                                    if (r.getId() == Integer.valueOf(tvStudyId.getText().toString())) {
+                                        studyToDelete.remove(i);
+
+                                    }
+                                    i++;
+                                }
+                            }
+                        }catch (Exception e){
+                            
+                        }
+
+
+                        // String is_selected=String.valueOf(checkBox.getText());
+                        // Toast.makeText(getApplicationContext(), tvStudyId.getText().toString()+ " "+String.valueOf(paramAnonymousBoolean), Toast.LENGTH_SHORT).show();
+
+
+                    }
+                });
+
+                String studyTempName = studyModelEntity.get(position).getName();
+
+                int totalUncommitedRecord = getTotalUncommitedRecord(studyModelEntity.get(position).getName());
+
+                if (totalUncommitedRecord > 0) {
+
+                    tvUncommitRecordLabel.setVisibility(View.VISIBLE);
+                    tvUncommittedRec.setVisibility(View.VISIBLE);
+                    tvUncommittedRec.setText(String.valueOf(totalUncommitedRecord));
+                    tvUncommitRecordLabel.setText("New Records: ");
+
+                } else {
+                    tvUncommitRecordLabel.setVisibility(View.GONE);
+                    tvUncommittedRec.setVisibility(View.GONE);
+                }
+
+            }catch (Exception e){
+
             }
-
-            TextView tvStudyName;
-            TextView tvName;
-            TextView tvStudyId;
-            TextView tvLastSync;
-            TextView tvUncommitRecordLabel;
-            TextView tvUncommittedRec;
-
-            tvStudyName = (TextView) convertView.findViewById(R.id.tvStudyName);
-            tvName = (TextView) convertView.findViewById(R.id.tvName);
-            tvStudyId = (TextView) convertView.findViewById(R.id.tvStudyId);
-
-            tvStudyName.setText(studyModelEntity.get(position).getName());
-            tvStudyId.setText(String.valueOf(studyModelEntity.get(position).getId()));
-
-            tvName.setText(studyModelEntity.get(position).getStudy());
-
-            tvLastSync=(TextView)  convertView.findViewById(R.id.tvLastSync);
-            tvLastSync.setText("Last Commited: "+studyModelEntity.get(position).getDateLastCommited());
-
-            tvUncommitRecordLabel=(TextView)  convertView.findViewById(R.id.tvUncommitRecordLabel);
-            tvUncommittedRec=(TextView)  convertView.findViewById(R.id.tvUncommittedRec);
-
-            String studyTempName=studyModelEntity.get(position).getName();
-
-            int totalUncommitedRecord=getTotalUncommitedRecord(studyModelEntity.get(position).getName());
-
-            if(totalUncommitedRecord > 0){
-
-                tvUncommitRecordLabel.setVisibility(View.VISIBLE);
-                tvUncommittedRec.setVisibility(View.VISIBLE);
-                tvUncommittedRec.setText(String.valueOf(totalUncommitedRecord));
-                tvUncommitRecordLabel.setText("New Records: ");
-
-            }else{
-                tvUncommitRecordLabel.setVisibility(View.GONE);
-                tvUncommittedRec.setVisibility(View.GONE);
-            }
-
             return convertView;
         }
 
@@ -447,6 +507,25 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         super.onDestroy();
 
 
+    }
+
+
+    public void actionCancel(View v) {
+        tblDeleteStudy.setVisibility(View.GONE);
+        deleteFlag=0;
+        studyList= getMyStudyList(null);
+        lvStudyList= (ListView) findViewById(R.id.lvStudyList);
+        adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
+        lvStudyList.setAdapter(adapter);
+        studyToDelete.clear();
+    }
+
+    public void actionDropStudy(View v) {
+        tblRowSearch.setVisibility(View.GONE);
+
+        for(StudyListModel r:studyToDelete){
+            Toast.makeText(getApplicationContext(), r.getName(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
