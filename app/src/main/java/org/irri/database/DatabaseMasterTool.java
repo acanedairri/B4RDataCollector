@@ -125,8 +125,10 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
     public SQLiteDatabase createMasterTables(SQLiteDatabase db) {
         try {
             db.execSQL(TableData.CREATE_USER_TABLE);
+            db.execSQL(TableData.CREATE_USER_TEAM_TABLE);
             db.execSQL(TableData.CREATE_STUDY_TABLE);
             db.execSQL(TableData.CREATE_STUDY_LIST);
+            db.execSQL(TableData.CREATE_VARIABLE_SET_TABLE);
         }catch (Exception e){
 
         }

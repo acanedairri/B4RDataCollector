@@ -7,7 +7,16 @@ public class StudyListModel {
 
     int id;
     String name;
+    String studyName;
     boolean is_selected;
+
+    public String getStudyName() {
+        return studyName;
+    }
+
+    public void setStudyName(String studyName) {
+        this.studyName = studyName;
+    }
 
     public boolean is_selected() {
         return is_selected;

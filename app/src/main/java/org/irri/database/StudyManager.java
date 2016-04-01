@@ -388,14 +388,20 @@ public class StudyManager {
 
     }
 
-    public void updateVariableSet(SQLiteDatabase database,String abbrev, String is_selected) {
-        String query="Update variable_set set is_selected='"+is_selected+"' where abbrev='"+abbrev+"'";
+    public void updateVariableSet(SQLiteDatabase database,String abbrev, String is_selected,int order) {
+        String query="Update variable_set set is_selected='"+is_selected+"',order_seq="+order+" where abbrev='"+abbrev+"'";
+        database.execSQL(query);
+    }
+
+    public void updateVariableSetOrder(SQLiteDatabase database,String abbrev,int order) {
+        String query="Update variable_set set order_seq="+order+" where abbrev='"+abbrev+"'";
         database.execSQL(query);
     }
 
     public Cursor getVariableSetSelected(SQLiteDatabase database) {
         try {
-            String sql = "SELECT * from variable_set where is_selected='true'";
+
+            String sql = "SELECT DISTINCT abbrev,label,data_type,scale_value,variable_id,order_seq from variable_set where is_selected='true' order by order_seq asc";
             Cursor cursor = database.rawQuery(sql, null);
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -413,6 +419,12 @@ public class StudyManager {
     }
 
 
+    public void deleteStudy(SQLiteDatabase database,String studyname) {
+        String query="Delete from study where name='"+studyname+"'";
+        database.execSQL(query);
+    }
+
+
     public Cursor getAllStudyList(SQLiteDatabase database) {
         Cursor cursor = null;
         try {
@@ -425,10 +437,46 @@ public class StudyManager {
         return cursor;
     }
 
-    public Cursor getStudyListByName(SQLiteDatabase database,String filter) {
+    public Cursor getAllStudyListByProgram(SQLiteDatabase database,String program) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from study_list where name like  '%"+filter+"%'";
+            String sql = "SELECT * from study_list where program_abbrev='"+program+"'";
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
+    public Cursor getAllStudyListByUser(SQLiteDatabase database,String name) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from study_list where author_name='"+name+"'";
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
+    public Cursor getStudyListByName(SQLiteDatabase database,String filter,String programName) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from study_list where name like  '%"+filter+"%' and program_abbrev='"+programName+"'";
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
+    public Cursor getStudyListByProgram(SQLiteDatabase database,String programName) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from study_list where program_abbrev='"+programName+"'";
             cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {
@@ -518,6 +566,23 @@ public class StudyManager {
     public boolean isStudyExist(SQLiteDatabase database,int studyId) {
         try {
             String sql = "SELECT * from study where id="+studyId;
+            Cursor cursor = database.rawQuery(sql, null);
+            if(cursor != null && cursor.getCount() > 0){
+                cursor.moveToFirst();
+                return true;
+            }
+
+        } catch (SQLiteException e) {
+
+        }
+
+
+        return false;
+    }
+
+    public boolean isVariableExist(SQLiteDatabase database,int variable_id,String variable_set_name) {
+        try {
+            String sql = "SELECT * from variable_set where variable_id="+variable_id+ " and variable_set_name='"+variable_set_name+"'";
             Cursor cursor = database.rawQuery(sql, null);
             if(cursor != null && cursor.getCount() > 0){
                 cursor.moveToFirst();

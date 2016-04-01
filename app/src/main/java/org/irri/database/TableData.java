@@ -6,6 +6,7 @@ package org.irri.database;
 public class TableData {
 
     public static String TABLE_USER= "user";
+    public static String TABLE_USER_TEAM="user_team";
     public static String CREATE_USER_TABLE="CREATE TABLE `user` (" +
             "        `_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
             "        `user_id` INTEGER," +
@@ -22,6 +23,13 @@ public class TableData {
             "        `creation_timestamp` TEXT," +
             "        `access_token` TEXT," +
             "        `access_token_expire` TEXT" +
+            "        );";
+
+    public static String CREATE_USER_TEAM_TABLE="CREATE TABLE `user_team` (" +
+            "        `_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "        `user_id` INTEGER," +
+            "        `program_abbrev` TEXT," +
+            "        `program_display_name` TEXT" +
             "        );";
 
      public static String TABLE_STUDY="study";
@@ -55,6 +63,8 @@ public class TableData {
             "`studyid` INTEGER," +
             "`last_commit` TEXT," +
             "`uncommited` INTEGER," +
+            "`author_name` TEXT," +
+            "`program_abbrev` TEXT," +
             "`name` TEXT" +
             ");";
 
@@ -129,6 +139,7 @@ public class TableData {
             "`data_type` TEXT," +
             "`display_name` TEXT," +
             "`scale_value` TEXT," +
+            "`order_seq` INTEGER," +
             "`is_selected` TEXT" +
             ");";
 

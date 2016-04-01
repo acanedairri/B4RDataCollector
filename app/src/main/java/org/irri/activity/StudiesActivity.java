@@ -1,5 +1,6 @@
 package org.irri.activity;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -21,12 +22,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,10 +50,12 @@ import org.irri.entity.StudyMetadata;
 import org.irri.entity.User;
 import org.irri.entity.VariableSet;
 import org.irri.expandablelist.ListObject;
+import org.irri.utility.ApplicationPath;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -85,6 +90,12 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     List<StudyListModel> studyToDelete = new ArrayList<StudyListModel>();
    // private int totalUncommitedRecord;
 
+    Spinner spinnerProgam;
+    ArrayAdapter<CharSequence> adapterProgram;
+    String[] spinnerArray;
+    private String programName;
+    int programIndex=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +103,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         Bundle bundle = getIntent().getExtras();
         accessToken=bundle.getString("ACCESS_TOKEN");
 
-        studyList= getMyStudyList(null);
+        studyList= getMyStudyList(null,"");
         lvStudyList= (ListView) findViewById(R.id.lvStudyList);
         adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
         lvStudyList.setAdapter(adapter);
@@ -123,7 +134,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 studyList.clear();
-                studyList = getMyStudyList(etSearchStudy.getText().toString());
+                studyList = getMyStudyList(etSearchStudy.getText().toString(),programName);
                 adapter = new MyStudyListAdapter(getApplicationContext(), R.layout.activity_studies_list_row, studyList);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
@@ -135,19 +146,20 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        populateProgam();
     }
 
-    private List<StudyListData> getMyStudyList(String filter) {
+    private List<StudyListData> getMyStudyList(String filter,String programName) {
          List<StudyListData> toreturn = new ArrayList<StudyListData>();
         try {
             DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
             SQLiteDatabase database = dbTool.getMasterDatabase();
             StudyManager mgr = new StudyManager();
             Cursor cursor = null;
-            if (filter == null) {
-                cursor = mgr.getAllStudyRecords(database, LoginActivity.getProgram());
+            if (filter==null ) {
+                cursor = mgr.getAllStudyRecords(database, programName);
             } else {
-                cursor = mgr.getStudyByName(database, filter, LoginActivity.getProgram());
+                cursor = mgr.getStudyByName(database, filter, programName);
             }
 
             if (cursor != null && cursor.getCount() > 0) {
@@ -224,6 +236,19 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 deleteFlag=1;
                 studyToDelete.clear();
                 tblDeleteStudy.setVisibility(View.VISIBLE);
+                studyList= getMyStudyList(null, programName);
+                lvStudyList= (ListView) findViewById(R.id.lvStudyList);
+                adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
+                lvStudyList.setAdapter(adapter);
+
+                break;
+
+            case R.id.action_variable:
+                Intent intent2 = new Intent(StudiesActivity.this, VariableSetMasterActivity.class);
+                intent2.putExtra("ACCESSTOKEN", accessToken);
+                intent2.putExtra("FLAG",0);
+                startActivity(intent2);
+
                 break;
         }
 
@@ -288,11 +313,14 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
                 tvName.setText(studyModelEntity.get(position).getStudy());
 
-                tvLastSync = (TextView) convertView.findViewById(R.id.tvLastSync);
-                tvLastSync.setText("Last Commited: " + studyModelEntity.get(position).getDateLastCommited());
+                if( studyModelEntity.get(position).getDateLastCommited()!=null) {
+                    tvLastSync = (TextView) convertView.findViewById(R.id.tvLastSync);
+                    tvLastSync.setText("Last Sync : " + studyModelEntity.get(position).getDateLastCommited());
+                }
 
                 tvUncommitRecordLabel = (TextView) convertView.findViewById(R.id.tvUncommitRecordLabel);
                 tvUncommittedRec = (TextView) convertView.findViewById(R.id.tvUncommittedRec);
+
                 checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
                 if (deleteFlag == 1) {
                     checkBox.setVisibility(View.VISIBLE);
@@ -308,6 +336,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                                 StudyListModel s = new StudyListModel();
                                 s.setId(Integer.valueOf(tvStudyId.getText().toString()));
                                 s.setName(tvStudyName.getText().toString());
+                                s.setStudyName(tvName.getText().toString());
                                 s.setIs_selected(paramAnonymousBoolean);
                                 studyToDelete.add(s);
                             } else {
@@ -321,7 +350,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                                 }
                             }
                         }catch (Exception e){
-                            
+
                         }
 
 
@@ -480,7 +509,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 });*/
 
                 studyList.clear();
-                studyList= getMyStudyList(null);
+                studyList= getMyStudyList(null,programName);
                 adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
@@ -513,7 +542,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     public void actionCancel(View v) {
         tblDeleteStudy.setVisibility(View.GONE);
         deleteFlag=0;
-        studyList= getMyStudyList(null);
+        studyList= getMyStudyList(null,programName);
         lvStudyList= (ListView) findViewById(R.id.lvStudyList);
         adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
         lvStudyList.setAdapter(adapter);
@@ -521,11 +550,59 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     }
 
     public void actionDropStudy(View v) {
-        tblRowSearch.setVisibility(View.GONE);
 
-        for(StudyListModel r:studyToDelete){
-            Toast.makeText(getApplicationContext(), r.getName(), Toast.LENGTH_SHORT).show();
+        if(studyToDelete.size() > 0) {
+
+            DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+            final SQLiteDatabase database = dbTool.getMasterDatabase();
+            final StudyManager mgr = new StudyManager();
+            StringBuffer studies = new StringBuffer();
+            for (StudyListModel r : studyToDelete) {
+                studies.append(r.getName().toString() + "\n");
+            }
+
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                    StudiesActivity.this);
+            alertDialog.setTitle("Confirm Deletion");
+            alertDialog.setMessage("Are you sure you want to delete the following studies?\n" + studies.toString());
+            alertDialog.setIcon(R.drawable.info);
+            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    tblRowSearch.setVisibility(View.GONE);
+                    deleteFlag = 0;
+                    for (StudyListModel r : studyToDelete) {
+                        // Toast.makeText(getApplicationContext(), r.getName(), Toast.LENGTH_SHORT).show();
+                        mgr.deleteStudy(database, r.getName());
+                        String f = ApplicationPath.APP_PATH_IMAGES + r.getName();
+                        new File(ApplicationPath.APP_PATH_STUDY + r.getName()).delete();
+                        new File(ApplicationPath.APP_PATH_STUDY + r.getName() + "-journal").delete();
+                    }
+                    tblDeleteStudy.setVisibility(View.GONE);
+                    studyList = getMyStudyList(null,programName);
+                    lvStudyList = (ListView) findViewById(R.id.lvStudyList);
+                    adapter = new MyStudyListAdapter(getApplicationContext(), R.layout.activity_studies_list_row, studyList);
+                    lvStudyList.setAdapter(adapter);
+                    studyToDelete.clear();
+
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            // Showing Alert Message
+            alertDialog.show();
+
+
+        }else{
+            Toast.makeText(getApplicationContext(),"No study to delete", Toast.LENGTH_SHORT).show();
         }
+
+
     }
 
     @Override
@@ -562,9 +639,73 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     protected void onResume() {
         super.onResume();
         studyList.clear();
-        studyList= getMyStudyList(null);
+        studyList= getMyStudyList(null,programName);
         adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
         adapter.notifyDataSetChanged();
         lvStudyList.setAdapter(adapter);
     }
+
+
+    private void populateProgam() {
+        int i = 0;
+
+        List<String> list= new ArrayList<String>();
+
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database = dbTool.getMasterDatabase();
+        AccountManager mgr = new AccountManager(database);
+        Cursor cursor = mgr.getUserTeamProgram(LoginActivity.getUser_id());
+
+        if(cursor != null && cursor.getCount() > 0){
+
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String name=cursor.getString(cursor.getColumnIndex("program_abbrev"));
+
+                    list.add(name);
+                } while (cursor.moveToNext());
+            }
+        }
+
+        spinnerArray = new String[list.size()];
+        for (String rec : list) {
+            spinnerArray[i] = rec;
+            i++;
+
+        }
+
+        spinnerProgam = (Spinner) findViewById(R.id.spinnerStudiesProgram);
+        adapterProgram = new ArrayAdapter<CharSequence>(StudiesActivity.this, R.layout.spinner_layout, spinnerArray);
+        // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
+        adapterProgram.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProgam.setAdapter(adapterProgram);
+        spinnerProgam.setSelection(0);
+
+        spinnerProgam.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        try {
+                            programName = spinnerProgam.getSelectedItem().toString();
+                            programIndex=position;
+
+                            studyList.clear();
+                            studyList= getMyStudyList(null,programName);
+                            adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
+                            adapter.notifyDataSetChanged();
+                            lvStudyList.setAdapter(adapter);
+
+
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+        dbTool.closeDB(database);
+    }
+
 }

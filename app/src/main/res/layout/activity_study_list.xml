@@ -27,7 +27,7 @@
                 android:layout_gravity="center_vertical" />
 
             <EditText
-                android:layout_width="fill_parent"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/etSearchStudy"
                 android:layout_gravity="top" />
@@ -39,7 +39,14 @@
                 android:src="@drawable/clear"
                 android:layout_weight="0.24"
                 android:layout_gravity="center_vertical"
-                android:onClick="actionBtnSearchClear" />
+                android:onClick="actionBtnSearchClear"
+                android:visibility="gone" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinnerProgram"
+                android:layout_weight="1" />
 
         </LinearLayout>
     </TableRow>

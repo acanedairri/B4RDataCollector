@@ -142,6 +142,10 @@ public class GetVariableSetActivity extends AppCompatActivity {
         SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
         StudyManager studyMgr = new StudyManager();
 
+        DatabaseMasterTool dbToolMaster= new DatabaseMasterTool(this);
+        SQLiteDatabase databaseMaster = dbTool.getMasterDatabase();
+
+
         Gson gson = new Gson();
         VariableSetMember variableSetMember = gson.fromJson(variableMembers, VariableSetMember.class);
         List<VariableSetMember.DataEntity.MembersEntity> list=variableSetMember.getData().getMembers();
@@ -154,9 +158,16 @@ public class GetVariableSetActivity extends AppCompatActivity {
             cv.put("data_type",r.getData_type());
             cv.put("display_name",r.getDisplay_name());
             cv.put("scale_value",r.getScale_value());
-            cv.put("is_selected","false");
-            cv.put("variable_set_name",variableSetName);
-            studyMgr.insertVariableSet(database,cv);
+            cv.put("is_selected", "false");
+            cv.put("variable_set_name", variableSetName);
+
+            boolean isExist=studyMgr.isVariableExist(database, r.getVariable_id().getValue(),variableSetName);
+            if(!isExist) {
+                studyMgr.insertVariableSet(database, cv);
+                studyMgr.insertVariableSet(databaseMaster,cv);
+            }
+
+
         }
         dbTool.closeDB(database);
         Toast.makeText(getApplicationContext(), "Finished adding the variables", Toast.LENGTH_SHORT).show();

@@ -17,7 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -26,6 +30,7 @@ import org.irri.constant.Authentication;
 import org.irri.database.AccountManager;
 import org.irri.database.DatabaseStudyHelper;
 import org.irri.database.DatabaseMasterTool;
+import org.irri.database.StudyManager;
 import org.irri.entity.AccessToken;
 import org.irri.entity.StudyListData;
 import org.irri.utility.ApplicationPath;
@@ -33,18 +38,26 @@ import org.irri.utility.FileManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class LoginActivity extends ActionBarActivity {
+    private static String name;
     private int REQUEST_CODE = 0X1;
     private AccessToken accessToken;
     private Gson gson;
-    private EditText username;
     private EditText password;
-    private String token="lo2q118mv9PGhX3MZfZZnWELTaJzrSQdXzWQOGAH";
+    private String token="msFpls9QCWaFIpn8jUUiVdMnOKQjPEIwNYHyflAc";
     private String versionName;
     private int versionNum;
     private static int user_id;
     private static String program;
+    Spinner spinnerUser;
+    ArrayAdapter<CharSequence> adapter;
+    String[] spinnerArray;
+    private String userName;
+
 
     public static int getUser_id() {
         return user_id;
@@ -54,7 +67,9 @@ public class LoginActivity extends ActionBarActivity {
         return program;
     }
 
-
+    public static String getName() {
+        return name;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +82,10 @@ public class LoginActivity extends ActionBarActivity {
         actionBar.setIcon(R.drawable.b4rlogo);
         createDirs();
         createMasterDatabase();
+        populateUser();
+
+
+
 
     }
 
@@ -119,13 +138,12 @@ public class LoginActivity extends ActionBarActivity {
 
     public void actionLogin(View v) {
 
-        username = (EditText) findViewById(R.id.txtUsername);
         password = (EditText) findViewById(R.id.txtPassword);
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
         SQLiteDatabase database = dbTool.getMasterDatabase();
         AccountManager mgr = new AccountManager(database);
 
-        Cursor cursor = mgr.getUserToken(database, username.getText().toString(), password.getText().toString());
+        Cursor cursor = mgr.getUserToken(database, userName, password.getText().toString());
 
 
 /*        if(cursor != null && cursor.getCount() > 0){
@@ -146,12 +164,13 @@ public class LoginActivity extends ActionBarActivity {
             token = cursor.getString(cursor.getColumnIndex("access_token"));
             user_id=cursor.getInt(cursor.getColumnIndex("user_id"));
             program=cursor.getString(cursor.getColumnIndex("program"));
+            name=cursor.getString(cursor.getColumnIndex("display_name"));
             System.out.println(program);
             Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
-            intent.putExtra("ACCESS_TOKEN", token);
-            startActivity(intent);
-            username.setText("");
-            password.setText("");
+           intent.putExtra("ACCESS_TOKEN", token);
+            intent.putExtra("USERNAME",name);
+                    startActivity(intent);
+
         }else{
             //Toast.makeText(this, "Invalid User", Toast.LENGTH_LONG).show();
 /*            Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
@@ -258,4 +277,63 @@ public class LoginActivity extends ActionBarActivity {
     }
 
 
+    private void populateUser() {
+        int i = 0;
+
+        List<String> list= new ArrayList<String>();
+
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database = dbTool.getMasterDatabase();
+        AccountManager mgr = new AccountManager(database);
+        Cursor cursor = mgr.getAccountList();
+
+        if(cursor != null && cursor.getCount() > 0){
+
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String name=cursor.getString(cursor.getColumnIndex("username"));
+
+                    list.add(name);
+                } while (cursor.moveToNext());
+            }
+        }
+
+        spinnerArray = new String[list.size()];
+        for (String rec : list) {
+            spinnerArray[i] = rec;
+            i++;
+
+        }
+
+        spinnerUser = (Spinner) findViewById(R.id.spinnerUser);
+        adapter = new ArrayAdapter<CharSequence>(LoginActivity.this, android.R.layout.simple_spinner_item, spinnerArray);
+        // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerUser.setAdapter(adapter);
+        spinnerUser.setSelection(0);
+
+        spinnerUser.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        try {
+                            userName = spinnerUser.getSelectedItem().toString();
+
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateUser();
+    }
 }

@@ -144,7 +144,11 @@ public class StudyMetadata {
         }
 
         public String getTitle() {
-            return title;
+            if(title!=null) {
+                return title;
+            }else{
+                return "";
+            }
         }
 
         public Object getRemarks() {

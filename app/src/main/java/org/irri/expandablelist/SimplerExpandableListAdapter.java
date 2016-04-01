@@ -2,6 +2,7 @@ package org.irri.expandablelist;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,10 @@ import android.widget.Toast;
 import org.irri.activity.R;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
+import org.irri.entity.VariableMeasuring;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class SimplerExpandableListAdapter extends BaseExpandableListAdapter
@@ -27,6 +30,8 @@ public class SimplerExpandableListAdapter extends BaseExpandableListAdapter
   private ArrayList<ViewHolder> lstHolders = new ArrayList<ViewHolder>();
   private Context mContext;
   private String studyName;
+  public List<VariableMeasuring> variableMeasuring = new ArrayList<VariableMeasuring>();
+  int order=1;
 
   @SuppressLint({"UseSparseArrays"})
   public SimplerExpandableListAdapter(Context paramContext, ArrayList<ListObject> paramArrayList, ArrayList<String> paramArrayList1,String studyName)
@@ -128,8 +133,9 @@ public class SimplerExpandableListAdapter extends BaseExpandableListAdapter
         DatabaseMasterTool dbTool = new DatabaseMasterTool(mContext,studyName);
         SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
         StudyManager mgr = new StudyManager();
-        mgr.updateVariableSet(database,abbrev,is_selected);
+        mgr.updateVariableSet(database,abbrev,is_selected,order);
         dbTool.closeDB(database);
+        order++;
 
       }
     });

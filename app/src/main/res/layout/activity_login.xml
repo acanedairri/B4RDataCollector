@@ -16,31 +16,84 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="30dp">
 
-        <TextView
+        <TableRow
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="System Login"
-            android:id="@+id/lblSystemLogin"
-            android:layout_gravity="center_horizontal" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
 
-        <EditText
-            android:layout_width="215dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtUsername"
-            android:hint="Username" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="System Login"
+                android:id="@+id/lblSystemLogin"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="30dp" />
+        </TableRow>
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/txtPassword"
-            android:hint="Password" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                android:id="@+id/textView23"
+                android:layout_gravity="center_vertical"
+                android:textSize="15dp" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:id="@+id/spinnerUser"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="10dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:id="@+id/textView24"
+                android:textSize="15dp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/txtPassword"
+                android:paddingLeft="10dp" />
+        </TableRow>
 
         <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="235dp">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:id="@+id/btnLogin"
+                android:onClick="actionLogin"
+                android:layout_gravity="center_vertical" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CREATE OFFLINE ACCOUNT"
+                android:id="@+id/btnAuthenticate"
+                android:layout_below="@+id/textView"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:onClick="onStartOauth"
+                android:clickable="true"
+                android:layout_column="5" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -48,26 +101,36 @@
                 android:layout_height="wrap_content"
                 android:weightSum="1">
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Login"
-                    android:id="@+id/btnLogin"
-                    android:onClick="actionLogin"
-                    android:layout_gravity="top" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Authenticate"
-                    android:id="@+id/btnAuthenticate"
-                    android:layout_below="@+id/textView"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:onClick="onStartOauth"
-                    android:clickable="true"
-                    />
             </LinearLayout>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </TableRow>
+
         </TableLayout>
 
     </LinearLayout>

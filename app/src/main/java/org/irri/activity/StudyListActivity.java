@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +79,12 @@ public class StudyListActivity extends AppCompatActivity {
     List<Study.DataEntity.ItemsEntity> studyList;
     List<StudyListModel> studyListModel;
 
+    Spinner spinnerProgam;
+    ArrayAdapter<CharSequence> adapterProgram;
+    String[] spinnerArray;
+    private String programName;
+    int programIndex=0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +124,7 @@ public class StudyListActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 studyListModel.clear();
-                studyListModel = getMyStudyList(etSearchStudy.getText().toString());
+                studyListModel = getMyStudyList(etSearchStudy.getText().toString(),programIndex);
                 adapter = new StudyListAdapter(getApplicationContext(), R.layout.activity_study_list_row, studyListModel);
                 adapter.notifyDataSetChanged();
                 lvStudyList.setAdapter(adapter);
@@ -130,7 +137,7 @@ public class StudyListActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-
+        populateProgam();
     }
 
     private List<StudyListModel> populateStudyList(List<Study.DataEntity.ItemsEntity>  items) {
@@ -148,10 +155,12 @@ public class StudyListActivity extends AppCompatActivity {
                 ContentValues contextValue = new ContentValues();
                 contextValue.put("studyid", rec.getId());
                 contextValue.put("name", rec.getStudy());
+                contextValue.put("author_name",rec.getAuthor());
+                contextValue.put("program_abbrev",rec.getProgram());
                 mgr.insertStudyList(database, contextValue);
             }
 
-            Cursor studyList = mgr.getAllStudyList(database);
+            Cursor studyList = mgr.getAllStudyListByUser(database, LoginActivity.getName());
 
             if (studyList != null && studyList.getCount() > 0) {
 
@@ -179,17 +188,18 @@ public class StudyListActivity extends AppCompatActivity {
 
     }
 
-    private List<StudyListModel> getMyStudyList(String filter) {
+    private List<StudyListModel> getMyStudyList(String filter,int programIndex) {
         List<StudyListModel> toreturn=new ArrayList<StudyListModel>();
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
         SQLiteDatabase database=dbTool.getMasterDatabase();
         StudyManager mgr= new StudyManager();
         Cursor studyList= null;
-        if(filter.length() > 0) {
-            studyList = mgr.getStudyListByName(database,filter);
-        }else{
-
-            studyList = mgr.getAllStudyList(database);
+        if(filter.length() > 0 && programIndex > 0) {
+            studyList = mgr.getStudyListByName(database,filter,programName);
+        }else if(filter.length() == 0 && programIndex > 0) {
+            studyList = mgr.getStudyListByProgram(database, programName);
+        }else if(programIndex == 0){
+            studyList = mgr.getAllStudyListByUser(database, LoginActivity.getName());
         }
 
         if(studyList != null && studyList.getCount() > 0){
@@ -516,6 +526,9 @@ public class StudyListActivity extends AppCompatActivity {
 
                 // save study information
 
+                String title=studyMetadata.getData().getTitle().toString();
+
+
                 ContentValues context = new ContentValues();
                 context.put("id", studyMetadata.getData().getId());
                 context.put("name", studyMetadata.getData().getName().toString());
@@ -525,6 +538,7 @@ public class StudyListActivity extends AppCompatActivity {
                 context.put("season", studyMetadata.getData().getSeason().toString());
                 context.put("place", studyMetadata.getData().getPlace().toString());
                 context.put("year", String.valueOf(studyMetadata.getData().getYear()));
+                context.put("last_commit", cdate.getDate());
                 context.put("is_posted","N");
                 context.put("transaction_id",0);
 
@@ -618,6 +632,11 @@ public class StudyListActivity extends AppCompatActivity {
                 dbToolStudy.closeDB(databaseStudy);
 
                 // insert study record to master table
+
+
+
+
+
                 DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
                 SQLiteDatabase database = dbTool.getMasterDatabase();
                 StudyManager mgr = new StudyManager();
@@ -632,6 +651,7 @@ public class StudyListActivity extends AppCompatActivity {
                 studyInfo.put("userid", LoginActivity.getUser_id());
                 studyInfo.put("is_posted","N");
                 studyInfo.put("transaction_id",0);
+                context.put("last_commit", cdate.getDate());
                 mgr.insertStudyBasicInfoRecord(database, studyInfo);
                 dbTool.closeDB(database);
 
@@ -734,6 +754,70 @@ public class StudyListActivity extends AppCompatActivity {
             startActivity(intent);
             Dialog.dismiss();
         }
+    }
+
+
+    private void populateProgam() {
+        int i = 0;
+
+        List<String> list= new ArrayList<String>();
+
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database = dbTool.getMasterDatabase();
+        AccountManager mgr = new AccountManager(database);
+        Cursor cursor = mgr.getUserTeamProgram(LoginActivity.getUser_id());
+
+        list.add("My Study");
+        if(cursor != null && cursor.getCount() > 0){
+
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String name=cursor.getString(cursor.getColumnIndex("program_abbrev"));
+
+                    list.add(name);
+                } while (cursor.moveToNext());
+            }
+        }
+
+        spinnerArray = new String[list.size()];
+        for (String rec : list) {
+            spinnerArray[i] = rec;
+            i++;
+
+        }
+
+        spinnerProgam = (Spinner) findViewById(R.id.spinnerProgram);
+        adapterProgram = new ArrayAdapter<CharSequence>(StudyListActivity.this, android.R.layout.simple_spinner_item, spinnerArray);
+        // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
+        adapterProgram.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerProgam.setAdapter(adapterProgram);
+        spinnerProgam.setSelection(0);
+
+        spinnerProgam.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        try {
+                            programName = spinnerProgam.getSelectedItem().toString();
+                            programIndex=position;
+
+                                studyListModel.clear();
+                                studyListModel = getMyStudyList(etSearchStudy.getText().toString(),programIndex);
+                                adapter = new StudyListAdapter(getApplicationContext(), R.layout.activity_study_list_row, studyListModel);
+                                adapter.notifyDataSetChanged();
+                                lvStudyList.setAdapter(adapter);
+
+
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+    dbTool.closeDB(database);
     }
 
 

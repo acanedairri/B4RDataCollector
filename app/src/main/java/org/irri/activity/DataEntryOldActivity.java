@@ -46,7 +46,6 @@ import org.irri.entity.PlotData;
 import org.irri.entity.ScaleValue;
 import org.irri.entity.TraitMeasuring;
 
-import java.net.Inet4Address;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -133,7 +132,7 @@ public class DataEntryOldActivity extends AppCompatActivity implements BarcodeRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_entry);
+        setContentView(R.layout.activity_data_entry1);
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
        // initdatabase

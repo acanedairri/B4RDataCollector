@@ -54,7 +54,7 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
         // plot field1 spinner
         spinnerPlotField1 = (Spinner) findViewById(R.id.spinnerPlotField1);
         adapterPlotField1 = ArrayAdapter.createFromResource(this,
-                R.array.spinner_plot_field, R.layout.spinner_layout);
+                R.array.spinner_plot_field2, R.layout.spinner_layout);
 
         adapterPlotField1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPlotField1.setAdapter(adapterPlotField1);
@@ -78,7 +78,7 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
         // plot field2 spinner
         spinnerPlotField2 = (Spinner) findViewById(R.id.spinnerPlotField2);
         adapterPlotField2 = ArrayAdapter.createFromResource(this,
-                R.array.spinner_plot_field, R.layout.spinner_layout);
+                R.array.spinner_plot_field2, R.layout.spinner_layout);
 
         adapterPlotField2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPlotField2.setAdapter(adapterPlotField2);

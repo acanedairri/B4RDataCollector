@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import com.google.gson.Gson;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
 import org.irri.entity.AccessToken;
+import org.irri.entity.VariableSwap;
 import org.irri.expandablelist.ExpandableListActionListener;
 import org.irri.expandablelist.ExpandableRadioListAdapter;
 import org.irri.expandablelist.ListObject;
@@ -27,6 +29,7 @@ import org.irri.expandablelist.TraitMeasuringModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TraitMeasuringActivity extends AppCompatActivity
 {
@@ -39,6 +42,9 @@ public class TraitMeasuringActivity extends AppCompatActivity
 	private ExpandableRadioListAdapter listAdapter;
 	private String studyName;
 	private String accessToken;
+	private List<VariableSwap> varSwap= new ArrayList<VariableSwap>();
+	private Button btnMoveUp;
+	private Button btnMoveDown;
 
 	public void onCreate(Bundle paramBundle)
 	{
@@ -47,10 +53,13 @@ public class TraitMeasuringActivity extends AppCompatActivity
 		Bundle bundle = getIntent().getExtras();
 		studyName=bundle.getString("STUDYNAME");
 		accessToken=bundle.getString("ACCESSTOKEN");
-	
+
+		btnMoveUp=(Button) findViewById(R.id.btnMoveUp);
+		btnMoveDown=(Button) findViewById(R.id.btnMoveDown);
+
 		refreshList();
 
-		findViewById(R.id.btnMoveUp).setOnClickListener(new OnClickListener() {
+		btnMoveUp.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				if(listAdapter.isListEmpty() || listAdapter.getSelectedItem() == null) return;
@@ -59,27 +68,30 @@ public class TraitMeasuringActivity extends AppCompatActivity
 				//if(createFieldBookModel.selectedTraitList.indexOf(listAdapter.getSelectedItem().traitCode) == 0) return;
 				Log.d("DEBUG", "SHOULD SWAP!");
 				String key1 = listAdapter.getSelectedItem().traitCode;
-				int a=traitMeasuringModel.selectedTraitList.indexOf(listAdapter.getSelectedItem().traitCode);
+				//int a=traitMeasuringModel.selectedTraitList.indexOf(listAdapter.getSelectedItem().traitCode);
 				//String key2 = createFieldBookModel.selectedTraitList.get(createFieldBookModel.selectedTraitList.indexOf(listAdapter.getSelectedItem().traitCode) - 1);
 				//createFieldBookModel.swapTraitList(key1, key2);
+				swapVariableUp(key1);
 				refreshList();
 				listAdapter.setSelected(key1);
 
 			}
 
 		});
-		findViewById(R.id.btnMoveDown).setOnClickListener(new OnClickListener() {
+
+		btnMoveDown.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 
-				if(listAdapter.isListEmpty() || listAdapter.getSelectedItem() == null) return;
-				String selectedItem=listAdapter.getSelectedItem().traitCode;
+				if (listAdapter.isListEmpty() || listAdapter.getSelectedItem() == null) return;
+				String selectedItem = listAdapter.getSelectedItem().traitCode;
 				//if(createFieldBookModel.selectedTraitList.indexOf(listAdapter.getSelectedItem().traitCode) >= createFieldBookModel.selectedTraitList.size() - 1 ) return;
 				//Log.d("DEBUG", "SHOULD SWAP!");
-				
+
 				String key1 = listAdapter.getSelectedItem().traitCode;
-				String key2 = traitMeasuringModel.selectedTraitList.get(traitMeasuringModel.selectedTraitList.indexOf(listAdapter.getSelectedItem().traitCode) + 1);
-				traitMeasuringModel.swapTraitList(key1, key2);
+/*				String key2 = traitMeasuringModel.selectedTraitList.get(traitMeasuringModel.selectedTraitList.indexOf(listAdapter.getSelectedItem().traitCode) + 1);
+				traitMeasuringModel.swapTraitList(key1, key2);*/
+				swapVariableDown(key1);
 				refreshList();
 				listAdapter.setSelected(key1);
 			}
@@ -91,6 +103,76 @@ public class TraitMeasuringActivity extends AppCompatActivity
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
+
+
+	}
+
+
+	private void swapVariableUp(String abbrev){
+
+		int prevIndex=0;
+		int i=0;
+		int currentOrder=0;
+		int tempOrder=0;
+		for(VariableSwap vs: varSwap){
+
+			if(vs.getAbbrev().equals(abbrev)){
+				if(i != 0){
+					prevIndex = i - 1;
+					currentOrder=vs.getOrder();
+				}
+			}
+			i++;
+		}
+
+		String topVariable=varSwap.get(prevIndex).getAbbrev();
+		int topOrder=varSwap.get(prevIndex).getOrder();
+
+		String currentVariable=abbrev;
+
+
+		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
+		SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
+		StudyManager mgr = new StudyManager();
+		mgr.updateVariableSetOrder(database, abbrev, topOrder);
+		mgr.updateVariableSetOrder(database, topVariable, currentOrder);
+		//Order plot;
+
+	}
+
+	private void swapVariableDown(String abbrev){
+		try {
+
+			int prevIndex = 0;
+			int i = 0;
+			int currentOrder = 0;
+			int tempOrder = 0;
+			for (VariableSwap vs : varSwap) {
+
+				if (vs.getAbbrev().equals(abbrev)) {
+					if (i != varSwap.size()) {
+						prevIndex = i + 1;
+						currentOrder = vs.getOrder();
+					}
+				}
+				i++;
+			}
+
+			String topVariable = varSwap.get(prevIndex).getAbbrev();
+			int topOrder = varSwap.get(prevIndex).getOrder();
+
+			String currentVariable = abbrev;
+
+
+			DatabaseMasterTool dbTool = new DatabaseMasterTool(this, studyName);
+			SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
+			StudyManager mgr = new StudyManager();
+			mgr.updateVariableSetOrder(database, abbrev, topOrder);
+			mgr.updateVariableSetOrder(database, topVariable, currentOrder);
+			//Order plot;
+		}catch(Exception e){
+
+		}
 	}
 
 	@Override
@@ -148,7 +230,7 @@ public class TraitMeasuringActivity extends AppCompatActivity
 		ArrayList<ListObject> listData = new ArrayList<ListObject>();
 		ArrayList<String> listHeader = new ArrayList<String>();
 		ArrayList<String> rows = new ArrayList<String>();
-
+		varSwap.clear();
 		traitMeasuringModel= (TraitMeasuringModel) getIntent().getSerializableExtra("FieldBookModel");
 		//FieldTraitManager fieldManager = new FieldTraitManager(this);
 
@@ -163,7 +245,12 @@ public class TraitMeasuringActivity extends AppCompatActivity
 			if (variableSet.moveToFirst()) {
 				do {
 					String abbrev=variableSet.getString(variableSet.getColumnIndex("abbrev"));
+					int order_seq=variableSet.getInt(variableSet.getColumnIndex("order_seq"));
 					rows.add(abbrev);
+					VariableSwap vs= new VariableSwap();
+					vs.setAbbrev(abbrev);
+					vs.setOrder(order_seq);
+					varSwap.add(vs);
 				} while (variableSet.moveToNext());
 			}
 		}
@@ -241,14 +328,22 @@ public class TraitMeasuringActivity extends AppCompatActivity
 			}
 		});
 		explvlist.setAdapter(listAdapter);
+		System.out.println(varSwap.size());
+		if(siteTraits.size() > 1){
+			btnMoveDown.setVisibility(View.VISIBLE);
+			btnMoveUp.setVisibility(View.VISIBLE);
+		}else{
 
+			btnMoveDown.setVisibility(View.GONE);
+			btnMoveUp.setVisibility(View.GONE);
+		}
 	}
 
 	private void unselectTrait(String abbrev,String is_selected){
 		DatabaseMasterTool dbTool = new DatabaseMasterTool(this,studyName);
 		SQLiteDatabase database = dbTool.getStudyDatabase(studyName);
 		StudyManager mgr = new StudyManager();
-		mgr.updateVariableSet(database,abbrev,is_selected);
+		mgr.updateVariableSet(database,abbrev,is_selected,0);
 		dbTool.closeDB(database);
 
 	}

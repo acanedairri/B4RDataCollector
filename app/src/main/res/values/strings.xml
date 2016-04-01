@@ -85,8 +85,33 @@
         <item>fldcol_cont</item>
 
     </string-array>
+
+
+    <string-array name="spinner_plot_field2">
+
+        <item>plot_key</item>
+        <item>plotno</item>
+        <item>plot_code</item>
+        <item>rep</item>
+        <item>entno</item>
+        <item>gid</item>
+        <item>designation</item>
+        <item>entcode</item>
+        <item>parentage</item>
+        <item>generation</item>
+        <item>qr_code</item>
+        <item>fldrow_cont</item>
+        <item>fldcol_cont</item>
+
+    </string-array>
+
+
     <string name="title_activity_plot_order_setting">Set Plot Display</string>
     <string name="title_activity_get_variable_set">Get Variable Set</string>
     <string name="title_activity_help">Help</string>
     <string name="title_activity_photo_capture">PhotoCaptureActivity</string>
+
+
+
+
 </resources>

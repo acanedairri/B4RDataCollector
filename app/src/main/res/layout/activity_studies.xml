@@ -1,95 +1,148 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="org.irri.activity.StudyListActivity">
 
-    <TableRow
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:id="@+id/tblRowSearch"
-        android:visibility="visible"
-        android:paddingStart="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:id="@+id/tblRowSearch"
+            android:visibility="visible"
+            android:paddingStart="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:baselineAligned="false">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/filter32"
+                    android:layout_gravity="center_vertical" />
+
+                <EditText
+                    android:layout_width="236dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etSearchStudy"
+                    android:layout_gravity="center_vertical" />
+
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnSearchStudy"
+                    android:src="@drawable/clear"
+                    android:layout_weight="0.24"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="actionBtnSearchClear" />
+
+            </LinearLayout>
+
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/tblProgram">
 
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:weightSum="1"
-            android:baselineAligned="false">
-            <ImageView
+            android:paddingLeft="10dp">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView"
-                android:src="@drawable/filter32"
-                android:layout_gravity="center_vertical" />
+                android:text="Program:"
+                android:id="@+id/textView25"
+                android:textSize="@dimen/abc_text_size_medium_material"
+                android:textIsSelectable="true"
+                android:textStyle="bold"
+                android:paddingLeft="5dp" />
 
-            <EditText
+            <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/etSearchStudy"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="0.69" />
-
-
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btnSearchStudy"
-                android:src="@drawable/clear"
-                android:layout_weight="0.24"
-                android:layout_gravity="center_vertical"
-                android:onClick="actionBtnSearchClear" />
-
+                android:layout_weight="2"
+                android:layout_gravity="right"
+                android:gravity="center"
+                android:textSize="18dp"
+                android:touchscreenBlocksFocus="false"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:id="@+id/spinnerStudiesProgram" />
         </LinearLayout>
-    </TableRow>
 
-    <ListView
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="334dp">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="367dp"
+            android:id="@+id/lvStudyList"
+            android:layout_gravity="right"
+            android:layout_above="@+id/tblDeleteStudy"
+            android:paddingLeft="5dp" />
+    </TableLayout>
+
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/lvStudyList"
-        android:layout_gravity="right"
-        android:layout_above="@+id/tblDeleteStudy" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
 
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tblDeleteStudy"
-        android:layout_weight="1"
-        android:layout_gravity="right"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
+        <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:id="@+id/button3"
+            android:id="@+id/tblDeleteStudy"
+            android:layout_weight="1"
+            android:layout_gravity="right"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/tblDeleteStudy"
-            android:onClick="actionCancel" />
+            android:layout_centerHorizontal="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView22"
-            android:text="      " />
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:id="@+id/button3"
+                android:layout_alignParentBottom="true"
+                android:layout_toStartOf="@+id/tblDeleteStudy"
+                android:onClick="actionCancel" />
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete"
-            android:id="@+id/button4"
-            android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/tblDeleteStudy"
-            android:layout_marginStart="23dp"
-            android:onClick="actionDropStudy" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView22"
+                android:text="      " />
 
-    </TableRow>
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:id="@+id/button4"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@+id/tblDeleteStudy"
+                android:layout_marginStart="23dp"
+                android:onClick="actionDropStudy" />
 
-</RelativeLayout>
+        </TableRow>
+    </FrameLayout>
+
+</LinearLayout>
 

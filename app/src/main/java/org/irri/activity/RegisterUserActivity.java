@@ -22,6 +22,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import org.irri.database.AccountManager;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.entity.User;
+import org.irri.entity.UserTeam;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -33,6 +34,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterUserActivity extends AppCompatActivity {
 
@@ -43,6 +46,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     static InputStream is = null;
     static JSONObject jObj = null;
     static String json = "";
+    List<UserTeam> userTeam= new ArrayList<UserTeam>();
 
 
     TextView txtUser;
@@ -103,16 +107,35 @@ public class RegisterUserActivity extends AppCompatActivity {
                 values.put("display_name",name);
                 values.put("user_id",userid);
 
-                mgr.insert(values,database);
+                boolean isExist=mgr.isUserExist(userid);
+
+                System.out.println(userTeam.toString());
+
+                if(!isExist) {
+                    mgr.insert(values, database);
+                }else{
+                    mgr.update(database, username, password, userid,accessToken);
+                    mgr.deleteUserTeam(userid,database);
+                }
+
+                for(UserTeam ut:userTeam){
+                    ContentValues c= new ContentValues();
+                    c.put("user_id",ut.getUserid());
+                    c.put("program_abbrev",ut.getProgramAbbrev());
+                    c.put("program_display_name",ut.getProgramName());
+                    mgr.insertUserTeam(c,database);
+                }
+
 
                 Cursor cursor = mgr.getAccountList();
 
 
                 while (cursor.isAfterLast() == false) {
                     String val = cursor.getString(cursor.getColumnIndex("display_name")) + " " + cursor.getString(cursor.getColumnIndex("program_abbrev"));
-                    Toast.makeText(this, "New account for "+val + " registered", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(this, "New account for "+val + " registered", Toast.LENGTH_LONG).show();
                     cursor.moveToNext();
                 }
+                dbTool.closeDB(database);
 
                 finish();
             } catch (Exception e) {
@@ -216,14 +239,27 @@ public class RegisterUserActivity extends AppCompatActivity {
             user = gson.fromJson(result, User.class);
             txtUser = (TextView) findViewById(R.id.txtUser);
             txtProgram = (TextView) findViewById(R.id.txtProgram);
+            String programLine="";
 
             txtUser.setText(user.getData().getDisplay_name());
             try {
                 //String program = user.getData().getTeams().get(0).getTeam().getName();
-                txtProgram.setText(user.getData().getTeams().get(0).getTeam().getName());
+
                 userid=user.getData().getId();
                 name=user.getData().getDisplay_name();
                 program=user.getData().getTeams().get(0).getTeam().getProgram().getAbbrev();
+
+                for(User.DataEntity.TeamsEntity rec:user.getData().getTeams()){
+                    UserTeam team = new UserTeam();
+                    team.setUserid(userid);
+                    team.setProgramAbbrev(rec.getTeam().getAbbrev());
+                    team.setProgramName(rec.getTeam().getName());
+                    userTeam.add(team);
+                    programLine=programLine+" "+rec.getTeam().getAbbrev()+"\n";
+                }
+
+                txtProgram.setText(programLine);
+
             }catch (Exception e){
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         RegisterUserActivity.this).create();

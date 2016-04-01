@@ -84,7 +84,7 @@ public class ImageListViewActivity extends AppCompatActivity {
 				AlertDialog.Builder adb=new AlertDialog.Builder(ImageListViewActivity.this);
 				Object o = listView.getItemAtPosition(position);
 				final 	ImagesItemDetails obj_itemDetails = (ImagesItemDetails)o; 
-				adb.setTitle("Delete?");
+				adb.setTitle("Confirm Deletion?");
 				adb.setMessage("Are you sure you want to delete " + obj_itemDetails.getFileName());
 				final int positionToRemove = position;
 				adb.setNegativeButton("Cancel", null);

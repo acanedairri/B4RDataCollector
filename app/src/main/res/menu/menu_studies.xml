@@ -1,8 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.irri.activity.StudiesActivity">
-
+    tools:context="org.irri.activity.StudiesFragmentActivity">
 
     <item android:id="@+id/action_search"
         android:orderInCategory="100"
@@ -23,8 +22,13 @@
         app:showAsAction="always" />
 
     <item android:id="@+id/action_help"
-        android:orderInCategory="400"
-        android:icon="@drawable/help"
-        app:showAsAction="always"
-        android:title="Help"/>
+    android:orderInCategory="400"
+    android:icon="@drawable/help"
+    app:showAsAction="always"
+    android:title="Help"/>
+
+    <item android:id="@+id/action_variable"
+        android:orderInCategory="500"
+        app:showAsAction="withText"
+        android:title="Variables"/>
 </menu>

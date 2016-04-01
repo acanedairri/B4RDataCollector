@@ -1,7 +1,9 @@
 package org.irri.expandablelist;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +12,16 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.irri.activity.R;
+import org.irri.entity.StudyListModel;
+import org.irri.utility.ApplicationPath;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class ExpandableRadioListAdapter extends BaseExpandableListAdapter
@@ -134,20 +141,44 @@ public boolean isListEmpty(){
     	}
        listData.get(((Integer)paramAnonymousCompoundButton.getTag()).intValue()).isCheckBoxSelected = paramAnonymousBoolean;
        selectedItem = listData.get(((Integer)paramAnonymousCompoundButton.getTag()).intValue());
+
+       // Toast.makeText(mContext,  listData.get(((Integer)paramAnonymousCompoundButton.getTag()).intValue()).isCheckBoxSelected + " "+selectedItem.traitCode , Toast.LENGTH_SHORT).show();
        ExpandableRadioListAdapter.this.notifyDataSetChanged();
       }
     });
     if(!isDeleteVisible)localViewHolder.btnDelete.setVisibility(View.INVISIBLE);
     else{
     	Log.d("DEBUG","onClick declared");
-    	localViewHolder.btnDelete.setOnClickListener(new OnClickListener(){
+    	localViewHolder.btnDelete.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View arg0) {
-				Log.d("DEBUG","onClick Delete called");
-				actionListener.deleteRow(listData.get(((Integer)arg0.getTag()).intValue()));
-				
-			}
+          @Override
+          public void onClick(final View arg0) {
+            Log.d("DEBUG", "onClick Delete called");
+
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+            alertDialog.setTitle("Confirm Deletion");
+            alertDialog.setMessage("Are you sure you want to delete this variable");
+            alertDialog.setIcon(R.drawable.info);
+            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int which) {
+
+                actionListener.deleteRow(listData.get(((Integer) arg0.getTag()).intValue()));
+
+              }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int which) {
+
+              }
+            });
+
+            // Showing Alert Message
+            alertDialog.show();
+
+
+          }
+
     		
     	});
     	localViewHolder.btnDelete.setFocusable(false);

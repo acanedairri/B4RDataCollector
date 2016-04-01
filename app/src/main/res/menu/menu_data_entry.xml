@@ -26,7 +26,7 @@
     <item android:id="@+id/action_single_entry"
         android:orderInCategory="500"
         app:showAsAction="withText"
-        android:title="Set Single Entry"/>
+        android:title="Set Per Plot Entry"/>
 
     <item android:id="@+id/action_range_entry"
         android:orderInCategory="600"

@@ -59,6 +59,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 
 import com.intermec.aidc.*;
@@ -154,6 +155,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private TableLayout tblLayoutMetaData;
     private EditText etPlotNoStart;
     private EditText etPlotNoEnd;
+    private final static Pattern LTRIM = Pattern.compile("^\\s+");
+    private boolean doSaving=false;
 
     public DataEntryActivity(){
 
@@ -317,7 +320,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             tblPlotRangeEntry.setVisibility(View.VISIBLE);
             tblLayoutMetaData.setVisibility(View.GONE);
         }
-        
+
         etPlotNoStart=(EditText)findViewById(R.id.etPlotNoStart);
         etPlotNoEnd=(EditText)findViewById(R.id.etPlotNoEnd);
 
@@ -402,7 +405,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             for (TraitMeasuring t : traitMeasuring) {
 
                 spinnerMap.put(i, t.getVariable_id());
-                spinnerArray[i] = t.getAbbrev();
+                spinnerArray[i] = ltrim(t.getAbbrev());
                 i++;
 
 
@@ -592,25 +595,52 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
        return false;
     }
 
-    public void actionBtnSave(View v) {
+    public void actionBtnSave(final View v) {
         boolean toSave=true;
-
+        doSaving=false;
         if(ifValidSaving()) {
 
             if (!isValidValue() && withScaleValue) {
 
-                Toast.makeText(getApplicationContext(),
+/*                Toast.makeText(getApplicationContext(),
                         "Invalid value entered", Toast.LENGTH_LONG)
-                        .show();
+                        .show();*/
+
+                android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(
+                        DataEntryActivity.this).create();
+                alertDialog.setTitle("Error Input Message");
+                alertDialog.setMessage("Invalid value");
+                alertDialog.setIcon(R.drawable.info);
+                alertDialog.setButton("Close", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                alertDialog.show();
+
                 etValue.setText("");
                 toSave = false;
             }
 
             if (isValidDate()) {
 
-                Toast.makeText(getApplicationContext(),
+              /*  Toast.makeText(getApplicationContext(),
                         "Invalid value entered for date", Toast.LENGTH_LONG)
-                        .show();
+                        .show();*/
+
+                android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(
+                        DataEntryActivity.this).create();
+                alertDialog.setTitle("Error Input Message");
+                alertDialog.setMessage("Invalid date format");
+                alertDialog.setIcon(R.drawable.info);
+                alertDialog.setButton("Close", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                alertDialog.show();
                 etValue.setText("");
                 toSave = false;
             }
@@ -621,21 +651,69 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
                     if (plotEntry == 1) {
 
-                        savePlotObservation();
-                        if (traitIndex == traitMeasuring.size() - 1) {
-                            traitIndex = 0;
-                            spinnerTrait.setSelection(traitIndex);
+                        boolean isExistRecord=studyMgr.isExistRecord(database,Integer.valueOf(plotNo),variable_id);
+                        if(isExistRecord){
 
-                            if (traitMeasuring.size() - 1 > 0) {
-                                showMsgToNextPlot(v);
+                            String fieldValue=etValue.getText().toString();
+                            String oldValue=currentTraitValue;
+
+                           if(!etValue.getText().toString().equals(currentTraitValue)) {
+                               doSaving=false;
+                              android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(
+                                    DataEntryActivity.this);
+                              alertDialog.setTitle("Saving Confirmation");
+                              alertDialog.setMessage("Replaced existing value?");
+                              alertDialog.setIcon(R.drawable.info);
+                              alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    doSaving=true;
+                                    savePlotObservation();
+                                    if (traitIndex == traitMeasuring.size() - 1) {
+                                        traitIndex = 0;
+                                        spinnerTrait.setSelection(traitIndex);
+
+                                        if (traitMeasuring.size() - 1 > 0) {
+                                            showMsgToNextPlot(v);
+                                        } else {
+                                            actionBtnPlotNext(v);
+                                        }
+                                        setTraitValue();
+
+                                    } else {
+                                        actionBtnTraitNext(v);
+                                    }
+
+                                }
+                            });
+                             alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+
+                            // Showing Alert Message
+                            alertDialog.show();
+
+                        }}else{
+                            doSaving=true;
+                            savePlotObservation();
+                            if (traitIndex == traitMeasuring.size() - 1) {
+                                traitIndex = 0;
+                                spinnerTrait.setSelection(traitIndex);
+
+                                if (traitMeasuring.size() - 1 > 0) {
+                                    showMsgToNextPlot(v);
+                                } else {
+                                    actionBtnPlotNext(v);
+                                }
+                                setTraitValue();
+
                             } else {
-                                actionBtnPlotNext(v);
+                                actionBtnTraitNext(v);
                             }
-                            setTraitValue();
-
-                        } else {
-                            actionBtnTraitNext(v);
                         }
+
+
                     } else {
                         savePlotObservationRange();
 
@@ -675,7 +753,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private boolean isValidDate(){
         if(traitMeasuring.get(traitIndex).getDataType().equals("date")){
             try{
-                SimpleDateFormat formatter =new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+                SimpleDateFormat formatter =new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                 String dateInString = etValue.getText().toString();
 
                 try {
@@ -742,6 +820,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         }
         if(traitMeasuring.get(traitIndex).getDataType().equals("float")){
             etValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        }else{
+            etValue.setInputType(InputType.TYPE_CLASS_TEXT);
         }
 
         if(!traitMeasuring.get(traitIndex).getScaleValue().equals("null") && !traitMeasuring.get(traitIndex).getScaleValue().equals("")){
@@ -751,9 +831,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             String[] scale=traitMeasuring.get(traitIndex).getScaleValue().split(";");
             for(int i=0;i <scale.length ; i++){
                 ScaleValue sv= new ScaleValue();
-                sv.setLabel(scale[i].trim());
+                sv.setLabel(ltrim(scale[i].trim()));
                 String[] val=scale[i].split("=");
-                sv.setValue(val[0].trim());
+                sv.setValue(ltrim(val[0].trim()));
                 scaleValueList.add(sv);
 
             }
@@ -808,9 +888,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         try {
             if(etValue.getText().toString().length() > 0) {
-                DateUtil cdate=new DateUtil();
+                final DateUtil cdate=new DateUtil();
 
-                ContentValues content = new ContentValues();
+                final ContentValues content = new ContentValues();
                 content.put("plot_key", plotKey);
                 content.put("abbrev", abbrev);
                 content.put("plotno", plotNo);
@@ -819,10 +899,14 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 content.put("timestamp", cdate.getDate());
 
                 boolean isExistRecord=studyMgr.isExistRecord(database,Integer.valueOf(plotNo),variable_id);
+                String fieldValue=etValue.getText().toString();
+
                 if(isExistRecord){
                     if(!etValue.getText().toString().equals(currentTraitValue)) {
-                        content.put("committed","N");
-                        studyMgr.updatePlotRecord(database, etValue.getText().toString(), Integer.valueOf(plotNo), variable_id, cdate.getDate());
+                        if(doSaving) {
+                            content.put("committed", "N");
+                            studyMgr.updatePlotRecord(database, etValue.getText().toString(), Integer.valueOf(plotNo), variable_id, cdate.getDate());
+                        }
                     }
                 }else{
                     content.put("committed","N");
@@ -1003,7 +1087,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
             int mon=month+1;
-            ((EditText) getActivity().findViewById(R.id.etValue)).setText(year+"/"+mon+"/"+day);
+            ((EditText) getActivity().findViewById(R.id.etValue)).setText(year+"-"+mon+"-"+day);
         }
     }
 
@@ -1228,13 +1312,18 @@ return data;
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        etValue.setText(year+"/"+(month+1)+"/"+day);
+        if(month < 10){
+            etValue.setText(year+"-0"+(month+1)+"-"+day);
+        }else{
+            etValue.setText(year+"-"+(month+1)+"-"+day);
+        }
+
     }
 
     public void actionBtnDateLess(View v) {
         try {
             String dateString = etValue.getText().toString();
-            DateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date = format.parse(dateString);
             Date dateBefore = new Date(date.getTime() - 1 * 24 * 3600 * 1000L ); //Subtract n days
             Calendar calendar = Calendar.getInstance();
@@ -1242,7 +1331,15 @@ return data;
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int day = calendar.get(Calendar.DAY_OF_MONTH);
-            etValue.setText(year+"/"+(month+1)+"/"+day);
+
+
+            if(month < 10){
+                etValue.setText(year+"-0"+(month+1)+"-"+day);
+            }else{
+                etValue.setText(year+"-"+(month+1)+"-"+day);
+            }
+
+
 
         }catch (Exception e) {
             etValue.setText("");
@@ -1255,7 +1352,7 @@ return data;
         try {
 
             String dateString = etValue.getText().toString();
-            DateFormat format = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date = format.parse(dateString);
 
             Calendar calendar = Calendar.getInstance();
@@ -1264,11 +1361,22 @@ return data;
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int day = calendar.get(Calendar.DAY_OF_MONTH);
-            etValue.setText(year + "/" + (month + 1) + "/" + day);
+
+
+            if(month < 10){
+                etValue.setText(year+"-0"+(month+1)+"-"+day);
+            }else{
+                etValue.setText(year+"-"+(month+1)+"-"+day);
+            }
+
+
         }catch (Exception e){
             etValue.setText("");
         }
     }
 
+    public static String ltrim(String s) {
+        return LTRIM.matcher(s).replaceAll("");
+    }
 
 }
