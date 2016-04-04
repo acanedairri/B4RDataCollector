@@ -530,6 +530,22 @@ public class StudyManager {
         return cursor;
     }
 
+    public Cursor getVariableSetListByVariableSetName(SQLiteDatabase database,String variableSetName) {
+
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT distinct * from variable_set where variable_set_name='"+variableSetName+"'";
+            cursor = database.rawQuery(sql, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
     public void removeVariableSet(SQLiteDatabase database,String variableSetName) {
         try {
            // String sql = "delete from variable_set where lower(variable_set_name)='"+variableSetName.toLowerCase()+"'";

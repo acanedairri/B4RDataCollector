@@ -140,7 +140,7 @@ public class StudyMainActivity extends AppCompatActivity {
             intent.putExtra("ACCESSTOKEN", accessToken);
             startActivity(intent);
         }else if(id == R.id.action_load_variable_set) {
-            Intent intent = new Intent(StudyMainActivity.this, GetVariableSetActivity.class);
+            Intent intent = new Intent(StudyMainActivity.this, VariableSetStudyActivity.class);
             intent.putExtra("STUDYNAME",studyName);
             intent.putExtra("ACCESSTOKEN", accessToken);
             intent.putExtra("FLAG",0);
@@ -216,6 +216,16 @@ public class StudyMainActivity extends AppCompatActivity {
         return gson.toJson(plotDataList);
     }
 
+    public void actionSync(View v){
+
+        String jsonString=getPlotDataToCommit();
+        String postUrl;
+        if(is_posted.equals("N")) {
+            postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets?accessToken=" + accessToken;
+        }else{
+            postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
+        }
+    }
 
     public class JSONTaskCommitStudy extends AsyncTask<String,String,String> {
 

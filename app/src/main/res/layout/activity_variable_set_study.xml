@@ -1,0 +1,108 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Get New Variable Set"
+                android:id="@+id/button6"
+                android:layout_gravity="center_vertical"
+                android:onClick="actionGetNewVariableSet"
+                android:textColorLink="#3155ff" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Variable Set : "
+                android:id="@+id/textView16"
+                android:layout_gravity="center_vertical"
+                android:textSize="18dp" />
+
+            <Spinner
+                android:layout_width="fill_parent"
+                android:layout_height="38dp"
+                android:id="@+id/spinnerVariableSet"
+                android:layout_gravity="center_vertical" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/tblRowSearch"
+            android:visibility="visible"
+            android:paddingStart="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:baselineAligned="false">
+
+                <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/etFilter"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.82" />
+
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnClearSearch"
+                android:src="@drawable/clear"
+                android:layout_weight="0.24"
+                android:layout_gravity="center_vertical"
+                android:onClick="actionBtnClearSearch" />
+
+            </LinearLayout>
+        </TableRow>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ExpandableListView
+                android:id="@+id/exp_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+            </ExpandableListView>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tableRow"
+                android:layout_alignParentBottom="true"
+                android:background="#f5f5f5">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add To Study Variables"
+                    android:id="@+id/btnAddVariableSetToStudy"
+                    android:layout_gravity="center_vertical"
+                    android:layout_alignBottom="@+id/tableRow"
+                    android:layout_alignParentStart="true"
+                    android:onClick="actionAddToStudyVariable" />
+            </TableRow>
+
+        </RelativeLayout>
+
+    </LinearLayout>

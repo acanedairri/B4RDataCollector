@@ -17,18 +17,18 @@
 
     <item android:id="@+id/action_delete_study"
         android:orderInCategory="300"
-        android:title="@string/action_load_study"
-        android:icon="@drawable/bin1"
+        android:title="Delete Study"
+        android:icon="@drawable/trash32"
         app:showAsAction="always" />
-
-    <item android:id="@+id/action_help"
-    android:orderInCategory="400"
-    android:icon="@drawable/help"
-    app:showAsAction="always"
-    android:title="Help"/>
 
     <item android:id="@+id/action_variable"
         android:orderInCategory="500"
         app:showAsAction="withText"
         android:title="Variables"/>
+
+    <item android:id="@+id/action_help"
+        android:orderInCategory="600"
+        android:icon="@drawable/help"
+        app:showAsAction="withText"
+        android:title="Help"/>
 </menu>

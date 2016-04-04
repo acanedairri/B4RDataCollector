@@ -151,6 +151,13 @@
             android:label="Variable Set"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
+
+        <activity
+            android:name=".VariableSetStudyActivity"
+            android:label="Study Variable Set"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+        </activity>
+
         <activity
             android:name=".PlotOrderSettingActivity"
             android:label="@string/title_activity_plot_order_setting" >

@@ -15,19 +15,23 @@
         android:icon="@drawable/sync"
         android:orderInCategory="300" app:showAsAction="always" />
 
+
+ <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
+        android:orderInCategory="500" app:showAsAction="never" />
+
+    <item android:id="@+id/action_view_photo" android:title="View Plot Photos"
+        android:orderInCategory="500" app:showAsAction="never" />
+
+    <item android:id="@+id/action_settings"
+        android:orderInCategory="600"
+        app:showAsAction="never"
+        android:title="Settings"/>
+
     <item android:id="@+id/action_help"
-        android:orderInCategory="400"
+        android:orderInCategory="600"
         android:icon="@drawable/help"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:title="Help"/>
-
-
-
-    <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
-        android:orderInCategory="500" app:showAsAction="never" />
-
-    <item android:id="@+id/action_view_photo" android:title="View Photos"
-        android:orderInCategory="500" app:showAsAction="never" />
 
 <!--    <item android:id="@+id/action_log_record" android:title="@string/action_log_recording"
         android:orderInCategory="600" app:showAsAction="never" />-->

@@ -10,7 +10,7 @@
     <string name="action_data_entry">Data Entry</string>
     <string name="action_trait_measuring">Trait To Measure</string>
     <string name="action_log_recording">Log Record</string>
-    <string name="action_commit_history">Upload Transaction</string>
+    <string name="action_commit_history">Sync History</string>
 
     <!-- TODO: Action Data Entry Study -->
     <string name="action_search_study">Search</string>
