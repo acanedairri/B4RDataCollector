@@ -17,22 +17,6 @@
         android:title="Set Variable to Measuring"/>
 
 
-
-    <item android:id="@+id/action_plotorder"
-        android:orderInCategory="400"
-        app:showAsAction="withText"
-        android:title="Set Plot Display"/>
-
-    <item android:id="@+id/action_single_entry"
-        android:orderInCategory="500"
-        app:showAsAction="withText"
-        android:title="Set Per Plot Entry"/>
-
-    <item android:id="@+id/action_range_entry"
-        android:orderInCategory="600"
-        app:showAsAction="withText"
-        android:title="Set Range Entry"/>
-
     <item android:id="@+id/action_take_photo"
         android:orderInCategory="700"
         android:icon="@drawable/camera3"
@@ -45,8 +29,14 @@
         app:showAsAction="withText"
         android:title="View Photos"/>
 
+    <item android:id="@+id/action_settings"
+        android:orderInCategory="800"
+        android:icon="@drawable/help"
+        app:showAsAction="withText"
+        android:title="Settings"/>
+
     <item android:id="@+id/action_help"
-        android:orderInCategory="300"
+        android:orderInCategory="900"
         android:icon="@drawable/help"
         app:showAsAction="withText"
         android:title="Help"/>

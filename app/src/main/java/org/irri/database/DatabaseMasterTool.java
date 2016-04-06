@@ -11,6 +11,7 @@ import android.util.Log;
 
 import org.irri.constant.AppDirectory;
 import org.irri.utility.ApplicationPath;
+import org.irri.utility.DateUtil;
 
 import java.util.ArrayList;
 
@@ -128,7 +129,9 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
             db.execSQL(TableData.CREATE_USER_TEAM_TABLE);
             db.execSQL(TableData.CREATE_STUDY_TABLE);
             db.execSQL(TableData.CREATE_STUDY_LIST);
+            db.execSQL(TableData.CREATE_SETTINGS_MASTER);
             db.execSQL(TableData.CREATE_VARIABLE_SET_TABLE);
+            populateSettingMasterValues(db);
         }catch (Exception e){
 
         }
@@ -157,7 +160,17 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         contentSettings.put("datafield2","rep");
         contentSettings.put("datafield3","entno");
         contentSettings.put("datafield4","designation");
+        contentSettings.put("entryform","single");
         db.insert("settings", null, contentSettings);
+
+    }
+
+    private void populateSettingMasterValues(SQLiteDatabase db) {
+        DateUtil dateUtil = new DateUtil();
+        ContentValues contentSettings = new ContentValues();
+        contentSettings.put("year",String.valueOf(dateUtil.getYear()));
+        contentSettings.put("season","Wet");
+        db.insert("settings_master", null, contentSettings);
 
     }
 

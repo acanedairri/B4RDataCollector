@@ -174,6 +174,12 @@ public class StudyMainActivity extends AppCompatActivity {
             i.putExtra("FOLDER_PATH", ApplicationPath.APP_PATH_IMAGES);
             i.putExtra("STUDYNAME",studyName );
             startActivity(i);
+        }else if (id == R.id.action_settings) {
+
+            Intent i = new Intent(StudyMainActivity.this, SettingDataEntryActivity.class);
+            i.putExtra("STUDYNAME", studyName);
+            i.putExtra("ACCESSTOKEN", accessToken);
+            startActivity(i);
         }
 
 
@@ -225,6 +231,8 @@ public class StudyMainActivity extends AppCompatActivity {
         }else{
             postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
         }
+
+        new JSONTaskCommitStudy().execute(postUrl,jsonString);
     }
 
     public class JSONTaskCommitStudy extends AsyncTask<String,String,String> {

@@ -16,12 +16,5 @@
             android:textSize="18dp"
             android:textIsSelectable="false" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/tvScaleLabel"
-            android:visibility="invisible" />
-
 
 </LinearLayout>

@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.irri.activity.VariableSetActivity">
 
-<!--    <item android:id="@+id/action_load_variable_set" android:title="Variable Set" android:icon="@drawable/variable"
-        android:orderInCategory="100" app:showAsAction="always" />-->
-
+    <item android:id="@+id/action_load_variable_set" android:title="Variable Set" android:icon="@drawable/variable"
+        android:orderInCategory="100" app:showAsAction="always" />
     <item android:id="@+id/action_remove_variable_set" android:title="Remove Selected Variable Set" android:icon="@drawable/trash32"
         android:orderInCategory="200" app:showAsAction="always" />
     <item android:id="@+id/action_help"

@@ -2,6 +2,7 @@ package org.irri.utility;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -26,5 +27,10 @@ public class DateUtil {
         return toreturn;
     }
 
+    public int getYear(){
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        return year;
+    }
 
 }

@@ -190,7 +190,7 @@ public class VariableSetStudyActivity extends AppCompatActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_variable_set_master, menu);
+		getMenuInflater().inflate(R.menu.menu_variable_set_study, menu);
 		return true;
 	}
 

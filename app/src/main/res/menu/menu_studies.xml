@@ -26,8 +26,13 @@
         app:showAsAction="withText"
         android:title="Variables"/>
 
+    <item android:id="@+id/action_settings"
+        android:orderInCategory="700"
+        app:showAsAction="withText"
+        android:title="Settings"/>
+
     <item android:id="@+id/action_help"
-        android:orderInCategory="600"
+        android:orderInCategory="700"
         android:icon="@drawable/help"
         app:showAsAction="withText"
         android:title="Help"/>

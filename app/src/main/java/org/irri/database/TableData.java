@@ -65,6 +65,8 @@ public class TableData {
             "`uncommited` INTEGER," +
             "`author_name` TEXT," +
             "`program_abbrev` TEXT," +
+            "`year` TEXT," +
+            "`season` TEXT," +
             "`name` TEXT" +
             ");";
 
@@ -126,7 +128,15 @@ public class TableData {
             "`datafield2` TEXT," +
             "`datafield3` TEXT," +
             "`datafield4` TEXT," +
+            "`entryform` TEXT," +
             "`last_recno` INTEGER" +
+            ");";
+
+    public static String CREATE_SETTINGS_MASTER="CREATE TABLE `settings_master` (" +
+            "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`year` TEXT," +
+            "`season` TEXT" +
+
             ");";
 
     public static String CREATE_VARIABLE_SET_TABLE="CREATE TABLE `variable_set` (" +

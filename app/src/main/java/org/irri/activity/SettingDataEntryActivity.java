@@ -1,22 +1,21 @@
 package org.irri.activity;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 
-import org.irri.activity.R;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
 
-public class PlotOrderSettingActivity extends AppCompatActivity {
+public class SettingDataEntryActivity extends AppCompatActivity {
 
     private int REQUEST_CODE2 = 0X2;
     String studyName;
@@ -39,11 +38,12 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
     DatabaseMasterTool dbTool;
     SQLiteDatabase database;
     StudyManager studyMgr;
+    String entryForm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plot_order_setting);
+        setContentView(R.layout.activity_setting_dataentry);
 
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
@@ -143,8 +143,24 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
                 });
 
         initSpinnerValues();
+        initEntryForm();
 
     }
+
+    private void initEntryForm() {
+        RadioButton radioSingle= (RadioButton) findViewById(R.id.radioButtonSingle);
+        RadioButton radioBatch= (RadioButton) findViewById(R.id.radioButtonRange);
+
+        if(entryForm.equals("single")){
+            radioSingle.setChecked(true);
+            radioBatch.setChecked(false);
+        }else{
+            radioSingle.setChecked(false);
+            radioBatch.setChecked(true);
+        }
+
+    }
+
 
     private void populateSettingValues() {
         Cursor cursorSettings= studyMgr.getSettings(database);
@@ -157,6 +173,7 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
                     dataField2=cursorSettings.getString(cursorSettings.getColumnIndex("datafield2"));
                     dataField3=cursorSettings.getString(cursorSettings.getColumnIndex("datafield3"));
                     dataField4=cursorSettings.getString(cursorSettings.getColumnIndex("datafield4"));
+                    entryForm=cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
 
                 } while (cursorSettings.moveToNext());
             }
@@ -174,10 +191,10 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
         spinnerPlotField2.setSelection(dataField2Position);
 
         int dataField3Position= adapterPlotField2.getPosition(dataField3);
-        spinnerPlotField3.setSelection(dataField3Position);
+        spinnerPlotField3.setSelection(dataField3Position+1);
 
         int dataField4Position= adapterPlotField2.getPosition(dataField4);
-        spinnerPlotField4.setSelection(dataField4Position);
+        spinnerPlotField4.setSelection(dataField4Position+1);
     }
 
 
@@ -210,7 +227,7 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
     }
 
     public void actionBtnSave(View v) {
-       // studyMgr.updateSettingsDataField(database,dataField1,dataField2,dataField3, dataField4,entryform);
+        studyMgr.updateSettingsDataField(database,dataField1,dataField2,dataField3, dataField4,entryForm);
         setResult(RESULT_OK);
         super.finish();
     }
@@ -220,5 +237,22 @@ public class PlotOrderSettingActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         dbTool.closeDB(database);
+    }
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radioButtonSingle:
+                if (checked)
+                   entryForm="single";
+                    break;
+            case R.id.radioButtonRange:
+                if (checked)
+                    entryForm="batch";
+                    break;
+        }
     }
 }

@@ -30,10 +30,10 @@ public class StudyManager {
     }
 
 
-    public Cursor getAllStudyRecords(SQLiteDatabase database,String program) {
+    public Cursor getAllStudyRecords(SQLiteDatabase database,String program,String year,String season) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from study where program='"+program+"'";
+            String sql = "SELECT * from study where program='"+program+"' and year='"+year+"' and season='"+season+"'";
             cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {
@@ -78,10 +78,22 @@ public class StudyManager {
         return cursor;
     }
 
-    public Cursor getStudyByName(SQLiteDatabase database,String studyName,String program) {
+    public Cursor getSettingsMaster(SQLiteDatabase database) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from study where lower(studyname) like '%"+studyName.toLowerCase()+"%' or lower(name) like '%"+studyName.toLowerCase()+"%' and program='"+program+"'";
+            String sql = "SELECT * from settings_master";
+            cursor = database.rawQuery(sql, null);
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
+    public Cursor getStudyByName(SQLiteDatabase database,String studyName,String program,String year, String season) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from study where lower(studyname) like '%"+studyName.toLowerCase()+"%' or lower(name) like '%"+studyName.toLowerCase()+"%' and program='"+program+"' and year='"+year+"' and season='"+season+"'";
             cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {
@@ -342,14 +354,24 @@ public class StudyManager {
         }
     }
 
-    public void updateSettingsDataField(SQLiteDatabase database, String datafield1,String datafield2,String datafield3,String datafield4) {
+    public void updateSettingsDataField(SQLiteDatabase database, String datafield1,String datafield2,String datafield3,String datafield4,String entryform) {
         try {
-            String sql="Update settings set datafield1='"+datafield1+"', datafield2='"+datafield2+"',datafield3='"+datafield3+"',datafield4='"+datafield4+"'";
+            String sql="Update settings set datafield1='"+datafield1+"', datafield2='"+datafield2+"',datafield3='"+datafield3+"',datafield4='"+datafield4+"',entryform='"+entryform+"'";
            database.execSQL(sql);
         } catch (SQLiteException e) {
             System.out.println(e.toString());
         }
     }
+
+    public void updateSettingsMaster(SQLiteDatabase database, String year,String season) {
+        try {
+            String sql="Update settings_master set year='"+year+"', season='"+season+"'";
+            database.execSQL(sql);
+        } catch (SQLiteException e) {
+            System.out.println(e.toString());
+        }
+    }
+
 
     public void insertPlotRecord(SQLiteDatabase database,ContentValues contentValues) {
         try {
@@ -461,7 +483,7 @@ public class StudyManager {
         return cursor;
     }
 
-    public Cursor getStudyListByName(SQLiteDatabase database,String filter,String programName) {
+    public Cursor getStudyListByName(SQLiteDatabase database,String filter,String programName,String year,String season) {
         Cursor cursor = null;
         try {
             String sql = "SELECT * from study_list where name like  '%"+filter+"%' and program_abbrev='"+programName+"'";
@@ -473,10 +495,10 @@ public class StudyManager {
         return cursor;
     }
 
-    public Cursor getStudyListByProgram(SQLiteDatabase database,String programName) {
+    public Cursor getStudyListByProgram(SQLiteDatabase database,String programName,String year,String season) {
         Cursor cursor = null;
         try {
-            String sql = "SELECT * from study_list where program_abbrev='"+programName+"'";
+            String sql = "SELECT * from study_list where program_abbrev='"+programName+"' and year='"+year+"' and season='"+season+"'";
             cursor = database.rawQuery(sql, null);
             return cursor;
         } catch (SQLiteException e) {

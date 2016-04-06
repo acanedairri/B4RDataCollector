@@ -84,6 +84,8 @@ public class StudyListActivity extends AppCompatActivity {
     String[] spinnerArray;
     private String programName;
     int programIndex=0;
+    String year;
+    String season;
 
 
     @Override
@@ -94,6 +96,7 @@ public class StudyListActivity extends AppCompatActivity {
         accessToken=bundle.getString("ACCESS_TOKEN");
         studyObj=bundle.getString("STUDY");
         lvStudyList= (ListView) findViewById(R.id.lvStudyList);
+        populateSettingValues();
 
 
         Gson gson = new Gson();
@@ -157,6 +160,8 @@ public class StudyListActivity extends AppCompatActivity {
                 contextValue.put("name", rec.getStudy());
                 contextValue.put("author_name",rec.getAuthor());
                 contextValue.put("program_abbrev",rec.getProgram());
+                contextValue.put("year",rec.getYear());
+                contextValue.put("season",rec.getSeason());
                 mgr.insertStudyList(database, contextValue);
             }
 
@@ -195,9 +200,9 @@ public class StudyListActivity extends AppCompatActivity {
         StudyManager mgr= new StudyManager();
         Cursor studyList= null;
         if(filter.length() > 0 && programIndex > 0) {
-            studyList = mgr.getStudyListByName(database,filter,programName);
+            studyList = mgr.getStudyListByName(database,filter,programName,year,season);
         }else if(filter.length() == 0 && programIndex > 0) {
-            studyList = mgr.getStudyListByProgram(database, programName);
+            studyList = mgr.getStudyListByProgram(database, programName,year,season);
         }else if(programIndex == 0){
             studyList = mgr.getAllStudyListByUser(database, LoginActivity.getName());
         }
@@ -648,6 +653,7 @@ public class StudyListActivity extends AppCompatActivity {
                 studyInfo.put("program", studyMetadata.getData().getProgram().toString());
                 studyInfo.put("phase", studyMetadata.getData().getPhase().toString());
                 studyInfo.put("season", studyMetadata.getData().getSeason().toString());
+                studyInfo.put("year", String.valueOf(studyMetadata.getData().getYear()));
                 studyInfo.put("userid", LoginActivity.getUser_id());
                 studyInfo.put("is_posted","N");
                 studyInfo.put("transaction_id",0);
@@ -819,7 +825,28 @@ public class StudyListActivity extends AppCompatActivity {
                 });
     dbTool.closeDB(database);
     }
+    private void populateSettingValues() {
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database = dbTool.getMasterDatabase();
+        StudyManager mgr = new StudyManager();
+        Cursor cursorSettings= mgr.getSettingsMaster(database);
 
+        if(cursorSettings != null && cursorSettings.getCount() > 0){
+
+            if (cursorSettings.moveToFirst()) {
+                do {
+                    try {
+                        year = cursorSettings.getString(cursorSettings.getColumnIndex("year"));
+                        season = cursorSettings.getString(cursorSettings.getColumnIndex("season"));
+                    }catch (Exception e){
+                        year="";
+                        season="";
+                    }
+                } while (cursorSettings.moveToNext());
+            }
+        }
+        dbTool.closeDB(database);
+    }
 
 }
 

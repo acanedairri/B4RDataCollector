@@ -80,6 +80,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     private Study study;
     private ListView lvStudyList;
     private int REQUEST_CODE = 0X1;
+    private int REQUEST_CODE_SETTING = 0X2;
     List<StudyListData> studyList;
     MyStudyListAdapter adapter;
     private TableRow tblDeleteStudy;
@@ -95,6 +96,8 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     String[] spinnerArray;
     private String programName;
     int programIndex=0;
+    String year="";
+    String season="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +150,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         populateProgam();
+        populateSettingValues();
     }
 
     private List<StudyListData> getMyStudyList(String filter,String programName) {
@@ -157,9 +161,9 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             StudyManager mgr = new StudyManager();
             Cursor cursor = null;
             if (filter==null ) {
-                cursor = mgr.getAllStudyRecords(database, programName);
+                cursor = mgr.getAllStudyRecords(database, programName,year,season);
             } else {
-                cursor = mgr.getStudyByName(database, filter, programName);
+                cursor = mgr.getStudyByName(database, filter, programName,year,season);
             }
 
             if (cursor != null && cursor.getCount() > 0) {
@@ -169,6 +173,8 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                         String name = cursor.getString(cursor.getColumnIndex("name"));
                         String study = cursor.getString(cursor.getColumnIndex("study"));
                         String title = cursor.getString(cursor.getColumnIndex("title"));
+                        String year = cursor.getString(cursor.getColumnIndex("year"));
+                        String season = cursor.getString(cursor.getColumnIndex("season"));
                         int id = cursor.getInt(cursor.getColumnIndex("id"));
                         String lastCommit = cursor.getString(cursor.getColumnIndex("last_commit"));
                         int uncommited = cursor.getInt(cursor.getColumnIndex("uncommited"));
@@ -179,6 +185,8 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                         rec.setTitle(title);
                         rec.setDateLastCommited(lastCommit);
                         rec.setUncommited(uncommited);
+                        rec.setYear(year);
+                        rec.setSeason(season);
                         toreturn.add(rec);
                     } while (cursor.moveToNext());
                 }
@@ -212,7 +220,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
         switch (item.getItemId()){
             case R.id.action_loadstudy:
-                String urlString="http://api.breeding4rice.irri.org/dev/v1/studies?accessToken="+accessToken+"&limit=-1&sort=name";
+                String urlString="http://api.breeding4rice.irri.org/dev/v1/studies?accessToken="+accessToken+"&limit=-1&sort=name&season="+season+"&year="+year;
                 new JSONTask().execute(urlString);
                 break;
             case R.id.action_search:
@@ -248,6 +256,12 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 intent2.putExtra("ACCESSTOKEN", accessToken);
                 intent2.putExtra("FLAG",0);
                 startActivity(intent2);
+
+                break;
+
+            case R.id.action_settings:
+                Intent intentSetting = new Intent(StudiesActivity.this, SettingMainActivity.class);
+                startActivityForResult(intentSetting, REQUEST_CODE_SETTING);
 
                 break;
         }
@@ -515,6 +529,10 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 lvStudyList.setAdapter(adapter);
 
             }
+
+            if(requestCode == REQUEST_CODE_SETTING) {
+                populateSettingValues();
+            }
         }
 
 
@@ -643,6 +661,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         adapter = new MyStudyListAdapter(getApplicationContext(),R.layout.activity_studies_list_row,studyList);
         adapter.notifyDataSetChanged();
         lvStudyList.setAdapter(adapter);
+
     }
 
 
@@ -708,4 +727,26 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         dbTool.closeDB(database);
     }
 
+    private void populateSettingValues() {
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
+        SQLiteDatabase database = dbTool.getMasterDatabase();
+        StudyManager mgr = new StudyManager();
+        Cursor cursorSettings= mgr.getSettingsMaster(database);
+
+        if(cursorSettings != null && cursorSettings.getCount() > 0){
+
+            if (cursorSettings.moveToFirst()) {
+                do {
+                    try {
+                        year = cursorSettings.getString(cursorSettings.getColumnIndex("year"));
+                        season = cursorSettings.getString(cursorSettings.getColumnIndex("season"));
+                    }catch (Exception e){
+                        year="";
+                        season="";
+                    }
+                } while (cursorSettings.moveToNext());
+            }
+        }
+        dbTool.closeDB(database);
+    }
 }

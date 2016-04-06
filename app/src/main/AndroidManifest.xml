@@ -192,6 +192,19 @@
             android:name=".GetVariableSetMasterActivity"
             android:label="Variables" >
         </activity>
+
+        <activity
+            android:name=".SettingDataEntryActivity"
+            android:screenOrientation="portrait"
+            android:label="Study Settings" >
+        </activity>
+
+        <activity
+            android:name=".SettingMainActivity"
+            android:screenOrientation="portrait"
+            android:label="Settings" >
+        </activity>
+
     </application>
 
 </manifest>

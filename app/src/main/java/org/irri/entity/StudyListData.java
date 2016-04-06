@@ -8,10 +8,27 @@ public class StudyListData {
     String study;
     String name;
     String title;
+    String year;
+    String season;
     String dateLastCommited;
     int uncommited;
     int id;
 
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
 
     public String getStudy() {
         return study;
