@@ -354,9 +354,9 @@ public class StudyManager {
         }
     }
 
-    public void updateSettingsDataField(SQLiteDatabase database, String datafield1,String datafield2,String datafield3,String datafield4,String entryform) {
+    public void updateSettingsDataField(SQLiteDatabase database, String datafield1,String datafield2,String datafield3,String datafield4,String entryform,String formcolor) {
         try {
-            String sql="Update settings set datafield1='"+datafield1+"', datafield2='"+datafield2+"',datafield3='"+datafield3+"',datafield4='"+datafield4+"',entryform='"+entryform+"'";
+            String sql="Update settings set datafield1='"+datafield1+"', datafield2='"+datafield2+"',datafield3='"+datafield3+"',datafield4='"+datafield4+"',entryform='"+entryform+"',formcolor='"+formcolor+"'";
            database.execSQL(sql);
         } catch (SQLiteException e) {
             System.out.println(e.toString());

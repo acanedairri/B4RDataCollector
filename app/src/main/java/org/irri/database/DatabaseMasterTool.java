@@ -161,6 +161,7 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         contentSettings.put("datafield3","entno");
         contentSettings.put("datafield4","designation");
         contentSettings.put("entryform","single");
+        contentSettings.put("formcolor","light");
         db.insert("settings", null, contentSettings);
 
     }

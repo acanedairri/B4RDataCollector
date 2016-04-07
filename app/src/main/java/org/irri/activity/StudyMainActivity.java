@@ -232,7 +232,7 @@ public class StudyMainActivity extends AppCompatActivity {
             postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
         }
 
-        new JSONTaskCommitStudy().execute(postUrl,jsonString);
+        new JSONTaskCommitStudy().execute(postUrl, jsonString);
     }
 
     public class JSONTaskCommitStudy extends AsyncTask<String,String,String> {
@@ -295,7 +295,9 @@ public class StudyMainActivity extends AppCompatActivity {
 
                 Gson gson = new Gson();
                 CommitMessage commitMessage = gson.fromJson(result, CommitMessage.class);
-                updateCommitHistory(commitMessage);
+                if(commitMessage.isSuccess()) {
+                    updateCommitHistory(commitMessage);
+                }
                 AlertDialog alertDialog = new AlertDialog.Builder(
                         StudyMainActivity.this).create();
                 alertDialog.setTitle("Upload Message");

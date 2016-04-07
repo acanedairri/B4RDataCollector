@@ -39,6 +39,7 @@ public class SettingDataEntryActivity extends AppCompatActivity {
     SQLiteDatabase database;
     StudyManager studyMgr;
     String entryForm;
+    String dataEntryColor="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +145,7 @@ public class SettingDataEntryActivity extends AppCompatActivity {
 
         initSpinnerValues();
         initEntryForm();
+        initEntryFormColor();
 
     }
 
@@ -161,6 +163,20 @@ public class SettingDataEntryActivity extends AppCompatActivity {
 
     }
 
+    private void initEntryFormColor() {
+        RadioButton radioLight= (RadioButton) findViewById(R.id.radioButtonLight);
+        RadioButton radioDark= (RadioButton) findViewById(R.id.radioButtonDark);
+
+        if(dataEntryColor.equals("light")){
+            radioLight.setChecked(true);
+            radioDark.setChecked(false);
+        }else{
+            radioLight.setChecked(false);
+            radioDark.setChecked(true);
+        }
+
+    }
+
 
     private void populateSettingValues() {
         Cursor cursorSettings= studyMgr.getSettings(database);
@@ -174,7 +190,7 @@ public class SettingDataEntryActivity extends AppCompatActivity {
                     dataField3=cursorSettings.getString(cursorSettings.getColumnIndex("datafield3"));
                     dataField4=cursorSettings.getString(cursorSettings.getColumnIndex("datafield4"));
                     entryForm=cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
-
+                    dataEntryColor=cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
                 } while (cursorSettings.moveToNext());
             }
         }
@@ -227,7 +243,7 @@ public class SettingDataEntryActivity extends AppCompatActivity {
     }
 
     public void actionBtnSave(View v) {
-        studyMgr.updateSettingsDataField(database,dataField1,dataField2,dataField3, dataField4,entryForm);
+        studyMgr.updateSettingsDataField(database,dataField1,dataField2,dataField3, dataField4,entryForm,dataEntryColor);
         setResult(RESULT_OK);
         super.finish();
     }
@@ -253,6 +269,23 @@ public class SettingDataEntryActivity extends AppCompatActivity {
                 if (checked)
                     entryForm="batch";
                     break;
+        }
+    }
+
+    public void onRadioButtonClickedColor(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radioButtonLight:
+                if (checked)
+                    dataEntryColor="light";
+                break;
+            case R.id.radioButtonDark:
+                if (checked)
+                    dataEntryColor="dark";
+                break;
         }
     }
 }

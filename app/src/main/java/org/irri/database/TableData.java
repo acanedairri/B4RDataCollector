@@ -129,6 +129,7 @@ public class TableData {
             "`datafield3` TEXT," +
             "`datafield4` TEXT," +
             "`entryform` TEXT," +
+            "`formcolor` TEXT," +
             "`last_recno` INTEGER" +
             ");";
 

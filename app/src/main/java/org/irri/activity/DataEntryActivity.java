@@ -164,6 +164,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     String currentAbbrev="";
     boolean isFinish=false;
     String entryform;
+    String dataEntryColor="light";
 
     public DataEntryActivity(){
 
@@ -173,15 +174,22 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_entry);
+
+
+
         Bundle bundle = getIntent().getExtras();
         studyName=bundle.getString("STUDYNAME");
         accessToken=bundle.getString("ACCESSTOKEN");
-       // initdatabase
 
         initDatabase();
-
         populateSettingValues();
+
+        if(dataEntryColor.equals("light")) {
+            setContentView(R.layout.activity_data_entry);
+        } else{
+            setContentView(R.layout.activity_data_entry_dark);
+        }
+
         traitMeasuring= new ArrayList<TraitMeasuring>();
 
         lvScale=(ListView) findViewById(R.id.lvScale);
@@ -227,7 +235,11 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         getTraitToMeasure();
         // trait spinner
         spinnerTrait = (Spinner) findViewById(R.id.spinner_trait);
-        dataAdapterTrait = new ArrayAdapter<CharSequence>(this,R.layout.spinner_layout, spinnerArray);
+        if(dataEntryColor.equals("light")){
+            dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout, spinnerArray);
+        }else {
+            dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout_dark, spinnerArray);
+        }
        // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
         dataAdapterTrait.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTrait.setAdapter(dataAdapterTrait);
@@ -349,6 +361,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     dataField4=cursorSettings.getString(cursorSettings.getColumnIndex("datafield4"));
                     int lplot=cursorSettings.getInt(cursorSettings.getColumnIndex("last_recno"));
                     entryform=cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
+                    dataEntryColor=cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
                     if(lplot > 0){
                         plotIndex=lplot;
                     }else{
@@ -657,7 +670,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                         if(isExistRecord){
 
                             String fieldValue=etValue.getText().toString();
-                            String oldValue=currentTraitValue;
+                            final String oldValue=currentTraitValue;
 
                            if(!etValue.getText().toString().equals(currentTraitValue)) {
                                doSaving=false;
@@ -689,6 +702,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                             });
                              alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+                                    etValue.setText(oldValue);
 
                                 }
                             });
@@ -863,14 +877,24 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
             }
 
-            scaleAdapter = new ScaleListAdapter(getApplicationContext(),R.layout.activity_scale_row,scaleValueList);
+            if(dataEntryColor.equals("light")) {
+                scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row, scaleValueList);
+            }else{
+                scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row_dark, scaleValueList);
+            }
             lvScale.setAdapter(scaleAdapter);
 
         }else{
             withScaleValue=false;
             lvScale.setVisibility(View.GONE);
             scaleValueList.clear();
-            scaleAdapter = new ScaleListAdapter(getApplicationContext(),R.layout.activity_scale_row,scaleValueList);
+
+            if(dataEntryColor.equals("light")) {
+                scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row, scaleValueList);
+            }else{
+                scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row_dark, scaleValueList);
+            }
+
             lvScale.setAdapter(scaleAdapter);
 
         }
@@ -1233,7 +1257,14 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_CODE) {
                 getTraitToMeasure();
-                dataAdapterTrait = new ArrayAdapter<CharSequence>(this,R.layout.spinner_layout, spinnerArray);
+
+                if(dataEntryColor.equals("light")) {
+                    dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout, spinnerArray);
+                }else{
+                    dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout_dark, spinnerArray);
+                }
+
+
                 dataAdapterTrait.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerTrait.setAdapter(dataAdapterTrait);
                 spinnerTrait.setSelection(0);
@@ -1243,6 +1274,15 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 setPlotRecordDisplay(plotIndex);
                 tvMetadata1.setText(plotMeta1);
                 tvMetadata2.setText(plotMeta2);
+
+                if(dataEntryColor.equals("light")) {
+                    setContentView(R.layout.activity_data_entry);
+
+                } else{
+                    setContentView(R.layout.activity_data_entry_dark);
+                }
+
+                //findViewById(android.R.id.content).invalidate();
             }
 
 
