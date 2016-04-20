@@ -162,6 +162,8 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         contentSettings.put("datafield4","designation");
         contentSettings.put("entryform","single");
         contentSettings.put("formcolor","light");
+        contentSettings.put("display_plot_label","Y");
+        contentSettings.put("display_meta_label","Y");
         db.insert("settings", null, contentSettings);
 
     }
@@ -171,6 +173,14 @@ public class DatabaseMasterTool extends SQLiteOpenHelper {
         ContentValues contentSettings = new ContentValues();
         contentSettings.put("year",String.valueOf(dateUtil.getYear()));
         contentSettings.put("season","Wet");
+        contentSettings.put("datafield1","plot_code");
+        contentSettings.put("datafield2","rep");
+        contentSettings.put("datafield3","entno");
+        contentSettings.put("datafield4","designation");
+        contentSettings.put("entryform","single");
+        contentSettings.put("formcolor","light");
+        contentSettings.put("display_plot_label","Y");
+        contentSettings.put("display_meta_label","Y");
         db.insert("settings_master", null, contentSettings);
 
     }

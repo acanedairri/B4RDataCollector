@@ -145,19 +145,16 @@
             android:label="@string/title_activity_variable_set"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
-
         <activity
             android:name=".VariableSetMasterActivity"
             android:label="Variable Set"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
-
         <activity
             android:name=".VariableSetStudyActivity"
             android:label="Study Variable Set"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
-
         <activity
             android:name=".PlotOrderSettingActivity"
             android:label="@string/title_activity_plot_order_setting" >
@@ -187,24 +184,45 @@
             android:name=".TestActivity"
             android:label="@string/title_activity_test" >
         </activity>
-
         <activity
             android:name=".GetVariableSetMasterActivity"
             android:label="Variables" >
         </activity>
-
         <activity
             android:name=".SettingDataEntryActivity"
-            android:screenOrientation="portrait"
-            android:label="Study Settings" >
+            android:label="Study Settings"
+            android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name=".SettingMainActivity"
-            android:screenOrientation="portrait"
-            android:label="Settings" >
+            android:label="Settings"
+            android:screenOrientation="portrait" >
         </activity>
-
+        <activity
+            android:name=".NavItemListActivity"
+            android:label="Settings"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".NavItemDetailActivity"
+            android:label=""
+            android:parentActivityName=".NavItemListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.irri.activity.NavItemListActivity" />
+        </activity>
+        <activity
+            android:name=".NavigationMainActivity"
+            android:label="@string/title_activity_navigation_main" >
+        </activity>
+        <activity
+            android:name=".StudiesWithNavActivity"
+            android:label="@string/title_activity_navigation_main" >
+        </activity>
+        <activity
+            android:name=".SettingTabsMainActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

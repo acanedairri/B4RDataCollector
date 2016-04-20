@@ -288,4 +288,23 @@ public class SettingDataEntryActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    public void onChckButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radioButtonLight:
+                if (checked)
+                    dataEntryColor="light";
+                break;
+            case R.id.radioButtonDark:
+                if (checked)
+                    dataEntryColor="dark";
+                break;
+        }
+    }
+
+
 }

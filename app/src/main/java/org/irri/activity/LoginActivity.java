@@ -48,7 +48,7 @@ public class LoginActivity extends ActionBarActivity {
     private AccessToken accessToken;
     private Gson gson;
     private EditText password;
-    private String token="EWlri8UzqBKnetM52qL3LByrVu92DROQznl5nAbN";
+    private String token = "EWlri8UzqBKnetM52qL3LByrVu92DROQznl5nAbN";
     private String versionName;
     private int versionNum;
     private static int user_id;
@@ -85,12 +85,10 @@ public class LoginActivity extends ActionBarActivity {
         populateUser();
 
 
-
-
     }
 
     private void setupAppFolder() {
-        FileManager fileManager= new FileManager();
+        FileManager fileManager = new FileManager();
         try {
             fileManager.createAppFolders(getApplicationContext());
         } catch (IOException e1) {
@@ -99,7 +97,6 @@ public class LoginActivity extends ActionBarActivity {
         }
 
     }
-
 
 
     @Override
@@ -128,10 +125,9 @@ public class LoginActivity extends ActionBarActivity {
     public void onStartOauth(View v) {
 
 
-
         Intent intent = new Intent(this, EasySocialAuthActivity.class);
         intent.putExtra(EasySocialAuthActivity.URL, Authentication.LOGIN_URL);
-        intent.putExtra(EasySocialAuthActivity.REDIRECT_URL,Authentication.REDIRECT_URI);
+        intent.putExtra(EasySocialAuthActivity.REDIRECT_URL, Authentication.REDIRECT_URI);
         intent.putExtra(EasySocialAuthActivity.ACCESS_TOKEN, Authentication.ACCESS_TOKEN_URL);
         startActivityForResult(intent, REQUEST_CODE);
     }
@@ -158,27 +154,28 @@ public class LoginActivity extends ActionBarActivity {
         }*/
 
 
-
-        if(cursor != null && cursor.getCount() > 0){
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             token = cursor.getString(cursor.getColumnIndex("access_token"));
-            user_id=cursor.getInt(cursor.getColumnIndex("user_id"));
-            program=cursor.getString(cursor.getColumnIndex("program"));
-            name=cursor.getString(cursor.getColumnIndex("display_name"));
+            user_id = cursor.getInt(cursor.getColumnIndex("user_id"));
+            program = cursor.getString(cursor.getColumnIndex("program"));
+            name = cursor.getString(cursor.getColumnIndex("display_name"));
             System.out.println(program);
-            Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
-           intent.putExtra("ACCESS_TOKEN", token);
-            intent.putExtra("USERNAME",name);
-                    startActivity(intent);
+            /*Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);*/
+           // Intent intent = new Intent(getApplicationContext(), NavigationMainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), StudiesWithNavActivity.class);
+            intent.putExtra("ACCESS_TOKEN", token);
+            intent.putExtra("USERNAME", name);
+            startActivity(intent);
 
-        }else{
+        } else {
             //Toast.makeText(this, "Invalid User", Toast.LENGTH_LONG).show();
 /*            Intent intent = new Intent(getApplicationContext(), StudiesActivity.class);
             intent.putExtra("ACCESS_TOKEN", token);
             startActivity(intent);*/
 
 
-         AlertDialog alertDialog = new AlertDialog.Builder(
+            AlertDialog alertDialog = new AlertDialog.Builder(
                     LoginActivity.this).create();
             alertDialog.setTitle("Error Message");
             alertDialog.setMessage("Invalid User");
@@ -197,7 +194,6 @@ public class LoginActivity extends ActionBarActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -207,16 +203,16 @@ public class LoginActivity extends ActionBarActivity {
                 String accessTokenString = data.getStringExtra("data");
                 gson = new Gson();
                 accessToken = gson.fromJson(accessTokenString, AccessToken.class);
-                String token=accessToken.getAccess_token();
-               // _ResponseShowTestView.setText(token);;
+                String token = accessToken.getAccess_token();
+                // _ResponseShowTestView.setText(token);;
                 Intent intent = new Intent(this, RegisterUserActivity.class);
-                intent.putExtra("ACCESS_TOKEN",token);
+                intent.putExtra("ACCESS_TOKEN", token);
                 startActivity(intent);
 
             }
         } else if (resultCode == RESULT_CANCELED) {
             if (requestCode == REQUEST_CODE) {
-              //  Toast.makeText(this, data.getIntExtra("Error getting access token", 0) + "", Toast.LENGTH_LONG).show();
+                //  Toast.makeText(this, data.getIntExtra("Error getting access token", 0) + "", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -264,12 +260,12 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
-    public void createMasterDatabase(){
+    public void createMasterDatabase() {
 
         try {
 
             DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
-            dbTool.createMasterDatabase(this,"master");
+            dbTool.createMasterDatabase(this, "master");
 
         } catch (Exception e) {
             Toast.makeText(this, "Error getting user information", Toast.LENGTH_LONG).show();
@@ -280,19 +276,19 @@ public class LoginActivity extends ActionBarActivity {
     private void populateUser() {
         int i = 0;
 
-        List<String> list= new ArrayList<String>();
+        List<String> list = new ArrayList<String>();
 
         DatabaseMasterTool dbTool = new DatabaseMasterTool(this);
         SQLiteDatabase database = dbTool.getMasterDatabase();
         AccountManager mgr = new AccountManager(database);
         Cursor cursor = mgr.getAccountList();
 
-        if(cursor != null && cursor.getCount() > 0){
+        if (cursor != null && cursor.getCount() > 0) {
 
             if (cursor.moveToFirst()) {
                 do {
 
-                    String name=cursor.getString(cursor.getColumnIndex("username"));
+                    String name = cursor.getString(cursor.getColumnIndex("username"));
 
                     list.add(name);
                 } while (cursor.moveToNext());

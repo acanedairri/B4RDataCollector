@@ -240,31 +240,22 @@
         </TableLayout>
 
         <TableLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tblLayoutMetadata">
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tblRowMetadata">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btnOtherMetadata"
-                        android:src="@drawable/summary"
-                        android:layout_gravity="center_vertical"
-                        android:onClick="actionBtnOtherMetadata"
-                        android:paddingRight="10dp" />
-
                     <TableLayout
-                        android:layout_width="258dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical">
 

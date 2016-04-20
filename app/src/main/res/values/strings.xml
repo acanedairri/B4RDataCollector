@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">B4R Mobile </string>
+    <string name="app_name">B4R Mobile App V1 </string>
 
     <string name="action_settings">Settings</string>
     <string name="menu_settings">Settings</string>
@@ -111,7 +111,12 @@
     <string name="title_activity_help">Help</string>
     <string name="title_activity_photo_capture">PhotoCaptureActivity</string>
 
-
+    <string name="opendrawer">Open</string>
+    <string name="closedrawer">Open</string>
+    <string name="title_activity_navigation_main">B4R Mobile App V1</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+    <string name="title_activity_setting_tabs_main">SettingTabsMainActivity</string>
 
 
 </resources>

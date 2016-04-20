@@ -10,12 +10,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,6 +68,8 @@ import java.util.regex.Pattern;
 
 
 import com.intermec.aidc.*;
+
+import static android.graphics.Color.BLACK;
 
 public class DataEntryActivity extends AppCompatActivity implements BarcodeReadListener,AdapterView.OnItemClickListener, View.OnClickListener {
 
@@ -182,7 +189,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         accessToken=bundle.getString("ACCESSTOKEN");
 
         initDatabase();
-        populateSettingValues();
+        populateSettingValuesMaster();
+        populateSettingValuesStudy();
 
         if(dataEntryColor.equals("light")) {
             setContentView(R.layout.activity_data_entry);
@@ -335,6 +343,35 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         etPlotNoStart=(EditText)findViewById(R.id.etPlotNoStart);
         etPlotNoEnd=(EditText)findViewById(R.id.etPlotNoEnd);
         setPlotRecordDisplay(plotIndex);
+
+        etValue.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(withScaleValue) {
+                    int i=0;
+                    for(ScaleValue r: scaleValueList){
+                        if(r.getValue().contains(s.toString())){
+                            lvScale.setSelection(i);
+                            lvScale.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                            if(dataEntryColor.equals("light")) {
+                                lvScale.setSelector(android.R.color.darker_gray);
+                            }else{
+                                lvScale.setSelector(android.R.color.background_light);
+
+                            }
+                            lvScale.setSelected(true);
+                        }
+                        i++;
+                    }
+                }
+            }
+        });
     }
 
     private void initDatabase() {
@@ -342,14 +379,20 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
         totalPlotRecord=studyMgr.getAllPlotRecords(database).getCount();
+
+
     }
 
 /*    private void updateSettingDataField(String field,String value) {
         studyMgr.updateSettingsDataField(database, field, value);
     }*/
 
-    private void populateSettingValues() {
-        Cursor cursorSettings= studyMgr.getSettings(database);
+    private void populateSettingValuesMaster() {
+
+        DatabaseMasterTool dbToolMaster=new DatabaseMasterTool(this);
+        SQLiteDatabase database=dbToolMaster.getMasterDatabase();
+        StudyManager mgr= new StudyManager();
+        Cursor cursorSettings= mgr.getSettingsMaster(database);
 
         if(cursorSettings != null && cursorSettings.getCount() > 0){
 
@@ -359,6 +402,26 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     dataField2=cursorSettings.getString(cursorSettings.getColumnIndex("datafield2"));
                     dataField3=cursorSettings.getString(cursorSettings.getColumnIndex("datafield3"));
                     dataField4=cursorSettings.getString(cursorSettings.getColumnIndex("datafield4"));
+                    entryform=cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
+                    dataEntryColor=cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
+
+                } while (cursorSettings.moveToNext());
+            }
+        }
+
+        dbToolMaster.closeDB(database);
+    }
+
+    private void populateSettingValuesStudy() {
+
+
+        Cursor cursorSettings= studyMgr.getSettingsMaster(database);
+
+        if(cursorSettings != null && cursorSettings.getCount() > 0){
+
+            if (cursorSettings.moveToFirst()) {
+                do {
+
                     int lplot=cursorSettings.getInt(cursorSettings.getColumnIndex("last_recno"));
                     entryform=cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
                     dataEntryColor=cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
@@ -372,7 +435,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             }
         }
 
+
     }
+
 
     static BarcodeReader getBarcodeObject()
     {
@@ -497,6 +562,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             return true;
 
         }*/
+
         else if (id == R.id.action_take_photo) {
 
             Calendar now = GregorianCalendar.getInstance();
@@ -507,7 +573,14 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             iPhoto.putExtra("PHOTO_NAME", photoName );
             startActivityForResult(iPhoto, PHOTO_CAPTURE);
 
-        }else if (id == R.id.action_view_photo) {
+        }
+        else if (id == R.id.action_view_plot_meta) {
+
+            showDialog(1);
+
+        }
+
+        else if (id == R.id.action_view_photo) {
 
             Intent i = new Intent(DataEntryActivity.this, ImageListViewActivity.class);
             i.putExtra("FOLDER_PATH", ApplicationPath.APP_PATH_IMAGES);
@@ -1182,11 +1255,11 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     public void barcodeRead(BarcodeReadEvent abarcodeReadEvent) {
 
         String[] barcodeData= abarcodeReadEvent.getBarcodeData().split(";");
-        final String plotNo=barcodeData[barcodeData.length-1];
+        final String plotCode=barcodeData[barcodeData.length-1];
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
-                Cursor plotCursor = studyMgr.getPlotRecordByPlotNo(database, Integer.valueOf(plotNo));
+                Cursor plotCursor = studyMgr.getPlotRecordByPlotCode(database, plotCode);
                 int recordNo = 1;
                 if (plotCursor != null && plotCursor.getCount() > 0) {
 
@@ -1270,18 +1343,19 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 spinnerTrait.setSelection(0);
                 setTraitValue();
             }else if(requestCode == REQUEST_CODE2){
-                populateSettingValues();
+                populateSettingValuesMaster();
+
                 setPlotRecordDisplay(plotIndex);
                 tvMetadata1.setText(plotMeta1);
                 tvMetadata2.setText(plotMeta2);
 
-                if(dataEntryColor.equals("light")) {
+             /*   if(dataEntryColor.equals("light")) {
                     setContentView(R.layout.activity_data_entry);
 
                 } else{
                     setContentView(R.layout.activity_data_entry_dark);
                 }
-
+*/
                 //findViewById(android.R.id.content).invalidate();
             }
 

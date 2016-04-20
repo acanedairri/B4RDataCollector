@@ -18,25 +18,30 @@
 
 
     <item android:id="@+id/action_take_photo"
-        android:orderInCategory="700"
+        android:orderInCategory="300"
         android:icon="@drawable/camera3"
         app:showAsAction="always"
         android:title="Take Photo"/>
 
     <item android:id="@+id/action_view_photo"
-        android:orderInCategory="800"
+        android:orderInCategory="400"
         android:icon="@drawable/camera3"
         app:showAsAction="withText"
         android:title="View Photos"/>
 
+    <item android:id="@+id/action_view_plot_meta"
+        android:orderInCategory="500"
+        app:showAsAction="withText"
+        android:title="View Plot Metadata"/>
+
     <item android:id="@+id/action_settings"
-        android:orderInCategory="800"
+        android:orderInCategory="600"
         android:icon="@drawable/help"
         app:showAsAction="withText"
         android:title="Settings"/>
 
     <item android:id="@+id/action_help"
-        android:orderInCategory="900"
+        android:orderInCategory="700"
         android:icon="@drawable/help"
         app:showAsAction="withText"
         android:title="Help"/>

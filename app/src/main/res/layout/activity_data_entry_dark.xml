@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     tools:context="org.irri.activity.DataEntryActivity"
     android:orientation="vertical"
     android:padding="5dp"
@@ -256,26 +256,17 @@
             android:id="@+id/tblLayoutMetadata">
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tblRowMetadata">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btnOtherMetadata"
-                        android:src="@drawable/summary"
-                        android:layout_gravity="center_vertical"
-                        android:onClick="actionBtnOtherMetadata"
-                        android:paddingRight="10dp" />
-
                     <TableLayout
-                        android:layout_width="258dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical">
 
@@ -287,7 +278,6 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="New Text"
                                 android:id="@+id/tvMetadata1"
                                 android:textSize="20dp"
                                 android:layout_weight="1"
@@ -303,7 +293,6 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="New Text"
                                 android:id="@+id/tvMetadata2"
                                 android:textSize="20dp"
                                 android:textColor="#fafff7" />
@@ -450,7 +439,7 @@
 
     <GridLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:background="#010101">
 
         <LinearLayout

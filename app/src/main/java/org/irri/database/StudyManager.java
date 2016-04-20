@@ -169,6 +169,21 @@ public class StudyManager {
         return cursor;
     }
 
+    public Cursor getPlotRecordByPlotCode(SQLiteDatabase database,String plotcode) {
+        Cursor cursor = null;
+        try {
+            String sql = "SELECT * from plot where plotcode="+plotcode;
+            cursor = database.rawQuery(sql, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            return cursor;
+        } catch (SQLiteException e) {
+
+        }
+        return cursor;
+    }
+
     public Cursor getRecordByName(SQLiteDatabase database,String name) {
         try {
             String sql = "SELECT * from study where name ='" + name + "'";
@@ -363,9 +378,9 @@ public class StudyManager {
         }
     }
 
-    public void updateSettingsMaster(SQLiteDatabase database, String year,String season) {
+    public void updateSettingsMaster(SQLiteDatabase database, String year, String season,  String datafield1, String datafield2, String datafield3, String datafield4, String entryform, String formcolor,String display_meta_label,String display_plot_label) {
         try {
-            String sql="Update settings_master set year='"+year+"', season='"+season+"'";
+            String sql="Update settings_master set year='"+year+"', season='"+season+"',datafield1='"+datafield1+"', datafield2='"+datafield2+"',datafield3='"+datafield3+"',datafield4='"+datafield4+"',entryform='"+entryform+"',formcolor='"+formcolor+"',entryform='"+display_meta_label+"',display_plot_label='"+display_plot_label+"'";
             database.execSQL(sql);
         } catch (SQLiteException e) {
             System.out.println(e.toString());

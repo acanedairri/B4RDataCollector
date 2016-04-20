@@ -8,13 +8,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-
+import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-
-
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,10 +21,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -46,7 +46,6 @@ import org.irri.entity.User;
 import org.irri.utility.ApplicationPath;
 import org.json.JSONObject;
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -61,10 +60,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class StudiesActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class StudiesWithNavActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
 
-    private String accessToken;
+
     AsyncHttpClient client;
     User user;
     Gson gson;
@@ -95,15 +94,27 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private DrawerLayout drawerLayout;
     ListView navList;
+
+    ListView mDrawerList;
+    RelativeLayout mDrawerPane;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout mDrawerLayout;
+    ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
     private android.support.v7.app.ActionBar actionBar;
 
+    private String accessToken;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_studies);
+        setContentView(R.layout.activity_studies_with_nav);
         Bundle bundle = getIntent().getExtras();
         accessToken = bundle.getString("ACCESS_TOKEN");
+        username=bundle.getString("USERNAME");
+
+        TextView tvUser=(TextView) findViewById(R.id.userName);
+        tvUser.setText(username);
 
         studyList = getMyStudyList(null, "");
         lvStudyList = (ListView) findViewById(R.id.lvStudyList);
@@ -152,11 +163,95 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         populateSettingValues();
 
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
+
+       /* mNavItems.add(new NavItem("Studies", "List of Studies ", R.drawable.study));*/
+        mNavItems.add(new NavItem("Variable", "Set Variable", R.drawable.variable));
+        mNavItems.add(new NavItem("Settings", "Settings", R.drawable.settings));
+        mNavItems.add(new NavItem("Help", "How to use the system", R.drawable.help));
+        mNavItems.add(new NavItem("About", "Get to know about us", R.drawable.aboutus));
+
+        // DrawerLayout
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
+
+
+        // Populate the Navigtion Drawer with options
+        // mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
+        mDrawerList = (ListView) findViewById(R.id.navList);
+        DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
+        mDrawerList.setAdapter(adapter);
+
+        // Drawer Item click listeners
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectItemFromDrawer(position);
+            }
+        });
+
+
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+
     }
 
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        // menu.findItem(R.id.action_search).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+
+
+    private void selectItemFromDrawer(int position) {
+
+/*        if(position==1){
+            Intent intent1 = new Intent(StudiesWithNavActivity.this,StudiesActivity.class);
+            intent1.putExtra("ACCESS_TOKEN", accessToken);
+            intent1.putExtra("USERNAME", username);
+            startActivity(intent1);
+
+        }else */
+        if(position==0){
+            Intent intent = new Intent(StudiesWithNavActivity.this, VariableSetMasterActivity.class);
+            intent.putExtra("ACCESSTOKEN", "123");
+            intent.putExtra("FLAG", 0);
+            startActivity(intent);
+
+        }else if(position==1) {
+/*            Intent intentSetting = new Intent(StudiesWithNavActivity.this, SettingMainActivity.class);
+            startActivityForResult(intentSetting, REQUEST_CODE_SETTING);*/
+
+            Intent intentSetting = new Intent(StudiesWithNavActivity.this, SettingTabsMainActivity.class);
+            startActivity(intentSetting);
+        }
+    }
 
 
     private List<StudyListData> getMyStudyList(String filter, String programName) {
@@ -219,9 +314,13 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
        if (id == android.R.id.home) {
-           this.finish();
-           return true;
+           /*this.finish();
+           return true;*/
          }
 
         switch (item.getItemId()) {
@@ -263,7 +362,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 break;
 
 /*            case R.id.action_variable:
-                Intent intent2 = new Intent(StudiesActivity.this, VariableSetMasterActivity.class);
+                Intent intent2 = new Intent(StudiesWithNavActivity.this, VariableSetMasterActivity.class);
                 intent2.putExtra("ACCESSTOKEN", accessToken);
                 intent2.putExtra("FLAG", 0);
                 startActivity(intent2);
@@ -271,7 +370,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 break;
 
             case R.id.action_settings:
-                Intent intentSetting = new Intent(StudiesActivity.this, SettingMainActivity.class);
+                Intent intentSetting = new Intent(StudiesWithNavActivity.this, SettingMainActivity.class);
                 startActivityForResult(intentSetting, REQUEST_CODE_SETTING);
 
                 break;*/
@@ -420,7 +519,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
     public class JSONTask extends AsyncTask<String, String, String> {
 
-        private ProgressDialog Dialog = new ProgressDialog(StudiesActivity.this);
+        private ProgressDialog Dialog = new ProgressDialog(StudiesWithNavActivity.this);
 
         @Override
         protected void onPreExecute() {
@@ -487,7 +586,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 tvMessage.setText("Cannot connect to web service, Please check your internet connection");
                 dialog.show();*/
                 AlertDialog alertDialog = new AlertDialog.Builder(
-                        StudiesActivity.this).create();
+                        StudiesWithNavActivity.this).create();
 
                 // Setting Dialog Title
                 alertDialog.setTitle("Connection Error");
@@ -590,7 +689,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                    StudiesActivity.this);
+                    StudiesWithNavActivity.this);
             alertDialog.setTitle("Confirm Deletion");
             alertDialog.setMessage("Are you sure you want to delete the following studies?\n" + studies.toString());
             alertDialog.setIcon(R.drawable.info);
@@ -634,14 +733,14 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
     @Override
     public void onBackPressed() {
-        // super.onBackPressed();
-        //viewLogoutConfirmDialog();
-        finish();
+         //super.onBackPressed();
+         viewLogoutConfirmDialog();
+
     }
 
     private void viewLogoutConfirmDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                StudiesActivity.this);
+                StudiesWithNavActivity.this);
         alertDialog.setTitle("Confirm Logout");
         alertDialog.setMessage("Are you sure you want to Logout?");
         alertDialog.setIcon(R.drawable.info);
@@ -705,7 +804,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         }
 
         spinnerProgam = (Spinner) findViewById(R.id.spinnerStudiesProgram);
-        adapterProgram = new ArrayAdapter<CharSequence>(StudiesActivity.this, R.layout.spinner_layout, spinnerArray);
+        adapterProgram = new ArrayAdapter<CharSequence>(StudiesWithNavActivity.this, R.layout.spinner_layout, spinnerArray);
         // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
         adapterProgram.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerProgam.setAdapter(adapterProgram);
@@ -758,5 +857,66 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
             }
         }
         dbTool.closeDB(database);
+    }
+
+    class NavItem {
+        String mTitle;
+        String mSubtitle;
+        int mIcon;
+
+        public NavItem(String title, String subtitle, int icon) {
+            mTitle = title;
+            mSubtitle = subtitle;
+            mIcon = icon;
+        }
+    }
+
+    class DrawerListAdapter extends BaseAdapter {
+
+        Context mContext;
+        ArrayList<NavItem> mNavItems;
+
+        public DrawerListAdapter(Context context, ArrayList<NavItem> navItems) {
+            mContext = context;
+            mNavItems = navItems;
+        }
+
+        @Override
+        public int getCount() {
+            return mNavItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mNavItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.activity_navigation_main_drawer_item, null);
+            }
+            else {
+                view = convertView;
+            }
+
+            TextView titleView = (TextView) view.findViewById(R.id.title);
+            TextView subtitleView = (TextView) view.findViewById(R.id.subTitle);
+            ImageView iconView = (ImageView) view.findViewById(R.id.icon);
+
+            titleView.setText( mNavItems.get(position).mTitle );
+            subtitleView.setText( mNavItems.get(position).mSubtitle );
+            iconView.setImageResource(mNavItems.get(position).mIcon);
+
+            return view;
+        }
     }
 }

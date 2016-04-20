@@ -130,11 +130,21 @@ public class TableData {
             "`datafield4` TEXT," +
             "`entryform` TEXT," +
             "`formcolor` TEXT," +
+            "`display_plot_label` TEXT," +
+            "`display_meta_label` TEXT," +
             "`last_recno` INTEGER" +
             ");";
 
     public static String CREATE_SETTINGS_MASTER="CREATE TABLE `settings_master` (" +
             "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            "`datafield1` TEXT," +
+            "`datafield2` TEXT," +
+            "`datafield3` TEXT," +
+            "`datafield4` TEXT," +
+            "`entryform` TEXT," +
+            "`formcolor` TEXT," +
+            "`display_plot_label` TEXT," +
+            "`display_meta_label` TEXT," +
             "`year` TEXT," +
             "`season` TEXT" +
 

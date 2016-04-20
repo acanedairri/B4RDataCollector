@@ -19,7 +19,7 @@
     <fragment android:id="@+id/navigation_drawer"
         android:layout_width="@dimen/navigation_drawer_width" android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="org.irri.activity.NavigationDrawerFragment"
-        tools:layout="@layout/fragment_navigation_drawer" />
+        android:name="org.irri.activity.NavItemDetailFragment"
+        tools:layout="@layout/fragment_nav_detail" />
 
 </android.support.v4.widget.DrawerLayout>

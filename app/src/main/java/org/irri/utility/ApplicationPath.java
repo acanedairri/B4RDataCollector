@@ -16,8 +16,8 @@ public class ApplicationPath {
 
     public  static String STUDY_FOLDER="study";*/
 
-    public static final String APP_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/B4RDataCollectorTesting";
-    public static final String APP_PATH_MASTER =Environment.getExternalStorageDirectory().getAbsolutePath()+ "/B4RtempTesting";
+    public static final String APP_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/B4RDataCollectorDemo1";
+    public static final String APP_PATH_MASTER =Environment.getExternalStorageDirectory().getAbsolutePath()+ "/B4RtempDemo1";
 
     public static String APP_PATH_STUDY=APP_PATH+"/study/";
     public static String APP_PATH_LOG=APP_PATH+"/log/";
