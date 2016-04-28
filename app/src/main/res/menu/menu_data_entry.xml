@@ -34,11 +34,11 @@
         app:showAsAction="withText"
         android:title="View Plot Metadata"/>
 
-    <item android:id="@+id/action_settings"
+<!--    <item android:id="@+id/action_settings"
         android:orderInCategory="600"
         android:icon="@drawable/help"
         app:showAsAction="withText"
-        android:title="Settings"/>
+        android:title="Settings"/>-->
 
     <item android:id="@+id/action_help"
         android:orderInCategory="700"

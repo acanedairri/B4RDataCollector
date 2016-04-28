@@ -2,17 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:focusable="false"
+    android:descendantFocusability="blocksDescendants"
+    android:focusableInTouchMode="false">
 
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="true">
 
         <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="false">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -52,51 +58,83 @@
         android:layout_height="wrap_content"
         android:id="@+id/tableLayout">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/tvName"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            android:paddingLeft="5dp" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="false">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/tvName"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                android:paddingLeft="5dp" />
+
+        </TableRow>
+
     </TableLayout>
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-            <TextView
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Uncommited :"
+                    android:id="@+id/tvUncommitRecordLabel"
+                    android:paddingLeft="20dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvUncommittedRec"
+                    android:visibility="gone"
+                    android:textColor="#ff0b0c"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:textIsSelectable="false" />
+
+            </TableRow>
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Uncommited :"
-                android:id="@+id/tvUncommitRecordLabel"
-                android:paddingLeft="20dp"
-                android:visibility="gone" />
+                android:text="Sync"
+                android:id="@+id/btnSync"
+                android:layout_column="6"
+                android:visibility="visible"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvUncommittedRec"
-                android:visibility="gone"
-                android:textColor="#ff0b0c"
-                android:textStyle="bold"
-                android:textSize="@dimen/abc_text_size_medium_material"
-                android:textIsSelectable="false" />
-        </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvLastSync"
+                    android:paddingLeft="20dp"
+                    android:layout_below="@+id/tableLayout"
+                    android:layout_alignParentStart="true" />
+            </TableRow>
+
+        </LinearLayout>
 
     </TableRow>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvLastSync"
-        android:paddingLeft="20dp"
-        android:layout_below="@+id/tableLayout"
-        android:layout_alignParentStart="true" />
 
 </LinearLayout>

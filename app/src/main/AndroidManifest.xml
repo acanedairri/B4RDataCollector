@@ -217,10 +217,12 @@
         </activity>
         <activity
             android:name=".StudiesWithNavActivity"
+
             android:label="@string/title_activity_navigation_main" >
         </activity>
         <activity
             android:name=".SettingTabsMainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:label="@string/title_activity_settings" >
         </activity>
     </application>

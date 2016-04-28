@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -231,7 +232,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 break;*/
 
             case R.id.action_loadstudy:
-                String urlString = "http://api.breeding4rice.irri.org/dev/v1/studies?accessToken=" + accessToken + "&limit=-1&sort=name&season=" + season + "&year=" + year;
+                String urlString = "https://api.breeding4rice.irri.org/v1/studies?accessToken=" + accessToken + "&limit=-1&sort=name&season=" + season + "&year=" + year;
                 new JSONTask().execute(urlString);
                 break;
             case R.id.action_search:
@@ -303,6 +304,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
         String studyName;
 
 
+
         public MyStudyListAdapter(Context context, int resource, List<StudyListData> objects) {
             super(context, resource, objects);
             studyModelEntity = objects;
@@ -324,6 +326,7 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                 final TextView tvStudyName;
                 final TextView tvName;
                 final TextView tvStudyId;
+                final Button btnSync;
                 TextView tvLastSync;
                 TextView tvUncommitRecordLabel;
                 TextView tvUncommittedRec;
@@ -345,6 +348,8 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
 
                 tvUncommitRecordLabel = (TextView) convertView.findViewById(R.id.tvUncommitRecordLabel);
                 tvUncommittedRec = (TextView) convertView.findViewById(R.id.tvUncommittedRec);
+
+               // btnSync= (Button) convertView.findViewById(R.id.btnSync);
 
                 checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
                 if (deleteFlag == 1) {
@@ -396,10 +401,12 @@ public class StudiesActivity extends AppCompatActivity implements AdapterView.On
                     tvUncommittedRec.setVisibility(View.VISIBLE);
                     tvUncommittedRec.setText(String.valueOf(totalUncommitedRecord));
                     tvUncommitRecordLabel.setText("New Records: ");
+                    //btnSync.setVisibility(View.VISIBLE);
 
                 } else {
                     tvUncommitRecordLabel.setVisibility(View.GONE);
                     tvUncommittedRec.setVisibility(View.GONE);
+                   // btnSync.setVisibility(View.GONE);
                 }
 
             } catch (Exception e) {

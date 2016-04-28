@@ -68,7 +68,7 @@ public class GetAccessToken extends AsyncTask<String, Void, String> {
         ProcessGettingToken jParser = new ProcessGettingToken();
         String json = null;
         try {
-            json = jParser.gettoken("http://api.breeding4rice.irri.org/v1/authenticate/token", params[0]);
+            json = jParser.gettoken("https://api.breeding4rice.irri.org/v1/authenticate/token", params[0]);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

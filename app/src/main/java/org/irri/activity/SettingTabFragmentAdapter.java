@@ -4,12 +4,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import org.irri.entity.Settings;
+
 /**
  * Created by ACañeda on 2016-04-20.
  */
 public class SettingTabFragmentAdapter extends FragmentPagerAdapter {
-    public SettingTabFragmentAdapter(FragmentManager fm) {
+
+
+    Settings settings;
+    SettingTabsFragment1 fs1;
+    SettingTabsFragment2 fs2;
+    SettingTabsFragment3 fs3;
+    public SettingTabFragmentAdapter(FragmentManager fm,Settings settings) {
         super(fm);
+        this.settings=settings;
+
     }
 
     @Override
@@ -17,11 +27,14 @@ public class SettingTabFragmentAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return new SettingTabsFragment1();
+                fs1= new SettingTabsFragment1(settings);
+                return fs1;
             case 1:
-                return new SettingTabsFragment2();
-            case 2:
-                return new SettingTabsFragment3();
+                fs2= new SettingTabsFragment2(settings);
+                return fs2;
+           /* case 2:
+                fs3= new SettingTabsFragment3(settings);
+                return fs3;*/
             default:
                 break;
         }
@@ -31,6 +44,18 @@ public class SettingTabFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
+    }
+
+    public SettingTabsFragment1 getFs1() {
+        return fs1;
+    }
+
+    public SettingTabsFragment2 getFs2() {
+        return fs2;
+    }
+
+    public SettingTabsFragment3 getFs3() {
+        return fs3;
     }
 }

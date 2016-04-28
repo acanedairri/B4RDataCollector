@@ -18,7 +18,7 @@ public class Authentication {
     public static String LOGIN_URL="http://api.breeding4rice.irri.org/v1/authenticate?client_id=pocketapp@breeding4rice.irri.org&redirect_uri=http://localhost/callback&client_secret=777q382Jf4&response_type=code";
 
 
-    public static String ACCESS_TOKEN_URL= "http://api.breeding4rice.irri.org/v1/authenticate/token?" +
+    public static String ACCESS_TOKEN_URL= "https://api.breeding4rice.irri.org/v1/authenticate/token?" +
             "client_id=pocketapp@breeding4rice.irri.org&" +
             "client_secret=777q382Jf4&" +
             "response_type=code&" +

@@ -74,7 +74,7 @@ public class GetVariableSetMasterActivity extends AppCompatActivity {
     private void populateVariableSet() {
 
             // TODO: 2015-12-08
-        String urlStringStudy="http://api.breeding4rice.irri.org/dev/v1/variable-sets?accessToken="+accessToken+"&limit=-1&sort=abbrev";
+        String urlStringStudy="https://api.breeding4rice.irri.org/v1/variable-sets?accessToken="+accessToken+"&limit=-1&sort=abbrev";
         new JSONTaskGetVariableSet().execute(urlStringStudy);
 
     }
@@ -118,7 +118,7 @@ public class GetVariableSetMasterActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();*/
 
-        String urlStringStudy="http://api.breeding4rice.irri.org/dev/v1/variable-sets/"+Integer.valueOf(variableSetId)+"/members?accessToken="+accessToken;
+        String urlStringStudy="https://api.breeding4rice.irri.org/v1/variable-sets/"+Integer.valueOf(variableSetId)+"/members?accessToken="+accessToken;
         new JSONTaskGetVariableSetMembers().execute(urlStringStudy);
 
     }

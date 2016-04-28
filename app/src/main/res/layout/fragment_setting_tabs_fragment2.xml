@@ -2,8 +2,203 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="org.irri.activity.SettingTabsFragment2">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="Fragment 2" />
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView2"
+        android:layout_alignParentStart="true">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Plot Order Field"
+                        android:id="@+id/textView26"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:background="#ededed" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false"
+                    android:paddingLeft="10dp">
+
+                    <Spinner
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinnerPlotField1" />
+
+                    <Spinner
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinnerPlotField2"
+
+                        />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Display Label"
+                        android:id="@+id/checkBoxDisplayPlotOrderLabel"
+                        android:checked="true" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Plot Metadata Field"
+                        android:id="@+id/textView11"
+                        android:textSize="18dp"
+                        android:layout_column="0"
+                        android:textStyle="bold"
+                        android:background="#ededed" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp">
+
+                    <Spinner
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinnerPlotField3"
+
+                        />
+
+                    <Spinner
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinnerPlotField4"
+
+                        />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Display  Label"
+                        android:id="@+id/checkBoxDisplayPlotMetaLabel"
+                        android:checked="false" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Form"
+                        android:id="@+id/textView27"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:background="#ededed" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp">
+
+                    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <RadioButton
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:text="Single"
+                            android:id="@+id/radioButtonSingle"
+                            android:checked="false"
+                            android:textSize="18dp" />
+
+                        <RadioButton
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:text="Batch Update"
+                            android:id="@+id/radioButtonRange"
+                            android:checked="false"
+                            android:textSize="18dp"
+                            android:layout_weight="1" />
+
+                    </RadioGroup>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Background"
+                        android:id="@+id/textView291"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:background="#ededed" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp">
+
+                    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="White"
+                            android:id="@+id/radioButtonLight"
+                            android:checked="false"
+                            android:textSize="18dp" />
+
+                        <RadioButton
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Black"
+                            android:id="@+id/radioButtonDark"
+                            android:checked="false"
+                            android:textSize="18dp" />
+                    </RadioGroup>
+                </TableRow>
+
+            </LinearLayout>
+
+        </TableRow>
+    </ScrollView>
 
 </FrameLayout>

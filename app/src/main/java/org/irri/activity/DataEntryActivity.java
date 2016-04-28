@@ -71,13 +71,13 @@ import com.intermec.aidc.*;
 
 import static android.graphics.Color.BLACK;
 
-public class DataEntryActivity extends AppCompatActivity implements BarcodeReadListener,AdapterView.OnItemClickListener, View.OnClickListener {
+public class DataEntryActivity extends AppCompatActivity implements BarcodeReadListener, AdapterView.OnItemClickListener, View.OnClickListener {
 
-    private static final String TAG ="" ;
+    private static final String TAG = "";
     private String studyName;
     private int REQUEST_CODE = 0X1;
     private int REQUEST_CODE2 = 0X2;
-    private static final int PHOTO_CAPTURE=4;
+    private static final int PHOTO_CAPTURE = 4;
 
     private ImageView btnPlotPrev;
     private ImageView btnPlotNext;
@@ -91,8 +91,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private TableLayout tblPlotSingleEntry;
     private SharedPreferences ep;
 
-    private int plotIndex=1;
-    private int traitIndex=0;
+    private int plotIndex = 1;
+    private int traitIndex = 0;
 
     private EditText etSearchPlot;
 
@@ -117,7 +117,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     String currentTraitLabel;
 
     Spinner spinnerTrait;
-    ArrayAdapter<CharSequence>  adapterTrait;
+    ArrayAdapter<CharSequence> adapterTrait;
 
 
     TextView tvFieldOrderLabel1;
@@ -137,11 +137,16 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     String dataField2;
     String dataField3;
     String dataField4;
+    String display_plot_label;
+    String display_meta_label;
+
+    String dataFieldLabel3;
+    String dataFieldLabel4;
 
     private ListView lvScale;
     private ScaleListAdapter scaleAdapter;
     private List<ScaleValue> scaleValueList;
-    int searchFlag=0;
+    int searchFlag = 0;
     private int totalPlotRecord;
 
     //data to save to plot
@@ -151,29 +156,29 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private String variable_value;
     private String abbrev;
     String[] spinnerArray;
-    HashMap<Integer,Integer> spinnerMap;
+    HashMap<Integer, Integer> spinnerMap;
     ArrayAdapter<CharSequence> dataAdapterTrait;
 
 
     TableRow tblRowDate;
-    private boolean withScaleValue=false;
+    private boolean withScaleValue = false;
     private String accessToken;
-    private int plotEntry=1;
+    private int plotEntry = 1;
     private TableLayout tblLayoutMetaData;
     private EditText etPlotNoStart;
     private EditText etPlotNoEnd;
     private final static Pattern LTRIM = Pattern.compile("^\\s+");
-    private boolean doSaving=false;
-    int countUpdate=0;
-    int countInsert=0;
+    private boolean doSaving = false;
+    int countUpdate = 0;
+    int countInsert = 0;
     int plotNoTemp = 0;
-    int plotEnd=0;
-    String currentAbbrev="";
-    boolean isFinish=false;
+    int plotEnd = 0;
+    String currentAbbrev = "";
+    boolean isFinish = false;
     String entryform;
-    String dataEntryColor="light";
+    String dataEntryColor = "light";
 
-    public DataEntryActivity(){
+    public DataEntryActivity() {
 
     }
 
@@ -183,39 +188,40 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         super.onCreate(savedInstanceState);
 
 
-
         Bundle bundle = getIntent().getExtras();
-        studyName=bundle.getString("STUDYNAME");
-        accessToken=bundle.getString("ACCESSTOKEN");
+        studyName = bundle.getString("STUDYNAME");
+        accessToken = bundle.getString("ACCESSTOKEN");
 
         initDatabase();
         populateSettingValuesMaster();
         populateSettingValuesStudy();
 
-        if(dataEntryColor.equals("light")) {
+        if (dataEntryColor.equals("light")) {
             setContentView(R.layout.activity_data_entry);
-        } else{
+        } else {
             setContentView(R.layout.activity_data_entry_dark);
         }
 
-        traitMeasuring= new ArrayList<TraitMeasuring>();
+        traitMeasuring = new ArrayList<TraitMeasuring>();
 
-        lvScale=(ListView) findViewById(R.id.lvScale);
-        scaleValueList= new ArrayList<ScaleValue>();
+        lvScale = (ListView) findViewById(R.id.lvScale);
+        scaleValueList = new ArrayList<ScaleValue>();
         lvScale.setOnItemClickListener(this);
         lvScale.setVisibility(View.GONE);
 
-        btnPlotPrev= (ImageView) findViewById(R.id.btnPlotPrev);
-        btnPlotNext=(ImageView) findViewById(R.id.btnPlotNext);;
-        btnTraitPrev=(ImageView) findViewById(R.id.btnTraitPrev);;
-        btnTraitNext=(ImageView) findViewById(R.id.btnTraitNext);;
+        btnPlotPrev = (ImageView) findViewById(R.id.btnPlotPrev);
+        btnPlotNext = (ImageView) findViewById(R.id.btnPlotNext);
+        ;
+        btnTraitPrev = (ImageView) findViewById(R.id.btnTraitPrev);
+        ;
+        btnTraitNext = (ImageView) findViewById(R.id.btnTraitNext);
+        ;
         //btnScale=(ImageButton) findViewById(R.id.btnScale);
-       // btnScale.setVisibility(View.GONE);
-        btnDate=(ImageView) findViewById(R.id.btnDate);
+        // btnScale.setVisibility(View.GONE);
+        btnDate = (ImageView) findViewById(R.id.btnDate);
         btnDate.setVisibility(View.GONE);
 
-        btnClear=(ImageView) findViewById(R.id.btnClear);
-
+        btnClear = (ImageView) findViewById(R.id.btnClear);
 
 
         etSearchPlot = (EditText) findViewById(R.id.etSearchPlot);
@@ -226,7 +232,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         tblRowSearch = (TableRow) findViewById(R.id.tblRowSearch);
         tblRowSearch.setVisibility(View.GONE);
 
-        dbTool = new DatabaseMasterTool(this,studyName);
+        dbTool = new DatabaseMasterTool(this, studyName);
         database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
 
@@ -243,12 +249,12 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         getTraitToMeasure();
         // trait spinner
         spinnerTrait = (Spinner) findViewById(R.id.spinner_trait);
-        if(dataEntryColor.equals("light")){
+        if (dataEntryColor.equals("light")) {
             dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout, spinnerArray);
-        }else {
+        } else {
             dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout_dark, spinnerArray);
         }
-       // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
+        // ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter.createFromResource(this, R.array.spinner_plot_field, android.R.layout.simple_spinner_item);
         dataAdapterTrait.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTrait.setAdapter(dataAdapterTrait);
         spinnerTrait.setSelection(0);
@@ -259,7 +265,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     public void onItemSelected(
                             AdapterView<?> parent, View view, int position, long id) {
                         variable_id = spinnerMap.get(position);
-                        traitIndex=position;
+                        traitIndex = position;
                         setHelperBtn();
                         setTraitValue();
                     }
@@ -275,8 +281,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
- //       setPlotRecordDisplay(plotIndex);
- //       setTraitRecordDisplay();
+        //       setPlotRecordDisplay(plotIndex);
+        //       setTraitRecordDisplay();
 
         AidcManager.connectService(this, new AidcManager.IServiceListener() {
             public void onConnect() {
@@ -310,10 +316,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         try {
             //get bar code instance from MainActivity
-            bcr =DataEntryActivity.getBarcodeObject();// SettingBarcodeActivity.getBarcodeObject();
+            bcr = DataEntryActivity.getBarcodeObject();// SettingBarcodeActivity.getBarcodeObject();
 
-            if(bcr != null)
-            {
+            if (bcr != null) {
                 //enable scanner
                 bcr.setScannerEnable(true);
 
@@ -327,21 +332,19 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         }
 
 
-
-        tblRowDate=(TableRow) findViewById(R.id.tblRowDate);
+        tblRowDate = (TableRow) findViewById(R.id.tblRowDate);
         tblRowDate.setVisibility(View.GONE);
 
 
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        tblPlotSingleEntry= (TableLayout) findViewById(R.id.tblPlotSingleEntry);
-        tblPlotRangeEntry= (TableLayout) findViewById(R.id.tblPlotRangeEntry);
+        tblPlotSingleEntry = (TableLayout) findViewById(R.id.tblPlotSingleEntry);
+        tblPlotRangeEntry = (TableLayout) findViewById(R.id.tblPlotRangeEntry);
         tblLayoutMetaData = (TableLayout) findViewById(R.id.tblLayoutMetadata);
 
 
-
-        etPlotNoStart=(EditText)findViewById(R.id.etPlotNoStart);
-        etPlotNoEnd=(EditText)findViewById(R.id.etPlotNoEnd);
+        etPlotNoStart = (EditText) findViewById(R.id.etPlotNoStart);
+        etPlotNoEnd = (EditText) findViewById(R.id.etPlotNoEnd);
         setPlotRecordDisplay(plotIndex);
 
         etValue.addTextChangedListener(new TextWatcher() {
@@ -353,15 +356,15 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(withScaleValue) {
-                    int i=0;
-                    for(ScaleValue r: scaleValueList){
-                        if(r.getValue().contains(s.toString())){
+                if (withScaleValue) {
+                    int i = 0;
+                    for (ScaleValue r : scaleValueList) {
+                        if (r.getValue().contains(s.toString())) {
                             lvScale.setSelection(i);
                             lvScale.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-                            if(dataEntryColor.equals("light")) {
+                            if (dataEntryColor.equals("light")) {
                                 lvScale.setSelector(android.R.color.darker_gray);
-                            }else{
+                            } else {
                                 lvScale.setSelector(android.R.color.background_light);
 
                             }
@@ -375,10 +378,10 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
     private void initDatabase() {
-        dbTool = new DatabaseMasterTool(this,studyName);
+        dbTool = new DatabaseMasterTool(this, studyName);
         database = dbTool.getStudyDatabase(studyName);
         studyMgr = new StudyManager();
-        totalPlotRecord=studyMgr.getAllPlotRecords(database).getCount();
+        totalPlotRecord = studyMgr.getAllPlotRecords(database).getCount();
 
 
     }
@@ -389,21 +392,23 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
     private void populateSettingValuesMaster() {
 
-        DatabaseMasterTool dbToolMaster=new DatabaseMasterTool(this);
-        SQLiteDatabase database=dbToolMaster.getMasterDatabase();
-        StudyManager mgr= new StudyManager();
-        Cursor cursorSettings= mgr.getSettingsMaster(database);
+        DatabaseMasterTool dbToolMaster = new DatabaseMasterTool(this);
+        SQLiteDatabase database = dbToolMaster.getMasterDatabase();
+        StudyManager mgr = new StudyManager();
+        Cursor cursorSettings = mgr.getSettingsMaster(database);
 
-        if(cursorSettings != null && cursorSettings.getCount() > 0){
+        if (cursorSettings != null && cursorSettings.getCount() > 0) {
 
             if (cursorSettings.moveToFirst()) {
                 do {
-                    dataField1=cursorSettings.getString(cursorSettings.getColumnIndex("datafield1"));
-                    dataField2=cursorSettings.getString(cursorSettings.getColumnIndex("datafield2"));
-                    dataField3=cursorSettings.getString(cursorSettings.getColumnIndex("datafield3"));
-                    dataField4=cursorSettings.getString(cursorSettings.getColumnIndex("datafield4"));
-                    entryform=cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
-                    dataEntryColor=cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
+                    dataField1 = cursorSettings.getString(cursorSettings.getColumnIndex("datafield1"));
+                    dataField2 = cursorSettings.getString(cursorSettings.getColumnIndex("datafield2"));
+                    dataField3 = cursorSettings.getString(cursorSettings.getColumnIndex("datafield3"));
+                    dataField4 = cursorSettings.getString(cursorSettings.getColumnIndex("datafield4"));
+                    entryform = cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
+                    dataEntryColor = cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
+                    display_meta_label = cursorSettings.getString(cursorSettings.getColumnIndex("display_meta_label"));
+                    display_plot_label = cursorSettings.getString(cursorSettings.getColumnIndex("display_plot_label"));
 
                 } while (cursorSettings.moveToNext());
             }
@@ -415,20 +420,20 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     private void populateSettingValuesStudy() {
 
 
-        Cursor cursorSettings= studyMgr.getSettingsMaster(database);
+        Cursor cursorSettings = studyMgr.getSettingsMaster(database);
 
-        if(cursorSettings != null && cursorSettings.getCount() > 0){
+        if (cursorSettings != null && cursorSettings.getCount() > 0) {
 
             if (cursorSettings.moveToFirst()) {
                 do {
 
-                    int lplot=cursorSettings.getInt(cursorSettings.getColumnIndex("last_recno"));
-                    entryform=cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
-                    dataEntryColor=cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
-                    if(lplot > 0){
-                        plotIndex=lplot;
-                    }else{
-                        plotIndex=1;
+                    int lplot = cursorSettings.getInt(cursorSettings.getColumnIndex("last_recno"));
+                    entryform = cursorSettings.getString(cursorSettings.getColumnIndex("entryform"));
+                    dataEntryColor = cursorSettings.getString(cursorSettings.getColumnIndex("formcolor"));
+                    if (lplot > 0) {
+                        plotIndex = lplot;
+                    } else {
+                        plotIndex = 1;
                     }
 
                 } while (cursorSettings.moveToNext());
@@ -439,30 +444,28 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
 
-    static BarcodeReader getBarcodeObject()
-    {
+    static BarcodeReader getBarcodeObject() {
         return bcr;
     }
-
 
 
     public void getTraitToMeasure() {
 
         traitMeasuring.clear();
-        Cursor cursorTrait=studyMgr.getVariableSetSelected(database);
+        Cursor cursorTrait = studyMgr.getVariableSetSelected(database);
 
-        if(cursorTrait != null && cursorTrait.getCount() > 0){
+        if (cursorTrait != null && cursorTrait.getCount() > 0) {
 
             if (cursorTrait.moveToFirst()) {
                 do {
-                    String abbrev=cursorTrait.getString(cursorTrait.getColumnIndex("abbrev"));
-                    String displayName=cursorTrait.getString(cursorTrait.getColumnIndex("label"));
-                    String dataType=cursorTrait.getString(cursorTrait.getColumnIndex("data_type"));
-                    String scaleValue=cursorTrait.getString(cursorTrait.getColumnIndex("scale_value"));
-                    int variable_id=cursorTrait.getInt(cursorTrait.getColumnIndex("variable_id"));
+                    String abbrev = cursorTrait.getString(cursorTrait.getColumnIndex("abbrev"));
+                    String displayName = cursorTrait.getString(cursorTrait.getColumnIndex("label"));
+                    String dataType = cursorTrait.getString(cursorTrait.getColumnIndex("data_type"));
+                    String scaleValue = cursorTrait.getString(cursorTrait.getColumnIndex("scale_value"));
+                    int variable_id = cursorTrait.getInt(cursorTrait.getColumnIndex("variable_id"));
 
 
-                    TraitMeasuring trait= new TraitMeasuring();
+                    TraitMeasuring trait = new TraitMeasuring();
                     trait.setAbbrev(abbrev);
                     trait.setVariable_id(variable_id);
                     trait.setDisplay_name(displayName);
@@ -475,11 +478,11 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         }
 
 
-        spinnerArray=new String[traitMeasuring.size()];
+        spinnerArray = new String[traitMeasuring.size()];
         spinnerMap = new HashMap<Integer, Integer>();
-        int i=0;
+        int i = 0;
 
-        if(traitMeasuring.size() > 0) {
+        if (traitMeasuring.size() > 0) {
             for (TraitMeasuring t : traitMeasuring) {
 
                 spinnerMap.put(i, t.getVariable_id());
@@ -506,35 +509,35 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id==android.R.id.home){
+        if (id == android.R.id.home) {
 
             this.finish();
             return true;
         }
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.action_trait_measuring) {
+        if (id == R.id.action_trait_measuring) {
             Intent intent = new Intent(DataEntryActivity.this, TraitMeasuringActivity.class);
             intent.putExtra("STUDYNAME", studyName);
             intent.putExtra("ACCESSTOKEN", accessToken);
             startActivityForResult(intent, REQUEST_CODE);
-        }else if(id==R.id.action_settings){
+        } else if (id == R.id.action_settings) {
             Intent intent = new Intent(DataEntryActivity.this, SettingDataEntryActivity.class);
             intent.putExtra("STUDYNAME", studyName);
             startActivityForResult(intent, REQUEST_CODE2);
-        }else if(id==R.id.action_search){
-            if(searchFlag==0) {
+        } else if (id == R.id.action_search) {
+            if (searchFlag == 0) {
                 tblRowSearch.setVisibility(View.VISIBLE);
                 item.setIcon(R.drawable.search_minus);
-                searchFlag=1;
+                searchFlag = 1;
 
-            }else{
+            } else {
                 item.setIcon(R.drawable.search);
                 tblRowSearch.setVisibility(View.GONE);
-                searchFlag=0;
+                searchFlag = 0;
             }
             etSearchPlot.requestFocus();
-        }else if (id == R.id.action_help) {
+        } else if (id == R.id.action_help) {
 
             Intent intent = new Intent(getApplicationContext(), HelpActivity.class);
             intent.putExtra("IMAGE", "help_dataentry");
@@ -566,25 +569,22 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         else if (id == R.id.action_take_photo) {
 
             Calendar now = GregorianCalendar.getInstance();
-            String plotReferenceCode="abc";
+            String plotReferenceCode = "abc";
             Intent iPhoto = new Intent(DataEntryActivity.this, PhotoCaptureActivity.class);
             iPhoto.putExtra("DBNAME", studyName);
-            String photoName=studyName+"_" + plotNo + "_" + "-var-" + currentTraitLabel;
-            iPhoto.putExtra("PHOTO_NAME", photoName );
+            String photoName = studyName + "_" + plotNo + "_" + "-var-" + currentTraitLabel;
+            iPhoto.putExtra("PHOTO_NAME", photoName);
             startActivityForResult(iPhoto, PHOTO_CAPTURE);
 
-        }
-        else if (id == R.id.action_view_plot_meta) {
+        } else if (id == R.id.action_view_plot_meta) {
 
             showDialog(1);
 
-        }
-
-        else if (id == R.id.action_view_photo) {
+        } else if (id == R.id.action_view_photo) {
 
             Intent i = new Intent(DataEntryActivity.this, ImageListViewActivity.class);
             i.putExtra("FOLDER_PATH", ApplicationPath.APP_PATH_IMAGES);
-            i.putExtra("STUDYNAME",studyName );
+            i.putExtra("STUDYNAME", studyName);
             startActivity(i);
         }
 
@@ -593,9 +593,8 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
 
-
     public void searchPlotRecord(View v) {
-        if(etSearchPlot.getText().toString().length() > 0) {
+        if (etSearchPlot.getText().toString().length() > 0) {
             savePlotObservation();
             setPlotRecordDisplay(Integer.valueOf(etSearchPlot.getText().toString()));
         }
@@ -608,10 +607,10 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
     public void actionBtnPlotPrev(View v) {
         savePlotObservation();
-        if(plotIndex!=1) {
+        if (plotIndex != 1) {
             plotIndex--;
-        }else{
-            plotIndex=1;
+        } else {
+            plotIndex = 1;
         }
 
         setPlotRecordDisplay(plotIndex);
@@ -621,10 +620,10 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
     public void actionBtnPlotNext(View v) {
         savePlotObservation();
-        if(plotIndex < totalPlotRecord) {
+        if (plotIndex < totalPlotRecord) {
             plotIndex++;
-        }else{
-            plotIndex=totalPlotRecord;
+        } else {
+            plotIndex = totalPlotRecord;
         }
         setPlotRecordDisplay(plotIndex);
 
@@ -632,7 +631,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
     public void actionBtnTraitPrev(View v) {
         savePlotObservation();
-        if(traitMeasuring.size() > 0) {
+        if (traitMeasuring.size() > 0) {
             if (traitIndex == 0) {
                 traitIndex = 0;
             } else {
@@ -648,7 +647,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     public void actionBtnTraitNext(View v) {
 //        actionBtnSave(v);
         savePlotObservation();
-        if(traitMeasuring.size() > 0) {
+        if (traitMeasuring.size() > 0) {
             if (traitIndex == traitMeasuring.size() - 1) {
                 traitIndex = 0;
                 spinnerTrait.setSelection(traitIndex);
@@ -659,7 +658,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             }
 
             spinnerTrait.setSelection(traitIndex);
-            variable_id=spinnerMap.get(traitIndex);
+            variable_id = spinnerMap.get(traitIndex);
             setTraitValue();
             setHelperBtn();
         }
@@ -667,26 +666,26 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
 
-    private boolean ifValidSaving(){
+    private boolean ifValidSaving() {
 
         System.out.println(variable_id);
         try {
             String t = spinnerTrait.getItemAtPosition(traitIndex).toString();
-            if(etValue.getText().toString().length() > 0 ){
+            if (etValue.getText().toString().length() > 0) {
                 return true;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
-       return false;
+        return false;
     }
 
     public void actionBtnSave(final View v) {
-        boolean toSave=true;
-        doSaving=false;
-        if(ifValidSaving()) {
+        boolean toSave = true;
+        doSaving = false;
+        if (ifValidSaving()) {
 
             if (!isValidValue() && withScaleValue) {
 
@@ -739,52 +738,53 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
                     if (plotEntry == 1) {
 
-                        boolean isExistRecord=studyMgr.isExistRecord(database,Integer.valueOf(plotNo),variable_id);
-                        if(isExistRecord){
+                        boolean isExistRecord = studyMgr.isExistRecord(database, Integer.valueOf(plotNo), variable_id);
+                        if (isExistRecord) {
 
-                            String fieldValue=etValue.getText().toString();
-                            final String oldValue=currentTraitValue;
+                            String fieldValue = etValue.getText().toString();
+                            final String oldValue = currentTraitValue;
 
-                           if(!etValue.getText().toString().equals(currentTraitValue)) {
-                               doSaving=false;
-                              android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(
-                                    DataEntryActivity.this);
-                              alertDialog.setTitle("Saving Confirmation");
-                              alertDialog.setMessage("Replaced existing value?");
-                              alertDialog.setIcon(R.drawable.info);
-                              alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    doSaving=true;
-                                    savePlotObservation();
-                                    if (traitIndex == traitMeasuring.size() - 1) {
-                                        traitIndex = 0;
-                                        spinnerTrait.setSelection(traitIndex);
+                            if (!etValue.getText().toString().equals(currentTraitValue)) {
+                                doSaving = false;
+                                android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(
+                                        DataEntryActivity.this);
+                                alertDialog.setTitle("Saving Confirmation");
+                                alertDialog.setMessage("Replaced existing value?");
+                                alertDialog.setIcon(R.drawable.info);
+                                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        doSaving = true;
+                                        savePlotObservation();
+                                        if (traitIndex == traitMeasuring.size() - 1) {
+                                            traitIndex = 0;
+                                            spinnerTrait.setSelection(traitIndex);
 
-                                        if (traitMeasuring.size() - 1 > 0) {
-                                            showMsgToNextPlot(v);
+                                            if (traitMeasuring.size() - 1 > 0) {
+                                                showMsgToNextPlot(v);
+                                            } else {
+                                                actionBtnPlotNext(v);
+                                            }
+                                            setTraitValue();
+
                                         } else {
-                                            actionBtnPlotNext(v);
+                                            actionBtnTraitNext(v);
                                         }
-                                        setTraitValue();
 
-                                    } else {
-                                        actionBtnTraitNext(v);
                                     }
+                                });
+                                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        etValue.setText(oldValue);
 
-                                }
-                            });
-                             alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    etValue.setText(oldValue);
+                                    }
+                                });
 
-                                }
-                            });
+                                // Showing Alert Message
+                                alertDialog.show();
 
-                            // Showing Alert Message
-                            alertDialog.show();
-
-                        }}else{
-                            doSaving=true;
+                            }
+                        } else {
+                            doSaving = true;
                             savePlotObservation();
                             if (traitIndex == traitMeasuring.size() - 1) {
                                 traitIndex = 0;
@@ -811,7 +811,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 }
             }
 
-        }else{
+        } else {
             Toast.makeText(getApplicationContext(),
                     "Incomplete data, record cannot be save", Toast.LENGTH_LONG);
             etValue.setText("");
@@ -840,7 +840,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         alertDialog.show();
     }
 
-    private void showMsgUpdateRecord(int countInsert,int countUpdate, final int plotEnd){
+    private void showMsgUpdateRecord(int countInsert, int countUpdate, final int plotEnd) {
 
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(
                 DataEntryActivity.this);
@@ -862,10 +862,10 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
 
-    private boolean isValidDate(){
-        if(traitMeasuring.get(traitIndex).getDataType().equals("date")){
-            try{
-                SimpleDateFormat formatter =new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private boolean isValidDate() {
+        if (traitMeasuring.get(traitIndex).getDataType().equals("date")) {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                 String dateInString = etValue.getText().toString();
 
                 try {
@@ -874,7 +874,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     e.printStackTrace();
                     return true;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 return true;
             }
 
@@ -884,23 +884,22 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         return false;
     }
 
-    private boolean isValidValue(){
+    private boolean isValidValue() {
 
-        if(withScaleValue){
-            String val=etValue.getText().toString();
+        if (withScaleValue) {
+            String val = etValue.getText().toString();
 
-            for(ScaleValue rec:scaleValueList){
-                if(val.equals(rec.getValue())){
+            for (ScaleValue rec : scaleValueList) {
+                if (val.equals(rec.getValue())) {
                     return true;
                 }
             }
         }
 
 
-
-
         return false;
     }
+
     public void actionBtnClear(View v) {
         etValue.setText("");
     }
@@ -910,61 +909,60 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
 
-
     public void setHelperBtn() {
 
-        if(traitMeasuring.get(traitIndex).getScaleValue().length()> 0){
+        if (traitMeasuring.get(traitIndex).getScaleValue().length() > 0) {
             //btnScale.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             //btnScale.setVisibility(View.GONE);
         }
 
-        if(traitMeasuring.get(traitIndex).getDataType().equals("date")){
+        if (traitMeasuring.get(traitIndex).getDataType().equals("date")) {
             btnDate.setVisibility(View.VISIBLE);
             tblRowDate.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             btnDate.setVisibility(View.GONE);
             tblRowDate.setVisibility(View.GONE);
         }
 
-        if(traitMeasuring.get(traitIndex).getDataType().equals("integer")){
+        if (traitMeasuring.get(traitIndex).getDataType().equals("integer")) {
             etValue.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
-        if(traitMeasuring.get(traitIndex).getDataType().equals("float")){
+        if (traitMeasuring.get(traitIndex).getDataType().equals("float")) {
             etValue.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        }else{
+        } else {
             etValue.setInputType(InputType.TYPE_CLASS_TEXT);
         }
 
-        if(!traitMeasuring.get(traitIndex).getScaleValue().equals("null") && !traitMeasuring.get(traitIndex).getScaleValue().equals("")){
+        if (!traitMeasuring.get(traitIndex).getScaleValue().equals("null") && !traitMeasuring.get(traitIndex).getScaleValue().equals("")) {
             lvScale.setVisibility(View.VISIBLE);
-            withScaleValue=true;
+            withScaleValue = true;
             scaleValueList.clear();
-            String[] scale=traitMeasuring.get(traitIndex).getScaleValue().split(";");
-            for(int i=0;i <scale.length ; i++){
-                ScaleValue sv= new ScaleValue();
+            String[] scale = traitMeasuring.get(traitIndex).getScaleValue().split(";");
+            for (int i = 0; i < scale.length; i++) {
+                ScaleValue sv = new ScaleValue();
                 sv.setLabel(ltrim(scale[i].trim()));
-                String[] val=scale[i].split("=");
+                String[] val = scale[i].split("=");
                 sv.setValue(ltrim(val[0].trim()));
                 scaleValueList.add(sv);
 
             }
 
-            if(dataEntryColor.equals("light")) {
+            if (dataEntryColor.equals("light")) {
                 scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row, scaleValueList);
-            }else{
+            } else {
                 scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row_dark, scaleValueList);
             }
             lvScale.setAdapter(scaleAdapter);
 
-        }else{
-            withScaleValue=false;
+        } else {
+            withScaleValue = false;
             lvScale.setVisibility(View.GONE);
             scaleValueList.clear();
 
-            if(dataEntryColor.equals("light")) {
+            if (dataEntryColor.equals("light")) {
                 scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row, scaleValueList);
-            }else{
+            } else {
                 scaleAdapter = new ScaleListAdapter(getApplicationContext(), R.layout.activity_scale_row_dark, scaleValueList);
             }
 
@@ -974,41 +972,40 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
 
-
     private void setTraitValue() {
 
-        Cursor cursor=studyMgr.getPlotData(database,plotNo,variable_id);
-        String value="";
+        Cursor cursor = studyMgr.getPlotData(database, plotNo, variable_id);
+        String value = "";
         String traitLabel;
-        if(cursor != null && cursor.getCount() > 0){
+        if (cursor != null && cursor.getCount() > 0) {
 
             if (cursor.moveToFirst()) {
                 do {
-                    value=cursor.getString(cursor.getColumnIndex("value"));
+                    value = cursor.getString(cursor.getColumnIndex("value"));
 
                 } while (cursor.moveToNext());
             }
         }
 
-        if(traitMeasuring.size() > 0 ) {
+        if (traitMeasuring.size() > 0) {
             tvTraitLabel.setText(traitMeasuring.get(traitIndex).getDisplay_name());
-            currentTraitLabel= traitMeasuring.get(traitIndex).getAbbrev();
+            currentTraitLabel = traitMeasuring.get(traitIndex).getAbbrev();
 
-        }else{
+        } else {
             tvTraitLabel.setText("");
         }
         etValue.setText(value);
-        currentTraitValue=value;
+        currentTraitValue = value;
 
 
     }
 
 
-    private void savePlotObservation(){
+    private void savePlotObservation() {
 
         try {
-            if(etValue.getText().toString().length() > 0) {
-                final DateUtil cdate=new DateUtil();
+            if (etValue.getText().toString().length() > 0) {
+                final DateUtil cdate = new DateUtil();
 
                 final ContentValues content = new ContentValues();
                 content.put("plot_key", plotKey);
@@ -1018,52 +1015,52 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 content.put("value", etValue.getText().toString());
                 content.put("timestamp", cdate.getDate());
 
-                boolean isExistRecord=studyMgr.isExistRecord(database,Integer.valueOf(plotNo),variable_id);
-                String fieldValue=etValue.getText().toString();
+                boolean isExistRecord = studyMgr.isExistRecord(database, Integer.valueOf(plotNo), variable_id);
+                String fieldValue = etValue.getText().toString();
 
-                if(isExistRecord){
-                    if(!etValue.getText().toString().equals(currentTraitValue)) {
-                        if(doSaving) {
+                if (isExistRecord) {
+                    if (!etValue.getText().toString().equals(currentTraitValue)) {
+                        if (doSaving) {
                             content.put("committed", "N");
                             studyMgr.updatePlotRecord(database, etValue.getText().toString(), Integer.valueOf(plotNo), variable_id, cdate.getDate());
                         }
                     }
-                }else{
-                    content.put("committed","N");
+                } else {
+                    content.put("committed", "N");
                     studyMgr.insertPlotRecord(database, content);
                 }
 
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
     }
 
-    private void savePlotObservationRange(){
+    private void savePlotObservationRange() {
 
         try {
 
-            int plotStart=Integer.valueOf(etPlotNoStart.getText().toString());
-            plotEnd=Integer.valueOf(etPlotNoEnd.getText().toString());
+            int plotStart = Integer.valueOf(etPlotNoStart.getText().toString());
+            plotEnd = Integer.valueOf(etPlotNoEnd.getText().toString());
 
 
-            if(etValue.getText().toString().length() > 0) {
+            if (etValue.getText().toString().length() > 0) {
                 final DateUtil cdate = new DateUtil();
 
-                if(plotStart > plotEnd){
-                    int temp=plotStart;
-                    plotStart=plotEnd;
-                    plotEnd=temp;
-                }else{
-                    plotStart=plotStart;
-                    plotEnd=plotEnd;
+                if (plotStart > plotEnd) {
+                    int temp = plotStart;
+                    plotStart = plotEnd;
+                    plotEnd = temp;
+                } else {
+                    plotStart = plotStart;
+                    plotEnd = plotEnd;
                 }
 
                 for (int start = plotStart; start <= plotEnd; start++) {
 
-                    Cursor plotData=studyMgr.getPlotRecordByPlotNo(database, start);
+                    Cursor plotData = studyMgr.getPlotRecordByPlotNo(database, start);
 
 
                     String plotKeyTemp = null;
@@ -1072,7 +1069,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                         if (plotData.moveToFirst()) {
                             do {
                                 plotKeyTemp = plotData.getString(plotData.getColumnIndex("plot_key"));
-                               plotNoTemp=plotData.getInt(plotData.getColumnIndex("plotno"));
+                                plotNoTemp = plotData.getInt(plotData.getColumnIndex("plotno"));
 
 
                             } while (plotData.moveToNext());
@@ -1095,7 +1092,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                     } else {
                         content.put("committed", "N");
                         studyMgr.insertPlotRecord(database, content);
-                           countInsert++;
+                        countInsert++;
                     }
 
                 }
@@ -1105,13 +1102,13 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
             etPlotNoStart.setText(String.valueOf(plotEnd + 1));
             etPlotNoEnd.setText("");
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
     }
 
-    private void showDialogConfirmSaving(final String date){
+    private void showDialogConfirmSaving(final String date) {
 
         android.app.AlertDialog.Builder alertDialog = new android.app.AlertDialog.Builder(
                 DataEntryActivity.this);
@@ -1166,7 +1163,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     Display Scale Value
      */
 
-     protected Dialog onCreateDialog(int id) {
+    protected Dialog onCreateDialog(int id) {
 
         AlertDialog dialog = null;
         switch (id) {
@@ -1226,10 +1223,11 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         int year;
         int month;
         int day;
-        public DatePickerFragment(int month,int year,int day) {
-            this.year=year;
-            this.month=month;
-            this.day=day;
+
+        public DatePickerFragment(int month, int year, int day) {
+            this.year = year;
+            this.month = month;
+            this.day = day;
         }
 
         @Override
@@ -1246,16 +1244,32 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
-            int mon=month+1;
-            ((EditText) getActivity().findViewById(R.id.etValue)).setText(year+"-"+mon+"-"+day);
+            int mon = month + 1;
+            String monthLabel;
+            String dayLabel;
+
+            if (mon < 10) {
+                monthLabel = "0" + String.valueOf(mon);
+            } else {
+                monthLabel = String.valueOf(mon);
+            }
+
+            if (day < 10) {
+                dayLabel = "0" + String.valueOf(day);
+            } else {
+                dayLabel = String.valueOf(day);
+            }
+
+
+            ((EditText) getActivity().findViewById(R.id.etValue)).setText(year + "-" + monthLabel + "-" + dayLabel);
         }
     }
 
     @Override
     public void barcodeRead(BarcodeReadEvent abarcodeReadEvent) {
 
-        String[] barcodeData= abarcodeReadEvent.getBarcodeData().split(";");
-        final String plotCode=barcodeData[barcodeData.length-1];
+        String[] barcodeData = abarcodeReadEvent.getBarcodeData().split(";");
+        final String plotCode = barcodeData[barcodeData.length - 1];
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
@@ -1275,35 +1289,54 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
     }
 
 
-    public  void setPlotRecordDisplay(int plotno) {
+    public void setPlotRecordDisplay(int plotno) {
 
         Cursor plotCursor = studyMgr.getPlotRecords(database, plotno);
-        if(plotCursor != null && plotCursor.getCount() > 0){
+        if (plotCursor != null && plotCursor.getCount() > 0) {
 
             if (plotCursor.moveToFirst()) {
                 do {
-                    tvFieldOrderLabel1.setText(dataField1);
-                    tvFieldOrderLabel2.setText(dataField2);
+                    if (display_plot_label.equals("Y")) {
+                        tvFieldOrderLabel1.setText(dataField1);
+                        tvFieldOrderLabel2.setText(dataField2);
+                    } else {
+                        tvFieldOrderLabel1.setVisibility(View.GONE);
+                        tvFieldOrderLabel2.setVisibility(View.GONE);
+                    }
+
+
+
                     tvFieldOrder1.setText(plotCursor.getString(plotCursor.getColumnIndex(dataField1)));
                     tvFieldOrder2.setText(plotCursor.getString(plotCursor.getColumnIndex(dataField2)));
-                    if(!dataField3.equals("")) {
-                        plotMeta1=dataField3 + " : " + plotCursor.getString(plotCursor.getColumnIndex(dataField3));
+                    if (!dataField3.equals("")) {
+                        if (display_meta_label.equals("Y")) {
+                            dataFieldLabel3=dataField3+ ":";
+                        } else {
+                            dataFieldLabel3="";
+                        }
+
+                        plotMeta1 = dataFieldLabel3 +plotCursor.getString(plotCursor.getColumnIndex(dataField3));
                         tvMetadata1.setText(plotMeta1);
                         tblRowMetadata1.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         tblRowMetadata1.setVisibility(View.GONE);
                     }
-                    if(!dataField4.equals("")) {
-                        plotMeta2=dataField4 + " : " + plotCursor.getString(plotCursor.getColumnIndex(dataField4));
+                    if (!dataField4.equals("")) {
+                        if (display_meta_label.equals("Y")) {
+                            dataFieldLabel4=dataField4+ ":";
+                        } else {
+                            dataFieldLabel4="";
+                        }
+                        plotMeta2 = dataFieldLabel4 + plotCursor.getString(plotCursor.getColumnIndex(dataField4));
                         tvMetadata2.setText(plotMeta2);
                         tblRowMetadata2.setVisibility(View.VISIBLE);
-                    }else{
+                    } else {
                         tblRowMetadata2.setVisibility(View.GONE);
                     }
 
-                    plotKey=plotCursor.getString(plotCursor.getColumnIndex("plot_key"));
-                    plotNo=plotCursor.getString(plotCursor.getColumnIndex("plotno"));
-                    plotIndex=plotCursor.getInt(plotCursor.getColumnIndex("recno"));
+                    plotKey = plotCursor.getString(plotCursor.getColumnIndex("plot_key"));
+                    plotNo = plotCursor.getString(plotCursor.getColumnIndex("plotno"));
+                    plotIndex = plotCursor.getInt(plotCursor.getColumnIndex("recno"));
                 } while (plotCursor.moveToNext());
             }
         }
@@ -1311,12 +1344,12 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         etValue.requestFocus();
         setTraitValue();
 
-        if(entryform.equals("single")){
-            tblPlotSingleEntry.setVisibility(View.VISIBLE) ;
+        if (entryform.equals("single")) {
+            tblPlotSingleEntry.setVisibility(View.VISIBLE);
             tblPlotRangeEntry.setVisibility(View.GONE);
             tblLayoutMetaData.setVisibility(View.VISIBLE);
-        }else{
-            tblPlotSingleEntry.setVisibility(View.GONE) ;
+        } else {
+            tblPlotSingleEntry.setVisibility(View.GONE);
             tblPlotRangeEntry.setVisibility(View.VISIBLE);
             tblLayoutMetaData.setVisibility(View.GONE);
         }
@@ -1331,9 +1364,9 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
             if (requestCode == REQUEST_CODE) {
                 getTraitToMeasure();
 
-                if(dataEntryColor.equals("light")) {
+                if (dataEntryColor.equals("light")) {
                     dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout, spinnerArray);
-                }else{
+                } else {
                     dataAdapterTrait = new ArrayAdapter<CharSequence>(this, R.layout.spinner_layout_dark, spinnerArray);
                 }
 
@@ -1342,7 +1375,7 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
                 spinnerTrait.setAdapter(dataAdapterTrait);
                 spinnerTrait.setSelection(0);
                 setTraitValue();
-            }else if(requestCode == REQUEST_CODE2){
+            } else if (requestCode == REQUEST_CODE2) {
                 populateSettingValuesMaster();
 
                 setPlotRecordDisplay(plotIndex);
@@ -1387,16 +1420,13 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         studyMgr.updateSettingsLastRow(database, plotIndex);
         savePlotObservation();
 
-        try
-        {
-            if(wedge != null)
-            {
+        try {
+            if (wedge != null) {
                 wedge.setEnable(true);
                 wedge = null;
             }
 
-            if(bcr != null)
-            {
+            if (bcr != null) {
                 bcr.close();
                 bcr = null;
             }
@@ -1410,34 +1440,34 @@ public class DataEntryActivity extends AppCompatActivity implements BarcodeReadL
         dbTool.closeDB(database);
     }
 
-    private  String getPlotMetadata() {
-        String data="";
+    private String getPlotMetadata() {
+        String data = "";
 
         plotCursor = studyMgr.getPlotRecords(database, plotIndex);
 
-        if(plotCursor != null && plotCursor.getCount() > 0){
+        if (plotCursor != null && plotCursor.getCount() > 0) {
 
             if (plotCursor.moveToFirst()) {
                 do {
-                    data+="Plot key : "+plotCursor.getString(plotCursor.getColumnIndex("plot_key"))+"\n";
-                    data+="Plot No : "+plotCursor.getInt(plotCursor.getColumnIndex("plotno"))+"\n";
-                    data+="Plot Code : "+plotCursor.getString(plotCursor.getColumnIndex("plot_code"))+"\n";
-                    data+="Rep : "+plotCursor.getInt(plotCursor.getColumnIndex("rep"))+"\n";
-                    data+="GID : "+plotCursor.getInt(plotCursor.getColumnIndex("gid"))+"\n";
-                    data+="Entry No : "+plotCursor.getInt(plotCursor.getColumnIndex("entno"))+"\n";
-                    data+="Entry Code : "+plotCursor.getString(plotCursor.getColumnIndex("entcode"))+"\n";
-                    data+="Designation : "+plotCursor.getString(plotCursor.getColumnIndex("designation"))+"\n";
-                    data+="Parentage : "+plotCursor.getString(plotCursor.getColumnIndex("parentage"))+"\n";
-                    data+="Generation : "+plotCursor.getString(plotCursor.getColumnIndex("generation"))+"\n";
-                    data+="QR Code : "+plotCursor.getString(plotCursor.getColumnIndex("qr_code"))+"\n";
-                    data+="Field Row : "+plotCursor.getString(plotCursor.getColumnIndex("fldrow_cont"))+"\n";
-                    data+="Field Column : "+plotCursor.getString(plotCursor.getColumnIndex("fldcol_cont"))+"\n";
+                    data += "Plot key : " + plotCursor.getString(plotCursor.getColumnIndex("plot_key")) + "\n";
+                    data += "Plot No : " + plotCursor.getInt(plotCursor.getColumnIndex("plotno")) + "\n";
+                    data += "Plot Code : " + plotCursor.getString(plotCursor.getColumnIndex("plot_code")) + "\n";
+                    data += "Rep : " + plotCursor.getInt(plotCursor.getColumnIndex("rep")) + "\n";
+                    data += "GID : " + plotCursor.getInt(plotCursor.getColumnIndex("gid")) + "\n";
+                    data += "Entry No : " + plotCursor.getInt(plotCursor.getColumnIndex("entno")) + "\n";
+                    data += "Entry Code : " + plotCursor.getString(plotCursor.getColumnIndex("entcode")) + "\n";
+                    data += "Designation : " + plotCursor.getString(plotCursor.getColumnIndex("designation")) + "\n";
+                    data += "Parentage : " + plotCursor.getString(plotCursor.getColumnIndex("parentage")) + "\n";
+                    data += "Generation : " + plotCursor.getString(plotCursor.getColumnIndex("generation")) + "\n";
+                    data += "QR Code : " + plotCursor.getString(plotCursor.getColumnIndex("qr_code")) + "\n";
+                    data += "Field Row : " + plotCursor.getString(plotCursor.getColumnIndex("fldrow_cont")) + "\n";
+                    data += "Field Column : " + plotCursor.getString(plotCursor.getColumnIndex("fldcol_cont")) + "\n";
 
                 } while (plotCursor.moveToNext());
             }
         }
 
-return data;
+        return data;
     }
 
     public class ScaleListAdapter extends ArrayAdapter {
@@ -1447,19 +1477,19 @@ return data;
         private LayoutInflater inflater;
 
 
-        public ScaleListAdapter(Context context, int resource,  List<ScaleValue> objects) {
+        public ScaleListAdapter(Context context, int resource, List<ScaleValue> objects) {
             super(context, resource, objects);
-            scaleList=objects;
-            this.resource=resource;
-            inflater=(LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            scaleList = objects;
+            this.resource = resource;
+            inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            if(convertView==null){
-                convertView = inflater.inflate(resource,null);
+            if (convertView == null) {
+                convertView = inflater.inflate(resource, null);
             }
             TextView tvScaleValue;
             tvScaleValue = (TextView) convertView.findViewById(R.id.tvScaleValue);
@@ -1469,11 +1499,12 @@ return data;
             return convertView;
         }
     }
+
     /**
      * Hides the soft keyboard
      */
     public void hideSoftKeyboard() {
-        if(getCurrentFocus()!=null) {
+        if (getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
@@ -1503,10 +1534,19 @@ return data;
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        if(month < 10){
-            etValue.setText(year+"-0"+(month+1)+"-"+day);
-        }else{
-            etValue.setText(year+"-"+(month+1)+"-"+day);
+
+        String dayLabel = "";
+
+        if (day < 10) {
+            dayLabel = "0" + String.valueOf(day);
+        } else {
+            dayLabel = String.valueOf(day);
+        }
+
+        if (month < 10) {
+            etValue.setText(year + "-0" + (month + 1) + "-" + dayLabel);
+        } else {
+            etValue.setText(year + "-" + (month + 1) + "-" + dayLabel);
         }
 
     }
@@ -1516,23 +1556,28 @@ return data;
             String dateString = etValue.getText().toString();
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             Date date = format.parse(dateString);
-            Date dateBefore = new Date(date.getTime() - 1 * 24 * 3600 * 1000L ); //Subtract n days
+            Date dateBefore = new Date(date.getTime() - 1 * 24 * 3600 * 1000L); //Subtract n days
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(dateBefore);
             int year = calendar.get(Calendar.YEAR);
             int month = calendar.get(Calendar.MONTH);
             int day = calendar.get(Calendar.DAY_OF_MONTH);
+            String dayLabel = "";
 
+            if (day < 10) {
+                dayLabel = "0" + String.valueOf(day);
+            } else {
+                dayLabel = String.valueOf(day);
+            }
 
-            if(month < 10){
-                etValue.setText(year+"-0"+(month+1)+"-"+day);
-            }else{
-                etValue.setText(year+"-"+(month+1)+"-"+day);
+            if (month < 10) {
+                etValue.setText(year + "-0" + (month + 1) + "-" + dayLabel);
+            } else {
+                etValue.setText(year + "-" + (month + 1) + "-" + dayLabel);
             }
 
 
-
-        }catch (Exception e) {
+        } catch (Exception e) {
             etValue.setText("");
         }
 
@@ -1553,15 +1598,22 @@ return data;
             int month = calendar.get(Calendar.MONTH);
             int day = calendar.get(Calendar.DAY_OF_MONTH);
 
+            String dayLabel = "";
 
-            if(month < 10){
-                etValue.setText(year+"-0"+(month+1)+"-"+day);
-            }else{
-                etValue.setText(year+"-"+(month+1)+"-"+day);
+            if (day < 10) {
+                dayLabel = "0" + String.valueOf(day);
+            } else {
+                dayLabel = String.valueOf(day);
+            }
+
+            if (month < 10) {
+                etValue.setText(year + "-0" + (month + 1) + "-" + dayLabel);
+            } else {
+                etValue.setText(year + "-" + (month + 1) + "-" + dayLabel);
             }
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             etValue.setText("");
         }
     }

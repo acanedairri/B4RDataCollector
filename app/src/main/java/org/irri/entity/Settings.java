@@ -8,7 +8,7 @@ import android.widget.EditText;
 public class Settings {
 
     String year;
-    EditText etYear;
+    String season;
     String dataField1;
     String dataField2;
     String dataField3;
@@ -16,6 +16,32 @@ public class Settings {
     String entryform;
     String dataEntryColor;
     int last_recno;
+    String display_plot_label;
+    String display_meta_label;
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
+
+    public String getDisplay_plot_label() {
+        return display_plot_label;
+    }
+
+    public void setDisplay_plot_label(String display_plot_label) {
+        this.display_plot_label = display_plot_label;
+    }
+
+    public String getDisplay_meta_label() {
+        return display_meta_label;
+    }
+
+    public void setDisplay_meta_label(String display_meta_label) {
+        this.display_meta_label = display_meta_label;
+    }
 
     public String getYear() {
         return year;
@@ -33,13 +59,6 @@ public class Settings {
         this.last_recno = last_recno;
     }
 
-    public EditText getEtYear() {
-        return etYear;
-    }
-
-    public void setEtYear(EditText etYear) {
-        this.etYear = etYear;
-    }
 
     public String getDataField1() {
         return dataField1;

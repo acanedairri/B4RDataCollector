@@ -18,7 +18,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class VariableActivity extends AppCompatActivity {
 
-    String urlResourceVariable="http://api.breeding4rice.irri.org/v1/variables?accessToken=00a8c82d46cf9f0745d5406478032d1234344";
+    String urlResourceVariable="https://api.breeding4rice.irri.org/v1/variables?accessToken=00a8c82d46cf9f0745d5406478032d1234344";
     Variable responseObj;
     Gson gson;
     AsyncHttpClient client;

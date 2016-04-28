@@ -65,7 +65,7 @@ public class RegisterUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register_user);
         Bundle bundle = getIntent().getExtras();
         accessToken=bundle.getString("ACCESS_TOKEN");
-        String urlString="http://api.breeding4rice.irri.org/v1/users/teams?accessToken="+accessToken;
+        String urlString="https://api.breeding4rice.irri.org/v1/users/teams?accessToken="+accessToken;
         txtUser=(TextView) findViewById(R.id.txtUser);
         txtProgram= (TextView) findViewById(R.id.txtPassword);
         txtUsername= (EditText) findViewById(R.id.txtUsername);

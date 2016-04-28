@@ -149,9 +149,9 @@ public class StudyMainActivity extends AppCompatActivity {
             String jsonString=getPlotDataToCommit();
             String postUrl;
             if(is_posted.equals("N")) {
-                 postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets?accessToken=" + accessToken;
+                 postUrl = "https://api.breeding4rice.irri.org/v1/datasets?accessToken=" + accessToken;
             }else{
-                postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
+                postUrl = "https://api.breeding4rice.irri.org/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
             }
             //String urlStringStudy="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
            // String url="http://api.breeding4rice.irri.org/dev/v1/studies/"+item.getItemId()+"/data-collection?accessToken="+accessToken;
@@ -227,9 +227,9 @@ public class StudyMainActivity extends AppCompatActivity {
         String jsonString=getPlotDataToCommit();
         String postUrl;
         if(is_posted.equals("N")) {
-            postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets?accessToken=" + accessToken;
+            postUrl = "https://api.breeding4rice.irri.org/v1/datasets?accessToken="+accessToken;
         }else{
-            postUrl = "http://api.breeding4rice.irri.org/dev/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
+            postUrl = "https://api.breeding4rice.irri.org/v1/datasets/"+transaction_id+"?accessToken="+accessToken;
         }
 
         new JSONTaskCommitStudy().execute(postUrl, jsonString);

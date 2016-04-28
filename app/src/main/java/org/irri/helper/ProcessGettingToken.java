@@ -31,6 +31,7 @@ public class ProcessGettingToken {
             try {
                 URL url = new URL(urlAddress);
                 con = (HttpURLConnection) url.openConnection();
+      /*          int s = con.getResponseCode();*/
                 con.setRequestMethod("POST");
                 con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 con.setDoOutput(true);

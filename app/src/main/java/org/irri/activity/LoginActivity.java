@@ -48,7 +48,7 @@ public class LoginActivity extends ActionBarActivity {
     private AccessToken accessToken;
     private Gson gson;
     private EditText password;
-    private String token = "EWlri8UzqBKnetM52qL3LByrVu92DROQznl5nAbN";
+    private String token = "uIpqo6BAUoglt2qOCXNzH6KEysdbHK9Z8lc3xcRu";
     private String versionName;
     private int versionNum;
     private static int user_id;

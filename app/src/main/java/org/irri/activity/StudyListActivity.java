@@ -249,8 +249,8 @@ public class StudyListActivity extends AppCompatActivity {
 
             boolean isStudyExist=isStudyExistCheck(item.getItemId());
             if(!isStudyExist) {
-                String urlStringStudy = "http://api.breeding4rice.irri.org/v1/studies/" + item.getItemId() + "/metadata?accessToken=" + accessToken;
-                String urlStringObsevationData = "http://api.breeding4rice.irri.org/dev/v1/studies/" + item.getItemId() + "/data-collection?accessToken=" + accessToken + "&sort=plotno&limit=-1";
+                String urlStringStudy = "https://api.breeding4rice.irri.org/v1/studies/" + item.getItemId() + "/metadata?accessToken=" + accessToken;
+                String urlStringObsevationData = "https://api.breeding4rice.irri.org/v1/studies/" + item.getItemId() + "/data-collection?accessToken=" + accessToken + "&sort=plotno&limit=-1";
                 new JSONTaskGetStudy().execute(urlStringStudy, urlStringObsevationData);
             }else{
 
@@ -259,7 +259,7 @@ public class StudyListActivity extends AppCompatActivity {
             }
         }else if(item.getTitle() == "View Info") {
             // TODO: 2015-12-08  get study metadata and open to activity
-            String urlString="http://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
+            String urlString="https://api.breeding4rice.irri.org/v1/studies/"+item.getItemId()+"/metadata?accessToken="+accessToken;
             new JSONTaskViewStudy().execute(urlString);
 
         }else{

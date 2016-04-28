@@ -2,6 +2,7 @@ package org.irri.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -39,18 +41,25 @@ import com.loopj.android.http.AsyncHttpClient;
 import org.irri.database.AccountManager;
 import org.irri.database.DatabaseMasterTool;
 import org.irri.database.StudyManager;
+import org.irri.entity.CommitMessage;
+import org.irri.entity.PlotDataCommitModel;
 import org.irri.entity.Study;
 import org.irri.entity.StudyListData;
 import org.irri.entity.StudyListModel;
 import org.irri.entity.User;
 import org.irri.utility.ApplicationPath;
+import org.irri.utility.DateUtil;
+import org.irri.utility.RestClient;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -81,6 +90,7 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
     private EditText etSearchStudy;
     int searchFlag = 0;
     int deleteFlag = 0;
+    private static String is_posted;
     List<StudyListModel> studyToDelete = new ArrayList<StudyListModel>();
     // private int totalUncommitedRecord;
 
@@ -104,6 +114,9 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
 
     private String accessToken;
     private String username;
+    private String studyName;
+    private int transaction_id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,7 +253,7 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
         }else */
         if(position==0){
             Intent intent = new Intent(StudiesWithNavActivity.this, VariableSetMasterActivity.class);
-            intent.putExtra("ACCESSTOKEN", "123");
+            intent.putExtra("ACCESSTOKEN", accessToken);
             intent.putExtra("FLAG", 0);
             startActivity(intent);
 
@@ -330,7 +343,7 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
                 break;*/
 
             case R.id.action_loadstudy:
-                String urlString = "http://api.breeding4rice.irri.org/dev/v1/studies?accessToken=" + accessToken + "&limit=-1&sort=name&season=" + season + "&year=" + year;
+                String urlString = "https://api.breeding4rice.irri.org/v1/studies?accessToken=" + accessToken + "&limit=-1&sort=name&season=" + season + "&year=" + year;
                 new JSONTask().execute(urlString);
                 break;
             case R.id.action_search:
@@ -412,7 +425,7 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             try {
 
@@ -426,6 +439,7 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
                 TextView tvLastSync;
                 TextView tvUncommitRecordLabel;
                 TextView tvUncommittedRec;
+                Button btnSync;
                 final CheckBox checkBox;
 
                 tvStudyName = (TextView) convertView.findViewById(R.id.tvStudyName);
@@ -436,6 +450,28 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
                 tvStudyId.setText(String.valueOf(studyModelEntity.get(position).getId()));
 
                 tvName.setText(studyModelEntity.get(position).getStudy());
+
+                btnSync= (Button) convertView.findViewById(R.id.btnSync);
+
+               btnSync.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        studyName=studyModelEntity.get(position).getName();
+                         //Toast.makeText(getApplicationContext(), tvStudyId.getText().toString()+ " "+String.valueOf(String.valueOf(studyModelEntity.get(position).getId())), Toast.LENGTH_SHORT).show();
+                        isPosted(studyName);
+
+                        String jsonString=getPlotDataToCommit(studyName);
+                        String postUrl;
+                        if(is_posted.equals("N")) {
+                            postUrl = "https://api.breeding4rice.irri.org/v1/datasets?accessToken=" + accessToken;
+                        }else{
+                            postUrl = "https://api.breeding4rice.irri.org/v1/datasets/"+transaction_id+"?accessToken=" + accessToken;
+                        }
+
+                        new JSONTaskCommitStudy().execute(postUrl, jsonString,is_posted,studyName);
+                    }
+                });
+
 
                 if (studyModelEntity.get(position).getDateLastCommited() != null) {
                     tvLastSync = (TextView) convertView.findViewById(R.id.tvLastSync);
@@ -495,11 +531,14 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
                     tvUncommittedRec.setVisibility(View.VISIBLE);
                     tvUncommittedRec.setText(String.valueOf(totalUncommitedRecord));
                     tvUncommitRecordLabel.setText("New Records: ");
-
+                    btnSync.setVisibility(View.VISIBLE);
                 } else {
                     tvUncommitRecordLabel.setVisibility(View.GONE);
                     tvUncommittedRec.setVisibility(View.GONE);
+                    btnSync.setVisibility(View.GONE);
                 }
+
+
 
             } catch (Exception e) {
 
@@ -602,6 +641,8 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
                     public void onClick(DialogInterface dialog, int which) {
                         // Write your code here to execute after dialog closed
                         //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+
+
                     }
                 });
 
@@ -919,4 +960,211 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
             return view;
         }
     }
+
+
+    public class JSONTaskCommitStudy extends AsyncTask<String,String,String> {
+
+        String studyId;
+        private ProgressDialog Dialog = new ProgressDialog(StudiesWithNavActivity.this);
+        String is_posted="N";
+        String studyName;
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Dialog.setMessage(" please wait while processing............");
+            Dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String response=null;
+            try{
+                RestClient client = new RestClient(params[0]);
+                client.AddHeader("Content-type", "application/json");
+                client.AddParam("data", params[1]);
+                client.AddParam("Accept", "application/json");
+                is_posted=params[2];
+                studyName=params[3];
+
+
+                //client.AddHeader("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
+
+                try {
+                    if(is_posted.equals("N")) {
+                        client.Execute(RestClient.RequestMethod.POST);
+                        response = client.getResponse();
+
+
+
+                    }else{
+                        client.Execute(RestClient.RequestMethod.PUT);
+                        response = client.getResponse();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(client.getResponseCode()==401){
+                    return null;
+                }
+              /* String response = client.getResponse();*/
+
+                return response;
+            }catch (Exception e){
+                return null;
+            }
+
+        }
+
+        protected void onPostExecute(String result){
+            super.onPostExecute(result);
+
+            if(result!=null) {
+                //Toast.makeText(StudyMainActivity.this, result, Toast.LENGTH_LONG).show();
+
+                Gson gson = new Gson();
+                CommitMessage commitMessage = gson.fromJson(result, CommitMessage.class);
+                if(commitMessage.isSuccess()) {
+                    updateCommitHistory(commitMessage);
+
+
+                }
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        StudiesWithNavActivity.this).create();
+                alertDialog.setTitle("Upload Message");
+                alertDialog.setMessage(commitMessage.getData().getMessage());
+                alertDialog.setIcon(R.drawable.info);
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+
+                        studyList.clear();
+                        studyList = getMyStudyList(null, programName);
+                        adapter = new MyStudyListAdapter(getApplicationContext(), R.layout.activity_studies_list_row, studyList);
+                        adapter.notifyDataSetChanged();
+                        lvStudyList.setAdapter(adapter);
+                    }
+                });
+                Dialog.dismiss();
+                alertDialog.show();
+
+
+                //setResult(RESULT_OK, null);
+                // finish();
+
+            }else{
+                AlertDialog alertDialog = new AlertDialog.Builder(
+                        StudiesWithNavActivity.this).create();
+                alertDialog.setTitle("Upload Error Message");
+                alertDialog.setMessage("Error uploading plot data. Please check your internet connection");
+                alertDialog.setMessage(result);
+                alertDialog.setIcon(R.drawable.info);
+                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Write your code here to execute after dialog closed
+                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Dialog.dismiss();
+                alertDialog.show();
+            }
+        }
+
+        private void updateCommitHistory(CommitMessage result) {
+
+            try {
+                // create new study database
+                String transMsg = result.getData().getMessage().toString();
+                String[] s = transMsg.split(" ");
+                String sname=studyName;
+
+                DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(), studyName);
+                SQLiteDatabase studyDatabase = dbToolStudy.getStudyDatabase(studyName);
+                StudyManager mgrStudy = new StudyManager();
+                mgrStudy.updatePlotRecordCommited(studyDatabase);
+                if (is_posted.equals("N")) {
+                    ContentValues cv = new ContentValues();
+                    DateUtil cdate = new DateUtil();
+                    cv.put("remarks", result.getData().getMessage());
+                    int transaction_id = Integer.valueOf(s[s.length - 1]);
+                    cv.put("transaction_id", transaction_id);
+                    cv.put("date_commit", cdate.getDate());
+                    mgrStudy.insertCommitHistory(studyDatabase, cv);
+                    dbToolStudy.closeDB(studyDatabase);
+
+                    // update master list study
+
+                    // insert study record to master table
+                    DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
+                    SQLiteDatabase database = dbTool.getMasterDatabase();
+                    StudyManager mgr = new StudyManager();
+                    mgr.updateStudyCommitTranscation(database, studyName, transaction_id);
+                    isPosted(studyName);
+                    dbTool.closeDB(database);
+                }
+
+            }catch(Exception e){
+
+            }
+
+        }
+    }
+
+    private void isPosted(String studyName){
+        DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
+        SQLiteDatabase database = dbTool.getMasterDatabase();
+        StudyManager mgr = new StudyManager();
+        Cursor cursor =mgr.getStudy(database, studyName);
+
+        if(cursor != null && cursor.getCount() > 0){
+
+            if (cursor.moveToFirst()) {
+                do {
+                    is_posted=cursor.getString(cursor.getColumnIndex("is_posted"));
+                    transaction_id=cursor.getInt(cursor.getColumnIndex("transaction_id"));
+                } while (cursor.moveToNext());
+            }
+        }
+
+        dbTool.closeDB(database);
+    }
+
+    private String getPlotDataToCommit(String studyName) {
+
+        DatabaseMasterTool dbToolStudy = new DatabaseMasterTool(getApplicationContext(),studyName);
+        SQLiteDatabase studyDatabase=dbToolStudy.getStudyDatabase(studyName);
+        StudyManager mgrStudy = new StudyManager();
+        Cursor plotData=mgrStudy.getPlotDataToCommit(studyDatabase);
+
+        List<PlotDataCommitModel> plotDataList= new ArrayList<PlotDataCommitModel>();
+
+        if(plotData != null && plotData.getCount() > 0){
+
+            if (plotData.moveToFirst()) {
+                do {
+                    PlotDataCommitModel plot= new PlotDataCommitModel();
+                    String plot_key=plotData.getString(plotData.getColumnIndex("plot_key"));
+                    int variable_id=plotData.getInt(plotData.getColumnIndex("variable_id"));
+                    String value=plotData.getString(plotData.getColumnIndex("value"));
+                    plot.setIdentifier_key(plot_key);
+                    plot.setVariable_id(variable_id);
+                    plot.setValue(value);
+                    plot.setRemarks("");
+                    plot.setData_unit("plot");
+                    plotDataList.add(plot);
+                } while (plotData.moveToNext());
+            }
+        }
+
+        Gson gson = new Gson();
+
+        dbToolStudy.closeDB(studyDatabase);
+
+
+        return gson.toJson(plotDataList);
+    }
+
 }

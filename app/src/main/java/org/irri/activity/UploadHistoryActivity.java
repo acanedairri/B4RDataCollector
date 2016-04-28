@@ -174,7 +174,7 @@ public class UploadHistoryActivity extends AppCompatActivity implements AdapterV
 
         switch (item.getItemId()){
             case R.id.action_loadstudy:
-                String urlString="http://api.breeding4rice.irri.org/v1/studies?accessToken="+accessToken+"&limit=-1&sort=name";
+                String urlString="https://api.breeding4rice.irri.org/v1/studies?accessToken="+accessToken+"&limit=-1&sort=name";
                 //new JSONTask().execute(urlString);
                 break;
             case R.id.action_search:

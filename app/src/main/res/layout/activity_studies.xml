@@ -100,7 +100,8 @@
             android:id="@+id/lvStudyList"
             android:layout_gravity="right"
             android:layout_above="@+id/tblDeleteStudy"
-            android:paddingLeft="5dp" />
+            android:paddingLeft="5dp"
+            android:choiceMode="singleChoice" />
     </TableLayout>
 
     <FrameLayout
