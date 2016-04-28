@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bgmain"
+    android:orientation="vertical"
+    android:weightSum="1" >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:id="@+id/TableRow07"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/bg_green"
+            android:baselineAligned="false" >
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TableRow
+                    android:id="@+id/TableRow08"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/TextView09"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="IRRI"
+                        android:textColor="#2b4d0f"
+                        android:textSize="70px"
+                        android:textStyle="normal|bold"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/TableRow05"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="International Rice Research Institute"
+                        android:textColor="#000000"
+                        android:textSize="25px"
+                        android:typeface="serif" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/TableRow04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </TableRow>
+            </TableLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bar" >
+        </TableRow>
+
+        <TextView
+            android:id="@+id/TextView07"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="Plant Breeding Division  "
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView36"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="Breeding Information Management System(BIMS)"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp" />
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="Contact Persons"
+        android:textColor="#000000"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:layout_column="0"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp">
+
+    </TextView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="187dp"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:id="@+id/TextView05"
+            android:layout_width="wrap_content"
+            android:text="Alexander A. Cañeda"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_column="0"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="28dp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/TextView06"
+            android:layout_width="wrap_content"
+            android:text="Developer"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView05"
+            android:layout_toEndOf="@+id/TextView05"
+            android:layout_marginStart="33dp" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="a.caneda@irri.org"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_below="@+id/TextView05"
+            android:layout_alignStart="@+id/TextView05" />
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:text="Nikki Carumba"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:layout_below="@+id/TextView02"
+            android:layout_alignStart="@+id/TextView02" />
+
+        <TextView
+            android:id="@+id/textView31"
+            android:layout_width="wrap_content"
+            android:text="Developer"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/TextView01"
+            android:layout_alignStart="@+id/TextView06" />
+
+        <TextView
+            android:id="@+id/textView32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="n.carumba@irri.org"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_below="@+id/TextView01"
+            android:layout_alignStart="@+id/TextView01" />
+
+        <TextView
+            android:id="@+id/textView33"
+            android:layout_width="wrap_content"
+            android:text="Marko Karkkainen"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:layout_below="@+id/textView32"
+            android:layout_alignStart="@+id/textView32" />
+
+        <TextView
+            android:id="@+id/textView34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="m.karkkainen@irri.org"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_below="@+id/textView33"
+            android:layout_alignStart="@+id/textView33" />
+
+        <TextView
+            android:id="@+id/textView35"
+            android:layout_width="wrap_content"
+            android:text="Consultant"
+            android:textColor="#000000"
+            android:textSize="16dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textView34"
+            android:layout_alignStart="@+id/textView31" />
+
+    </RelativeLayout>
+</LinearLayout>

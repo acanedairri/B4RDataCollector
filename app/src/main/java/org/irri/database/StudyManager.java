@@ -295,6 +295,16 @@ public class StudyManager {
         }
     }
 
+    public void updateStudyCommitTranscationToNo(SQLiteDatabase database,String studyName,int trans_id) {
+        try {
+            DateUtil cdate= new DateUtil();
+            String sql="update study set is_posted='N', last_commit='"+cdate.getDate()+"', transaction_id="+trans_id+" where name='"+studyName+"'";
+            database.execSQL(sql);
+        } catch (SQLiteException e) {
+            System.out.println(e);
+        }
+    }
+
 
     public void isPosted(SQLiteDatabase database,String studyName){
         try {
@@ -419,6 +429,8 @@ public class StudyManager {
 
         }
     }
+
+
 
     public void populateRecords(List<Study.DataEntity.ItemsEntity> records){
 

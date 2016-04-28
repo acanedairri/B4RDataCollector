@@ -15,12 +15,16 @@
         android:icon="@drawable/sync"
         android:orderInCategory="300" app:showAsAction="always" />
 
-
- <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
-        android:orderInCategory="500" app:showAsAction="never" />
-
     <item android:id="@+id/action_view_photo" android:title="View Plot Photos"
+        android:orderInCategory="400" app:showAsAction="never" />
+
+    <item android:id="@+id/action_sync_to_operational" android:title="Sync to Operation Data"
         android:orderInCategory="500" app:showAsAction="never" />
+
+    <item android:id="@+id/action_commit_history" android:title="@string/action_commit_history"
+        android:orderInCategory="600" app:showAsAction="never" />
+
+
 
 <!--    <item android:id="@+id/action_settings"
         android:orderInCategory="600"

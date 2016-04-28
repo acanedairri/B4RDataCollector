@@ -255,6 +255,7 @@ public class RestClient {
                 Log.e("TAG", "HTTPx Response: " + HttpResult + " - " + con.getResponseMessage());
                 in = new BufferedInputStream(con.getErrorStream());
                 String res=convertStreamToString(in);
+                response=res;
 
             }
             else {

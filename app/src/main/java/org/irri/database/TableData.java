@@ -55,7 +55,8 @@ public class TableData {
                 "`last_commit` TEXT," +
                 "`uncommited` INTEGER," +
                 "`is_uploaded` TEXT," +
-                "`is_posted` TEXT" +
+                "`is_posted` TEXT," +
+                "`last_sync` TEXT" +
                 ");";
 
     public static String CREATE_STUDY_LIST="CREATE TABLE `study_list` (" +

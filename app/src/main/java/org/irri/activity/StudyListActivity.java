@@ -657,7 +657,8 @@ public class StudyListActivity extends AppCompatActivity {
                 studyInfo.put("userid", LoginActivity.getUser_id());
                 studyInfo.put("is_posted","N");
                 studyInfo.put("transaction_id",0);
-                context.put("last_commit", cdate.getDate());
+                studyInfo.put("last_commit", cdate.getDate());
+                studyInfo.put("last_sync", cdate.getDate());
                 mgr.insertStudyBasicInfoRecord(database, studyInfo);
                 dbTool.closeDB(database);
 

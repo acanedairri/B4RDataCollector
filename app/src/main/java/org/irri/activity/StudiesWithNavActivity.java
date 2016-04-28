@@ -264,6 +264,13 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
             Intent intentSetting = new Intent(StudiesWithNavActivity.this, SettingTabsMainActivity.class);
             startActivity(intentSetting);
         }
+        else if(position==3) {
+/*            Intent intentSetting = new Intent(StudiesWithNavActivity.this, SettingMainActivity.class);
+            startActivityForResult(intentSetting, REQUEST_CODE_SETTING);*/
+
+            Intent intentSetting = new Intent(StudiesWithNavActivity.this, AboutActivity.class);
+            startActivity(intentSetting);
+        }
     }
 
 
@@ -1028,28 +1035,53 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
                 CommitMessage commitMessage = gson.fromJson(result, CommitMessage.class);
                 if(commitMessage.isSuccess()) {
                     updateCommitHistory(commitMessage);
+                    AlertDialog alertDialog = new AlertDialog.Builder(
+                            StudiesWithNavActivity.this).create();
+                    alertDialog.setTitle("Upload Message");
+                    alertDialog.setMessage(commitMessage.getData().getMessage());
+                    alertDialog.setIcon(R.drawable.info);
+                    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Write your code here to execute after dialog closed
+                            //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+
+                            studyList.clear();
+                            studyList = getMyStudyList(null, programName);
+                            adapter = new MyStudyListAdapter(getApplicationContext(), R.layout.activity_studies_list_row, studyList);
+                            adapter.notifyDataSetChanged();
+                            lvStudyList.setAdapter(adapter);
+                        }
+                    });
+                    Dialog.dismiss();
+                    alertDialog.show();
+
+                }else{
+
+                    if(commitMessage.getData().getMessage().contains("Transaction is already committed")){
+                        updateCommitHistoryReset(commitMessage,studyName);
 
 
-                }
-                AlertDialog alertDialog = new AlertDialog.Builder(
-                        StudiesWithNavActivity.this).create();
-                alertDialog.setTitle("Upload Message");
-                alertDialog.setMessage(commitMessage.getData().getMessage());
-                alertDialog.setIcon(R.drawable.info);
-                alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Write your code here to execute after dialog closed
-                        //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                        AlertDialog alertDialog = new AlertDialog.Builder(
+                                StudiesWithNavActivity.this).create();
+                        alertDialog.setTitle("Upload Message");
+                        alertDialog.setMessage(commitMessage.getData().getMessage() + "Create new transaction? ");
+                        alertDialog.setIcon(R.drawable.info);
+                        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Write your code here to execute after dialog closed
+                                //Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
+                                String jsonString=getPlotDataToCommit(studyName);
+                                String postUrl;
+                                postUrl = "https://api.breeding4rice.irri.org/v1/datasets?accessToken=" + accessToken;
+                                new JSONTaskCommitStudy().execute(postUrl, jsonString,"N",studyName);
 
-                        studyList.clear();
-                        studyList = getMyStudyList(null, programName);
-                        adapter = new MyStudyListAdapter(getApplicationContext(), R.layout.activity_studies_list_row, studyList);
-                        adapter.notifyDataSetChanged();
-                        lvStudyList.setAdapter(adapter);
+                            }
+                        });
+                        Dialog.dismiss();
+                        alertDialog.show();
                     }
-                });
-                Dialog.dismiss();
-                alertDialog.show();
+                }
+
 
 
                 //setResult(RESULT_OK, null);
@@ -1112,6 +1144,31 @@ public class StudiesWithNavActivity extends AppCompatActivity implements Adapter
 
         }
     }
+
+    private void updateCommitHistoryReset(CommitMessage result,String studyName) {
+
+        try {
+            // create new study database
+            String transMsg = result.getData().getMessage().toString();
+            String[] s = transMsg.split(" ");
+            String sname=studyName;
+
+
+            // insert study record to master table
+            DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
+            SQLiteDatabase database = dbTool.getMasterDatabase();
+            StudyManager mgr = new StudyManager();
+            mgr.updateStudyCommitTranscationToNo(database, sname, transaction_id);
+            isPosted(studyName);
+            dbTool.closeDB(database);
+
+
+        }catch(Exception e){
+
+        }
+
+
+}
 
     private void isPosted(String studyName){
         DatabaseMasterTool dbTool = new DatabaseMasterTool(getApplicationContext());
